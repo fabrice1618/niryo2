@@ -3,15 +3,15 @@
 - **Promotion :** BACH INGE 2024-0 (3e année), 22 étudiants alternants, groupes G1 et G2
 - **Année :** 2026-2027
 - **Intervenant :** Fabrice Guichard
-- **Version :** v1.3 (brouillon), 04/10/2026
+- **Version :** v1.4 (brouillon), 04/10/2026
 - **Prérequis :** Python (cours de 1re année)
-- **Sources :** `seances.xlsx` (planning) et supports 2025-2026 (`/home/fab/cours/niryo`)
+- **Sources :** `seances_planifie.xlsx` (planning officiel : dates et horaires), `seances_prevu.xlsx` (planning envisagé : lieux et matériel) et supports 2025-2026 (`/home/fab/cours/niryo`)
 - **Présentation du projet :** `README.md` à la racine (contexte, besoins, objectifs, fonctions, synoptique, données échangées), commun aux trois classes
 - **Supports de cours :** dossier `cours/` (voir la fin de la section 4)
 
 **En bref**
 
-- 6 séances, d'octobre 2026 à janvier 2027, soit environ 19 h par étudiant.
+- 6 séances, d'octobre 2026 à janvier 2027, soit 17h30 par étudiant.
 - 22 étudiants en 8 équipes de 2 ou 3, sur 4 robots.
 - Un projet fil rouge : une cellule robotisée supervisée, construite séance après séance.
 - Évaluation : chaque équipe déroule son propre cahier de recette devant l'enseignant.
@@ -70,15 +70,16 @@ L'architecture, les fonctions F1 à F7, le cycle instrumenté et le scénario co
 
 | Séance | Thème | Groupe | Date | Lieu | Durée | Livrable en fin de séance |
 |--------|-------|--------|------|------|-------|---------------------------|
-| Séance 1 | Prise en main du robot, export Python, définition du process | G1 | mer. 14/10/2026, 08:30-12:00 | Fab lab | 3h30 | Programme Blockly et export `.py`, fiche process v0 |
-| Séance 1 | (idem) | G2 | mer. 14/10/2026, 13:30-17:00 | Fab lab | 3h30 | (idem) |
-| Séance 2 | Analyse, dossier, présentation, tests de recette | G1 + G2 | lun. 09/11/2026, 08:30-12:00 | Salle de cours | 3h30 | Dossier d'analyse v1, cahier de recette v1 |
-| Séance 3 | MQTT, rappel SQL, collecte des données dans SQLite | G1 + G2 | mar. 17/11/2026, 08:30-12:00 | Salle de cours, serveur | 3h30 | Collecteur MQTT → SQLite sur le serveur, alimenté par des données simulées |
+| Séance 1 | Prise en main du robot, export Python, définition du process | G1 | lun. 12/10/2026, 08:30-12:00 | Fab lab | 3h30 | Programme Blockly et export `.py`, fiche process v0 |
+| Séance 1 | (idem) | G2 | lun. 12/10/2026, 13:30-17:00 | Fab lab | 3h30 | (idem) |
+| Séance 2 | Analyse, dossier, présentation, tests de recette | G2 | mar. 17/11/2026, 08:30-12:00 | Salle de cours | 3h30 | Dossier d'analyse v1, cahier de recette v1 |
+| Séance 2 | (idem) | G1 | mar. 17/11/2026, 13:30-17:00 | Salle de cours | 3h30 | (idem) |
+| Séance 3 | MQTT, rappel SQL, collecte des données dans SQLite | G1 + G2 | jeu. 19/11/2026, 13:30-17:00 | Salle de cours, serveur | 3h30 | Collecteur MQTT → SQLite sur le serveur, alimenté par des données simulées |
 | Séance 4 | Python, site web et API | G1 + G2 | mer. 20/01/2027, 08:30-12:00 | Salle de cours, serveur | 3h30 | Site web et API (mode simulé) sur le serveur |
-| Séance 5 | Intégration sur les robots | G1 | **à planifier** | Fab lab | 3h30 ? | Système intégré, recette à blanc |
-| Séance 5 | (idem) | G2 | **à planifier** | Fab lab | 3h30 ? | (idem) |
-| Séance 6 | Évaluation : recette | G1 | jeu. 21/01/2027, 15:15-17:00 | Fab lab | 1h45 | Recette signée, code déposé |
-| Séance 6 | (idem) | G2 | jeu. 28/01/2027, 09:45-11:30 | Fab lab | 1h45 | (idem) |
+| Séance 5 | Intégration sur les robots, recette à blanc | G1 + G2 | jeu. 21/01/2027, 15:15-17:00 | Fab lab | 1h45 | Système intégré, recette à blanc |
+| Séance 6 | Évaluation : recette | G1 + G2 | jeu. 28/01/2027, 09:45-11:30 | Fab lab | 1h45 | Recette signée, code déposé |
+
+Dates et horaires : planning officiel (`seances_planifie.xlsx`). Lieux et matériel : ceux du planning envisagé (`seances_prevu.xlsx`), à confirmer pour les créneaux qui ont changé (voir la section 7).
 
 ```mermaid
 gantt
@@ -88,24 +89,23 @@ gantt
     tickInterval 2week
     todayMarker off
     section G1 + G2
-        Séance 2 · Analyse, dossier, recette      : 2026-11-09, 1d
-        Séance 3 · MQTT, SQL, collecte            : 2026-11-17, 1d
+        Séance 3 · MQTT, SQL, collecte            : 2026-11-19, 1d
         Rendu dossier v2 (proposé)                : milestone, 2026-12-15, 0d
         Séance 4 · Python, site web, API          : 2027-01-20, 1d
-    section G1
-        Séance 1 · Prise en main du robot         : 2026-10-14, 1d
-        Séance 5 · Intégration (créneau à fixer)  : crit, 2027-01-20, 2d
-        Séance 6 · Évaluation                     : milestone, 2027-01-21, 0d
-    section G2
-        Séance 1 · Prise en main du robot         : 2026-10-14, 1d
-        Séance 5 · Intégration (créneau à fixer)  : crit, 2027-01-21, 7d
+        Séance 5 · Intégration (1h45)             : crit, 2027-01-21, 1d
         Séance 6 · Évaluation                     : milestone, 2027-01-28, 0d
+    section G1
+        Séance 1 · Prise en main du robot         : 2026-10-12, 1d
+        Séance 2 · Analyse, dossier, recette      : 2026-11-17, 1d
+    section G2
+        Séance 1 · Prise en main du robot         : 2026-10-12, 1d
+        Séance 2 · Analyse, dossier, recette      : 2026-11-17, 1d
 ```
 
-**Volumes horaires**
+**Volumes horaires** (planning officiel)
 
-- **Par étudiant :** 15h45 planifiées + intégration (3h30 si confirmée), soit **19h15**.
-- **Pour l'enseignant :** 21h au planning actuel + 7h d'intégration (2 × 3h30), soit **28h**.
+- **Par étudiant :** 4 séances de 3h30 + 2 séances de 1h45, soit **17h30**.
+- **Pour l'enseignant :** séances 1 et 2 assurées deux fois (4 × 3h30) + séances 3 et 4 (2 × 3h30) + séances 5 et 6 (2 × 1h45), soit **24h30**.
 
 **Organisation des équipes**
 
@@ -166,7 +166,7 @@ gantt
 
 | Lieu | Groupes | Durée | Matériel |
 |------|---------|-------|----------|
-| Salle de cours | G1 + G2 ensemble | 3h30 | Pas de robot |
+| Salle de cours | Par groupe : G2 le matin, G1 l'après-midi | 3h30 | Pas de robot |
 
 **Objectifs**
 
@@ -181,7 +181,7 @@ gantt
 |-------|----------|
 | 45 min | **Cours** : architecture client / serveur en contexte industriel (niveaux terrain, supervision, gestion) ; du besoin (piloter, informer, observer) aux fonctions F1 à F7 et au rôle de chaque brique du fil rouge ; cahier des charges et recette |
 | 2h | **Atelier par équipe** : rédaction du dossier d'analyse à partir d'un gabarit fourni |
-| 45 min | **Présentations flash** : 5 min par équipe (8 équipes), puis retours |
+| 45 min | **Présentations flash** : 5 min par équipe (4 équipes par groupe), puis retours |
 
 **Contenu attendu du dossier d'analyse**
 
@@ -336,9 +336,11 @@ Le scénario complet, de la commande jusqu'à l'affichage des cycles, est dans l
 
 | Lieu | Groupes | Durée | Matériel |
 |------|---------|-------|----------|
-| Fab lab | G1 et G2 séparément | À confirmer (3h30 ?), dates à fixer | Robots et serveur |
+| Fab lab | G1 + G2 ensemble | 1h45 | Robots et serveur |
 
 Le collecteur, la base et le site web tournent déjà sur le serveur depuis les séances 3 et 4 : la séance porte sur le robot et sa liaison avec le serveur.
+
+Le créneau est court : 1h45 pour les 8 équipes, soit deux équipes par robot (une de G1, une de G2). L'intégration n'est possible dans ce temps que si le programme process et l'API ont été testés en mode simulé à la séance 4 (voir la section 7).
 
 **Objectifs**
 
@@ -351,10 +353,9 @@ Le collecteur, la base et le site web tournent déjà sur le serveur depuis les 
 
 | Durée | Activité |
 |-------|----------|
-| 30 min | **Vérifications réseau** : IP du robot et du serveur, accès du robot au broker, accès du serveur à l'API du robot |
-| 1h | **Déploiement sur le robot** : programme process, publication MQTT et API (passage du mode simulé aux appels réels au robot) |
-| 1h | **Essais de bout en bout** (robot → serveur → site web → robot), reprise des poses si le poste a bougé depuis octobre |
-| 1h | **Recette à blanc** : corrections, mise à jour du cahier de recette |
+| 15 min | **Vérifications réseau** (préparées par l'enseignant avant la séance) : IP du robot et du serveur, accès du robot au broker, accès du serveur à l'API du robot |
+| 2 × 40 min | **Passage sur le robot**, une équipe après l'autre sur chaque robot : déploiement du programme process, de la publication MQTT et de l'API (passage du mode simulé aux appels réels), essai de bout en bout (robot → serveur → site web → robot), reprise des poses si besoin, recette à blanc. Pendant ce temps, l'autre équipe prépare son déploiement |
+| 10 min | **Bilan** : corrections à faire avant l'évaluation, mise à jour du cahier de recette |
 
 **Livrables**
 
@@ -374,14 +375,16 @@ Le collecteur, la base et le site web tournent déjà sur le serveur depuis les 
 
 | Lieu | Groupes | Durée | Matériel |
 |------|---------|-------|----------|
-| Fab lab | G1 le 21/01, G2 le 28/01 | 1h45 par groupe | Cellule intégrée de chaque équipe (robot et serveur) |
+| Fab lab | G1 + G2 ensemble | 1h45 | Cellule intégrée de chaque équipe (robot et serveur) |
 
-**Déroulé** (4 équipes par groupe, environ 25 min par équipe)
+**Déroulé** (8 équipes, environ 12 min par équipe)
+
+Pendant qu'une équipe passe, l'équipe suivante prépare sa cellule sur un autre robot.
 
 | Durée | Activité |
 |-------|----------|
-| 15 min | **Recette** : l'équipe déroule son cahier de recette devant l'enseignant ; chaque test est noté conforme ou non conforme |
-| 10 min | **Questions individuelles** sur l'architecture et le code |
+| 8 min | **Recette** : l'équipe déroule les tests de son cahier choisis par l'enseignant ; chaque test est noté conforme ou non conforme |
+| 4 min | **Questions individuelles** sur l'architecture et le code |
 
 **Proposition de grille** (à valider)
 
@@ -444,7 +447,7 @@ flowchart TB
 
 **Calendrier de préparation**
 
-- Disque prêt et testé sur la machine ISTP avant la séance 3 (17/11), par exemple lors de la séance 2 (09/11)
+- Disque prêt et testé sur la machine ISTP avant la séance 3 (19/11), par exemple lors de la séance 2 (17/11)
 - Sauvegarde du disque après chaque séance (image complète ou copie des dossiers des équipes)
 
 **Ressources reprises de l'an dernier**
@@ -455,10 +458,11 @@ flowchart TB
 
 ## 7. Points à arbitrer
 
-1. **Séances d'intégration (séance 5) absentes du planning.** Elles n'ont ni date ni créneau.
-   - Pour G1, le créneau doit tenir entre le 20/01 après-midi et le 21/01 15:15 (par exemple le 21/01 au matin).
-   - Pour G2, entre le 21/01 et le 28/01.
-   - Sans ces séances, il faudrait intégrer pendant l'évaluation, ce qui n'est pas tenable.
-2. **Peu de temps sur les robots.** Les étudiants n'ont le robot qu'aux séances 1 et 5, puis à l'évaluation. Le process doit rester simple. Aux séances 3 et 4, le travail se fait sur le serveur réel, mais avec un process simulé et une API en mode simulé.
-3. **Typage des séances.** Toutes les lignes du planning sont en « CM » sauf le test du 28/01, alors que les séances 1 et 5 sont des TP et que le 21/01 est un test.
-4. **Long intervalle entre les séances 3 et 4** (17/11 → 20/01). Fixer une date de rendu intermédiaire du dossier v2 (par exemple mi-décembre) pour maintenir le rythme.
+1. **Intégration trop courte.** Le planning officiel ne prévoit qu'un créneau commun de 1h45 (séance 5, jeu. 21/01) pour les 8 équipes, au lieu des 3h30 par groupe envisagées.
+   - Le déroulé proposé (deux passages de 40 min par robot) ne suffit que si le code a été testé en mode simulé à la séance 4.
+   - Si possible, demander un créneau par groupe au fab lab entre le 21/01 et le 28/01.
+2. **Évaluation resserrée.** La séance 6 (jeu. 28/01, 1h45) réunit les deux groupes : environ 12 min par équipe au lieu des 25 min envisagées. La recette porte donc sur une sélection de tests ; les questions individuelles sont courtes.
+3. **Lieux à confirmer.** Le planning officiel ne donne pas les salles. À vérifier pour les créneaux qui ont changé : séance 2 par groupe (17/11), séance 3 (19/11), séance 5 (21/01, fab lab avec les robots).
+4. **Peu de temps sur les robots.** Les étudiants n'ont le robot qu'à la séance 1, à la séance 5 (1h45) et à l'évaluation. Le process doit rester simple. Aux séances 3 et 4, le travail se fait sur le serveur réel, mais avec un process simulé et une API en mode simulé.
+5. **Typage des séances.** Toutes les lignes du planning sont en « CM » sauf l'évaluation du 28/01 (« TEST »), alors que les séances 1 et 5 sont des TP et la séance 2 un atelier.
+6. **Long intervalle entre les séances 3 et 4** (19/11 → 20/01). Fixer une date de rendu intermédiaire du dossier v2 (par exemple mi-décembre) pour maintenir le rythme.
