@@ -1,13 +1,20 @@
 # Progression pédagogique : Infrastructure client / serveur dans un contexte industriel
 
-**Promotion :** BACH INGE 2024-0 (3e année), 22 étudiants alternants, groupes G1 et G2
-**Année :** 2026-2027
-**Intervenant :** Fabrice Guichard
-**Version :** v1.2 (brouillon), 04/10/2026
-**Prérequis :** Python (cours de 1re année)
-**Sources :** `seances.xlsx` (planning) et supports 2025-2026 (`/home/fab/cours/niryo`)
-**Présentation du projet :** `README.md` à la racine (contexte, besoins, objectifs, fonctions, synoptique, données échangées), commun aux trois classes
-**Supports de cours :** dossier `cours/` (voir la fin de la section 4)
+- **Promotion :** BACH INGE 2024-0 (3e année), 22 étudiants alternants, groupes G1 et G2
+- **Année :** 2026-2027
+- **Intervenant :** Fabrice Guichard
+- **Version :** v1.3 (brouillon), 04/10/2026
+- **Prérequis :** Python (cours de 1re année)
+- **Sources :** `seances.xlsx` (planning) et supports 2025-2026 (`/home/fab/cours/niryo`)
+- **Présentation du projet :** `README.md` à la racine (contexte, besoins, objectifs, fonctions, synoptique, données échangées), commun aux trois classes
+- **Supports de cours :** dossier `cours/` (voir la fin de la section 4)
+
+**En bref**
+
+- 6 séances, d'octobre 2026 à janvier 2027, soit environ 19 h par étudiant.
+- 22 étudiants en 8 équipes de 2 ou 3, sur 4 robots.
+- Un projet fil rouge : une cellule robotisée supervisée, construite séance après séance.
+- Évaluation : chaque équipe déroule son propre cahier de recette devant l'enseignant.
 
 
 ## 1. Intention générale
@@ -28,12 +35,12 @@ Par rapport à l'an dernier :
 
 | Code | Compétence | Séances |
 |------|------------|---------|
-| C1 | Programmer une séquence robotisée (Blockly puis Python) | S1, S5 |
-| C2 | Analyser un process industriel et le spécifier (dossier, recette) | S1, S2 |
-| C3 | Mettre en œuvre une communication client / serveur (MQTT, HTTP) | S3, S4, S5 |
-| C4 | Collecter et stocker des données de production (SQL / SQLite) | S3, S5 |
-| C5 | Développer une interface web et une API en Python (Flask) | S4, S5 |
-| C6 | Intégrer, tester et valider un système (recette) | S5, S6 |
+| C1 | Programmer une séquence robotisée (Blockly puis Python) | 1 et 5 |
+| C2 | Analyser un process industriel et le spécifier (dossier, recette) | 1 et 2 |
+| C3 | Mettre en œuvre une communication client / serveur (MQTT, HTTP) | 3, 4 et 5 |
+| C4 | Collecter et stocker des données de production (SQL / SQLite) | 3 et 5 |
+| C5 | Développer une interface web et une API en Python (Flask) | 4 et 5 |
+| C6 | Intégrer, tester et valider un système (recette) | 5 et 6 |
 
 
 ## 3. Architecture cible du fil rouge
@@ -46,32 +53,32 @@ L'architecture, les fonctions F1 à F7, le cycle instrumenté et le scénario co
 
 | Fonction | Brique | Réalisée en | Passage sur le robot réel |
 |----------|--------|-------------|---------------------------|
-| F1 Exécuter le cycle | Programme process | S1 (Blockly, export Python) | S5 |
-| F2 Recevoir les commandes | API CQRS | S4, en mode simulé sur le serveur | S5 |
-| F3 Exposer l'état | API CQRS | S4, en mode simulé sur le serveur | S5 |
-| F4 Publier les événements | Client MQTT du robot | S3 avec le simulateur de process fourni, puis entre S3 et S4 dans le programme robot | S5 |
+| F1 Exécuter le cycle | Programme process | Séance 1 (Blockly, export Python) | Séance 5 |
+| F2 Recevoir les commandes | API CQRS | Séance 4, en mode simulé sur le serveur | Séance 5 |
+| F3 Exposer l'état | API CQRS | Séance 4, en mode simulé sur le serveur | Séance 5 |
+| F4 Publier les événements | Client MQTT du robot | Séance 3 avec le simulateur de process fourni, puis entre les séances 3 et 4 dans le programme robot | Séance 5 |
 | F5 Transmettre les messages | Broker Mosquitto | Préparé par l'enseignant sur le serveur (section 6) | (sur le serveur) |
-| F6 Collecter et stocker | Collecteur Python + base SQLite | S3 | (sur le serveur) |
-| F7 Présenter | Site web Flask | S4 | (sur le serveur) |
+| F6 Collecter et stocker | Collecteur Python + base SQLite | Séance 3 | (sur le serveur) |
+| F7 Présenter | Site web Flask | Séance 4 | (sur le serveur) |
 
-Exemple de process : une pièce est posée sur le convoyeur, le convoyeur tourne jusqu'au capteur (DI5), le robot prend la pièce, la dépose dans une zone, le cycle est compté et horodaté (diagramme dans le `README.md`, section 5, « Le cycle instrumenté »).
+**Exemple de process :** une pièce est posée sur le convoyeur, le convoyeur tourne jusqu'au capteur (DI5), le robot prend la pièce, la dépose dans une zone, le cycle est compté et horodaté (diagramme dans le `README.md`, section 5, « Le cycle instrumenté »).
 
-Données remontées (à définir par chaque équipe en S2) : début / fin de cycle, durée de cycle, nombre de pièces, état du robot, défauts.
+**Données remontées** (à définir par chaque équipe à la séance 2) : début / fin de cycle, durée de cycle, nombre de pièces, état du robot, défauts.
 
 
 ## 4. Vue d'ensemble des séances
 
-| Séance | Date | Groupe | Lieu | Durée | Thème | Livrable en fin de séance |
-|--------|------|--------|------|-------|-------|---------------------------|
-| S1 | mer. 14/10/2026 08:30-12:00 | G1 | Fab lab | 3h30 | Prise en main robot, export Python, définition du process | Programme Blockly + export `.py`, fiche process v0 |
-| S1 | mer. 14/10/2026 13:30-17:00 | G2 | Fab lab | 3h30 | (idem) | (idem) |
-| S2 | lun. 09/11/2026 08:30-12:00 | G1 + G2 | Salle de cours | 3h30 | Analyse, dossier, présentation, tests de recette | Dossier d'analyse v1 + cahier de recette v1 |
-| S3 | mar. 17/11/2026 08:30-12:00 | G1 + G2 | Salle de cours + serveur | 3h30 | MQTT, rappel SQL, collecte des données dans SQLite | Collecteur MQTT → SQLite déployé sur le serveur, alimenté par données simulées |
-| S4 | mer. 20/01/2027 08:30-12:00 | G1 + G2 | Salle de cours + serveur | 3h30 | Python, site web et API | Site web + API (mode simulé) déployés sur le serveur |
-| S5 | **à planifier** | G1 | Fab lab | 3h30 ? | Intégration sur robots | Système intégré, recette à blanc |
-| S5 | **à planifier** | G2 | Fab lab | 3h30 ? | Intégration sur robots | (idem) |
-| S6 | jeu. 21/01/2027 15:15-17:00 | G1 | Fab lab | 1h45 | Évaluation : recette | Recette signée + code déposé |
-| S6 | jeu. 28/01/2027 09:45-11:30 | G2 | Fab lab | 1h45 | Évaluation : recette | (idem) |
+| Séance | Thème | Groupe | Date | Lieu | Durée | Livrable en fin de séance |
+|--------|-------|--------|------|------|-------|---------------------------|
+| Séance 1 | Prise en main du robot, export Python, définition du process | G1 | mer. 14/10/2026, 08:30-12:00 | Fab lab | 3h30 | Programme Blockly et export `.py`, fiche process v0 |
+| Séance 1 | (idem) | G2 | mer. 14/10/2026, 13:30-17:00 | Fab lab | 3h30 | (idem) |
+| Séance 2 | Analyse, dossier, présentation, tests de recette | G1 + G2 | lun. 09/11/2026, 08:30-12:00 | Salle de cours | 3h30 | Dossier d'analyse v1, cahier de recette v1 |
+| Séance 3 | MQTT, rappel SQL, collecte des données dans SQLite | G1 + G2 | mar. 17/11/2026, 08:30-12:00 | Salle de cours, serveur | 3h30 | Collecteur MQTT → SQLite sur le serveur, alimenté par des données simulées |
+| Séance 4 | Python, site web et API | G1 + G2 | mer. 20/01/2027, 08:30-12:00 | Salle de cours, serveur | 3h30 | Site web et API (mode simulé) sur le serveur |
+| Séance 5 | Intégration sur les robots | G1 | **à planifier** | Fab lab | 3h30 ? | Système intégré, recette à blanc |
+| Séance 5 | (idem) | G2 | **à planifier** | Fab lab | 3h30 ? | (idem) |
+| Séance 6 | Évaluation : recette | G1 | jeu. 21/01/2027, 15:15-17:00 | Fab lab | 1h45 | Recette signée, code déposé |
+| Séance 6 | (idem) | G2 | jeu. 28/01/2027, 09:45-11:30 | Fab lab | 1h45 | (idem) |
 
 ```mermaid
 gantt
@@ -81,43 +88,51 @@ gantt
     tickInterval 2week
     todayMarker off
     section G1 + G2
-        S2 Analyse, dossier, recette       : 2026-11-09, 1d
-        S3 MQTT, SQL, collecte             : 2026-11-17, 1d
-        Rendu dossier v2 (proposé)         : milestone, 2026-12-15, 0d
-        S4 Python, site web, API           : 2027-01-20, 1d
+        Séance 2 · Analyse, dossier, recette      : 2026-11-09, 1d
+        Séance 3 · MQTT, SQL, collecte            : 2026-11-17, 1d
+        Rendu dossier v2 (proposé)                : milestone, 2026-12-15, 0d
+        Séance 4 · Python, site web, API          : 2027-01-20, 1d
     section G1
-        S1 Prise en main robot             : 2026-10-14, 1d
-        S5 Intégration (créneau à fixer)   : crit, 2027-01-20, 2d
-        S6 Évaluation                      : milestone, 2027-01-21, 0d
+        Séance 1 · Prise en main du robot         : 2026-10-14, 1d
+        Séance 5 · Intégration (créneau à fixer)  : crit, 2027-01-20, 2d
+        Séance 6 · Évaluation                     : milestone, 2027-01-21, 0d
     section G2
-        S1 Prise en main robot             : 2026-10-14, 1d
-        S5 Intégration (créneau à fixer)   : crit, 2027-01-21, 7d
-        S6 Évaluation                      : milestone, 2027-01-28, 0d
+        Séance 1 · Prise en main du robot         : 2026-10-14, 1d
+        Séance 5 · Intégration (créneau à fixer)  : crit, 2027-01-21, 7d
+        Séance 6 · Évaluation                     : milestone, 2027-01-28, 0d
 ```
 
-**Volume par étudiant :** 15h45 planifiées + intégration (3h30 si confirmée), soit **19h15**.
-**Volume enseignant :** 21h au planning actuel + 7h d'intégration (2 × 3h30), soit **28h**.
+**Volumes horaires**
 
-**Organisation des équipes :** 4 robots, 1 équipe de 3 étudiants par robot : 4 équipes par groupe, soit 8 équipes au total (22 étudiants : 6 équipes de 3 et 2 équipes de 2). Les équipes sont constituées en S1 et restent les mêmes jusqu'à l'évaluation.
+- **Par étudiant :** 15h45 planifiées + intégration (3h30 si confirmée), soit **19h15**.
+- **Pour l'enseignant :** 21h au planning actuel + 7h d'intégration (2 × 3h30), soit **28h**.
+
+**Organisation des équipes**
+
+- 4 robots, une équipe par robot dans chaque groupe : 4 équipes par groupe, 8 équipes au total.
+- 22 étudiants : 6 équipes de 3 et 2 équipes de 2.
+- Les équipes sont constituées à la séance 1 et restent les mêmes jusqu'à l'évaluation.
 
 **Supports de cours** (dossier `cours/`, et `README.md` à la racine)
 
 | Fichier | Titre | Séances |
 |---------|-------|---------|
-| `README.md` | Présentation du projet : contexte, besoins, objectifs, fonctions, synoptique | S1 (présentation), S2 |
-| `reseau_TCP_IP.md` | Révisions réseau : TCP/IP, adressage, routage, sous-réseaux, configuration statique et DHCP | S3 (révision), S5 |
-| `collecteur_MQTT.md` | Collecteur de messages MQTT en Python vers une base de données | S3 |
-| `SQL.md` | Rappels de SQL | S3 |
-| `site_web_HTML_CSS.md` | Cours HTML et CSS : réaliser les pages d'un site web | S4 |
-| `intro_flask.md` | Le framework Flask : premiers pas | S4 |
-| `API_CQRS_REST_Flask.md` | Une API CQRS pour le robot Niryo, comparée à REST, avec Flask | S4, S5 |
+| `README.md` | Présentation du projet : contexte, besoins, objectifs, fonctions, synoptique | 1 (présentation) et 2 |
+| `reseau_TCP_IP.md` | Révisions réseau : TCP/IP, adressage, routage, sous-réseaux, configuration statique et DHCP | 3 (révision) et 5 |
+| `collecteur_MQTT.md` | Collecteur de messages MQTT en Python vers une base de données | 3 |
+| `SQL.md` | Rappels de SQL | 3 |
+| `site_web_HTML_CSS.md` | Cours HTML et CSS : réaliser les pages d'un site web | 4 |
+| `intro_flask.md` | Le framework Flask : premiers pas | 4 |
+| `API_CQRS_REST_Flask.md` | Une API CQRS pour le robot Niryo, comparée à REST, avec Flask | 4 et 5 |
 
 
 ## 5. Détail des séances
 
-### S1 – Prise en main du robot, export Python, définition du process
+### Séance 1 : prise en main du robot, export Python, définition du process
 
-*Fab lab, robots. G1 le matin, G2 l'après-midi. 3h30.*
+| Lieu | Groupes | Durée | Matériel |
+|------|---------|-------|----------|
+| Fab lab | G1 le matin, G2 l'après-midi | 3h30 | Robots Ned2 et convoyeurs |
 
 **Objectifs**
 
@@ -130,11 +145,11 @@ gantt
 
 | Durée | Activité |
 |-------|----------|
-| 20 min | Présentation du module et du fil rouge (`README.md`, sections 1 à 3), constitution des équipes, consignes de sécurité (zone de travail, arrêt d'urgence, vitesses) |
-| 60 min | Prise en main : connexion Niryo Studio, calibration, mode apprentissage, mouvements articulaires et cartésiens, pince |
-| 70 min | Scénario guidé : convoyeur jusqu'au capteur DI5, prise de la pièce, dépose, retour en position d'attente |
-| 30 min | Export Python : lecture du code généré (`calibrate_auto`, `move_pose`, `pick_from_pose`, `control_conveyor`, `digital_read`), repérage des poses et des fonctions |
-| 30 min | Définition du process de l'équipe : étapes, entrées / sorties, cas d'erreur, premières données à remonter |
+| 20 min | **Lancement** : présentation du module et du fil rouge (`README.md`, sections 1 à 3), constitution des équipes, consignes de sécurité (zone de travail, arrêt d'urgence, vitesses) |
+| 60 min | **Prise en main** : connexion Niryo Studio, calibration, mode apprentissage, mouvements articulaires et cartésiens, pince |
+| 70 min | **Scénario guidé** : convoyeur jusqu'au capteur DI5, prise de la pièce, dépose, retour en position d'attente |
+| 30 min | **Export Python** : lecture du code généré (`calibrate_auto`, `move_pose`, `pick_from_pose`, `control_conveyor`, `digital_read`), repérage des poses et des fonctions |
+| 30 min | **Process de l'équipe** : étapes, entrées / sorties, cas d'erreur, premières données à remonter |
 
 **Livrables**
 
@@ -147,9 +162,11 @@ gantt
 - `documentation/sdk.md`
 
 
-### S2 – Analyse, dossier, présentation, tests de recette
+### Séance 2 : analyse, dossier, présentation, tests de recette
 
-*Salle de cours, G1 + G2. 3h30. Pas de robot.*
+| Lieu | Groupes | Durée | Matériel |
+|------|---------|-------|----------|
+| Salle de cours | G1 + G2 ensemble | 3h30 | Pas de robot |
 
 **Objectifs**
 
@@ -162,9 +179,9 @@ gantt
 
 | Durée | Activité |
 |-------|----------|
-| 45 min | Cours : architecture client / serveur en contexte industriel (niveaux terrain, supervision, gestion), du besoin (piloter, informer, observer) aux fonctions F1 à F7 et au rôle de chaque brique du fil rouge, notion de cahier des charges et de recette |
-| 2h | Atelier par équipe : rédaction du dossier d'analyse à partir d'un gabarit fourni |
-| 45 min | Présentations flash (5 min par équipe, 8 équipes) et retours |
+| 45 min | **Cours** : architecture client / serveur en contexte industriel (niveaux terrain, supervision, gestion) ; du besoin (piloter, informer, observer) aux fonctions F1 à F7 et au rôle de chaque brique du fil rouge ; cahier des charges et recette |
+| 2h | **Atelier par équipe** : rédaction du dossier d'analyse à partir d'un gabarit fourni |
+| 45 min | **Présentations flash** : 5 min par équipe (8 équipes), puis retours |
 
 **Contenu attendu du dossier d'analyse**
 
@@ -176,7 +193,7 @@ Le dossier peut suivre le plan du `README.md` (contexte, besoins, objectifs, fon
 - Fonctions attendues du site web (maquette papier acceptée)
 - Cahier de recette : au moins 8 tests (identifiant, exigence, préconditions, procédure, résultat attendu)
 
-La partie technique (topics MQTT, table SQL, routes de l'API) reste au niveau fonctionnel ; elle sera précisée en v2 après S3 et S4.
+La partie technique (topics MQTT, table SQL, routes de l'API) reste au niveau fonctionnel. Elle sera précisée dans la v2 du dossier, après les séances 3 et 4.
 
 **Livrables**
 
@@ -187,9 +204,11 @@ La partie technique (topics MQTT, table SQL, routes de l'API) reste au niveau fo
 - `README.md` (présentation du projet, à utiliser comme modèle de plan pour le dossier)
 
 
-### S3 – MQTT, rappel SQL, collecte des données dans SQLite
+### Séance 3 : MQTT, rappel SQL, collecte des données dans SQLite
 
-*Salle de cours, G1 + G2. 3h30. Serveur utilisé (voir section 6) : broker Mosquitto, base SQLite, exécution du collecteur. Pas de robot : le process est simulé.*
+| Lieu | Groupes | Durée | Matériel |
+|------|---------|-------|----------|
+| Salle de cours | G1 + G2 ensemble | 3h30 | Serveur (section 6) : broker Mosquitto, base SQLite, exécution du collecteur. Pas de robot : le process est simulé |
 
 **Objectifs**
 
@@ -203,16 +222,16 @@ La partie technique (topics MQTT, table SQL, routes de l'API) reste au niveau fo
 
 | Durée | Activité |
 |-------|----------|
-| 40 min | Cours MQTT : broker, clients, topics, payload JSON, QoS, authentification. Démonstration avec `mosquitto_pub` / `mosquitto_sub` sur le broker du serveur |
-| 50 min | TP : connexion au serveur (SSH, VS Code Remote SSH) avec le compte de l'équipe, puis publier et s'abonner sur le broker du serveur (MQTT Explorer puis `paho-mqtt`) |
-| 30 min | Rappel SQL : table, types, clé primaire, `CREATE`, `INSERT`, `SELECT`, `WHERE`, `GROUP BY`. SQLite (module `sqlite3`, DB Browser for SQLite) |
-| 1h30 | TP : un simulateur publie les événements du process de l'équipe, le collecteur tourne sur le serveur, reçoit les messages, les valide et les insère dans SQLite. Requêtes de contrôle (nombre de cycles, durée moyenne) |
+| 40 min | **Cours MQTT** : broker, clients, topics, payload JSON, QoS, authentification. Démonstration avec `mosquitto_pub` / `mosquitto_sub` sur le broker du serveur |
+| 50 min | **TP connexion et MQTT** : connexion au serveur (SSH, VS Code Remote SSH) avec le compte de l'équipe, puis publier et s'abonner sur le broker du serveur (MQTT Explorer puis `paho-mqtt`) |
+| 30 min | **Rappel SQL** : table, types, clé primaire, `CREATE`, `INSERT`, `SELECT`, `WHERE`, `GROUP BY`. SQLite (module `sqlite3`, DB Browser for SQLite) |
+| 1h30 | **TP collecte** : un simulateur publie les événements du process de l'équipe ; le collecteur tourne sur le serveur, reçoit les messages, les valide et les insère dans SQLite. Requêtes de contrôle (nombre de cycles, durée moyenne) |
 
 **Flux de collecte**
 
 ```mermaid
 sequenceDiagram
-    participant SIM as Simulateur de process (robot en S5)
+    participant SIM as Simulateur de process (robot en séance 5)
     participant B as Broker Mosquitto
     participant C as Collecteur Python
     participant DB as Base SQLite
@@ -248,16 +267,18 @@ Conventions reprises des supports `cours/collecteur_MQTT.md` et `cours/SQL.md` (
 - `essai_robot/script4_mqtt_send.py`, `script5_mqtt_receive.py`
 - `tp/fiche_configuration.md` (à adapter : comptes, topics, ports par équipe)
 
-**Travail entre S3 et S4 (2 mois)**
+**Travail entre les séances 3 et 4 (2 mois)**
 
 - Dossier v2 : topics, format des messages, schéma de la base, routes de l'API
 - Finaliser le collecteur
 - Préparer dans le programme robot les appels de publication MQTT
 
 
-### S4 – Python, site web et API
+### Séance 4 : Python, site web et API
 
-*Salle de cours, G1 + G2. 3h30. Serveur utilisé (voir section 6) : exécution de l'API et du site web, base SQLite de S3. Pas de robot : l'API fonctionne en mode simulé.*
+| Lieu | Groupes | Durée | Matériel |
+|------|---------|-------|----------|
+| Salle de cours | G1 + G2 ensemble | 3h30 | Serveur (section 6) : exécution de l'API et du site web, base SQLite de la séance 3. Pas de robot : l'API fonctionne en mode simulé |
 
 **Objectifs**
 
@@ -269,10 +290,10 @@ Conventions reprises des supports `cours/collecteur_MQTT.md` et `cours/SQL.md` (
 
 | Durée | Activité |
 |-------|----------|
-| 15 min | Points Python propres au projet (le langage a été vu en 1re année) : environnement virtuel et `pip`, bibliothèques `flask` et `requests` |
-| 30 min | Cours HTTP / REST : client / serveur, `GET` / `POST`, codes de retour, JSON. Tests avec `curl` |
-| 1h15 | TP API : écrire l'API de commande du robot selon le principe CQRS (`GET /requetes/etat`, `POST /commandes/demarrer`, `/commandes/arreter`, `/commandes/calibrer`) en mode simulé (`RobotSimule`), sans appel au robot. Exécution sur le serveur, sur le port attribué à l'équipe (5001 à 5008) |
-| 1h30 | TP site web : tableau de bord exécuté sur le serveur (port 8001 à 8008), lisant la base SQLite de S3 (dernier état, liste des cycles, compteurs), avec des boutons de commande appelant l'API |
+| 15 min | **Python pour le projet** (le langage a été vu en 1re année) : environnement virtuel et `pip`, bibliothèques `flask` et `requests` |
+| 30 min | **Cours HTTP / REST** : client / serveur, `GET` / `POST`, codes de retour, JSON. Tests avec `curl` |
+| 1h15 | **TP API** : écrire l'API de commande du robot selon le principe CQRS (`GET /requetes/etat`, `POST /commandes/demarrer`, `/commandes/arreter`, `/commandes/calibrer`) en mode simulé (`RobotSimule`), sans appel au robot. Exécution sur le serveur, sur le port attribué à l'équipe (5001 à 5008) |
+| 1h30 | **TP site web** : tableau de bord exécuté sur le serveur (port 8001 à 8008), lisant la base SQLite de la séance 3 (dernier état, liste des cycles, compteurs), avec des boutons de commande appelant l'API |
 
 **Flux de consultation et de commande**
 
@@ -281,7 +302,7 @@ sequenceDiagram
     actor O as Opérateur
     participant W as Site web Flask
     participant DB as Base SQLite
-    participant A as API de commande (simulée, puis robot en S5)
+    participant A as API de commande (simulée, puis robot en séance 5)
     O->>W: GET / (tableau de bord)
     W->>DB: SELECT des derniers cycles
     DB-->>W: Résultats
@@ -296,7 +317,7 @@ Le scénario complet, de la commande jusqu'à l'affichage des cycles, est dans l
 
 **Livrables**
 
-- Site web et API (mode simulé) déployés sur le serveur, alimentés par les données simulées de S3
+- Site web et API (mode simulé) déployés sur le serveur, alimentés par les données simulées de la séance 3
 
 **Supports de cours**
 
@@ -311,11 +332,13 @@ Le scénario complet, de la commande jusqu'à l'affichage des cycles, est dans l
 - `essai_robot/script6_api.py`, `script7_API_mqtt.py`
 
 
-### S5 – Intégration sur robots
+### Séance 5 : intégration sur les robots
 
-*Fab lab, robots + serveur. G1 et G2 séparément. Durée et dates à confirmer.*
+| Lieu | Groupes | Durée | Matériel |
+|------|---------|-------|----------|
+| Fab lab | G1 et G2 séparément | À confirmer (3h30 ?), dates à fixer | Robots et serveur |
 
-Le collecteur, la base et le site web tournent déjà sur le serveur depuis S3 et S4 : la séance porte sur le robot et sa liaison avec le serveur.
+Le collecteur, la base et le site web tournent déjà sur le serveur depuis les séances 3 et 4 : la séance porte sur le robot et sa liaison avec le serveur.
 
 **Objectifs**
 
@@ -328,10 +351,10 @@ Le collecteur, la base et le site web tournent déjà sur le serveur depuis S3 e
 
 | Durée | Activité |
 |-------|----------|
-| 30 min | Vérifications réseau : IP du robot et du serveur, accès du robot au broker, accès du serveur à l'API du robot |
-| 1h | Déploiement sur le robot : programme process + publication MQTT + API (passage du mode simulé aux appels réels au robot) |
-| 1h | Essais de bout en bout (robot → serveur → site web → robot), reprise des poses si le poste a bougé depuis octobre |
-| 1h | Recette à blanc, corrections, mise à jour du cahier de recette |
+| 30 min | **Vérifications réseau** : IP du robot et du serveur, accès du robot au broker, accès du serveur à l'API du robot |
+| 1h | **Déploiement sur le robot** : programme process, publication MQTT et API (passage du mode simulé aux appels réels au robot) |
+| 1h | **Essais de bout en bout** (robot → serveur → site web → robot), reprise des poses si le poste a bougé depuis octobre |
+| 1h | **Recette à blanc** : corrections, mise à jour du cahier de recette |
 
 **Livrables**
 
@@ -347,14 +370,18 @@ Le collecteur, la base et le site web tournent déjà sur le serveur depuis S3 e
 - `flask_arm/` : paquets Python pour l'installation hors ligne sur le robot
 
 
-### S6 – Évaluation : recette
+### Séance 6 : évaluation par la recette
 
-*Fab lab. 1h45 par groupe (G1 le 21/01, G2 le 28/01).*
+| Lieu | Groupes | Durée | Matériel |
+|------|---------|-------|----------|
+| Fab lab | G1 le 21/01, G2 le 28/01 | 1h45 par groupe | Cellule intégrée de chaque équipe (robot et serveur) |
 
 **Déroulé** (4 équipes par groupe, environ 25 min par équipe)
 
-- 15 min : déroulé du cahier de recette devant l'enseignant, chaque test est noté conforme / non conforme
-- 10 min : questions individuelles sur l'architecture et le code
+| Durée | Activité |
+|-------|----------|
+| 15 min | **Recette** : l'équipe déroule son cahier de recette devant l'enseignant ; chaque test est noté conforme ou non conforme |
+| 10 min | **Questions individuelles** sur l'architecture et le code |
 
 **Proposition de grille** (à valider)
 
@@ -369,7 +396,7 @@ Le collecteur, la base et le site web tournent déjà sur le serveur depuis S3 e
 
 ISTP fournit une machine qui fait office de serveur. Elle démarre sur un disque externe (SSD USB) contenant un Linux préparé à l'avance par l'enseignant. Le disque interne de la machine n'est ni utilisé ni modifié.
 
-Le serveur sert en S3 et S4 (salle de cours), puis en S5 et S6 (fab lab). Le travail des équipes reste sur le disque d'une séance à l'autre.
+Le serveur sert aux séances 3 et 4 (salle de cours), puis aux séances 5 et 6 (fab lab). Le travail des équipes reste sur le disque d'une séance à l'autre.
 
 **Intérêts**
 
@@ -390,17 +417,17 @@ Le serveur sert en S3 et S4 (salle de cours), puis en S5 et S6 (fab lab). Le tra
 
 **Réseau**
 
-- En salle de cours (S3, S4) : le serveur et les postes étudiants doivent être sur le même réseau. Soit le réseau ISTP, si SSH (22), MQTT (1883) et les ports HTTP sont autorisés entre postes, soit un routeur dédié apporté en salle.
-- Au fab lab (S5, S6) : le serveur rejoint le réseau des robots avec une adresse IP fixe (plan d'adressage proposé dans `cours/reseau_TCP_IP.md` : réseau `192.168.10.0/24`, serveur en `.10`, robots en `.21` à `.24`). L'API tourne alors sur chaque robot, port 5000.
+- **En salle de cours (séances 3 et 4)** : le serveur et les postes étudiants doivent être sur le même réseau. Soit le réseau ISTP, si SSH (22), MQTT (1883) et les ports HTTP sont autorisés entre postes, soit un routeur dédié apporté en salle.
+- **Au fab lab (séances 5 et 6)** : le serveur rejoint le réseau des robots avec une adresse IP fixe (plan d'adressage proposé dans `cours/reseau_TCP_IP.md` : réseau `192.168.10.0/24`, serveur en `.10`, robots en `.21` à `.24`). L'API tourne alors sur chaque robot, port 5000.
 
 ```mermaid
 flowchart TB
-    subgraph SALLE["S3, S4 : salle de cours"]
+    subgraph SALLE["Séances 3 et 4 : salle de cours"]
         direction LR
         PE1["Postes étudiants"] --- R1["Réseau ISTP<br/>ou routeur dédié"]
         R1 --- SV1["Serveur<br/>démarré sur le disque externe"]
     end
-    subgraph FAB["S5, S6 : fab lab"]
+    subgraph FAB["Séances 5 et 6 : fab lab"]
         direction LR
         PE2["Postes étudiants"] --- R2["Réseau des robots"]
         R2 --- SV2["Serveur<br/>même disque, IP fixe"]
@@ -411,13 +438,13 @@ flowchart TB
 
 **À vérifier avec ISTP**
 
-- Disponibilité de la machine aux dates de S3, S4, S5 et S6, en salle de cours et au fab lab
+- Disponibilité de la machine aux dates des séances 3 à 6, en salle de cours et au fab lab
 - Démarrage sur périphérique USB autorisé (réglages BIOS / UEFI, Secure Boot, mot de passe BIOS)
 - Port Ethernet et port USB 3 disponibles
 
 **Calendrier de préparation**
 
-- Disque prêt et testé sur la machine ISTP avant S3 (17/11), par exemple lors de S2 (09/11)
+- Disque prêt et testé sur la machine ISTP avant la séance 3 (17/11), par exemple lors de la séance 2 (09/11)
 - Sauvegarde du disque après chaque séance (image complète ou copie des dossiers des équipes)
 
 **Ressources reprises de l'an dernier**
@@ -428,7 +455,10 @@ flowchart TB
 
 ## 7. Points à arbitrer
 
-1. **Séances d'intégration (S5) absentes du planning.** Elles n'ont ni date ni créneau. Pour G1, le créneau doit tenir entre le 20/01 après-midi et le 21/01 15:15 (par exemple le 21/01 au matin). Pour G2, entre le 21/01 et le 28/01. Sans ces séances, il faudrait intégrer pendant l'évaluation, ce qui n'est pas tenable.
-2. **Peu de temps sur les robots.** Les étudiants n'ont le robot qu'en S1, en S5 puis à l'évaluation. Le process doit rester simple. En S3 et S4, le travail se fait sur le serveur réel, mais avec un process simulé et une API en mode simulé.
-3. **Typage des séances.** Toutes les lignes du planning sont en « CM » sauf le test du 28/01, alors que S1 et S5 sont des TP et que le 21/01 est un test.
-4. **Long intervalle entre S3 et S4** (17/11 → 20/01). Fixer une date de rendu intermédiaire du dossier v2 (par exemple mi-décembre) pour maintenir le rythme.
+1. **Séances d'intégration (séance 5) absentes du planning.** Elles n'ont ni date ni créneau.
+   - Pour G1, le créneau doit tenir entre le 20/01 après-midi et le 21/01 15:15 (par exemple le 21/01 au matin).
+   - Pour G2, entre le 21/01 et le 28/01.
+   - Sans ces séances, il faudrait intégrer pendant l'évaluation, ce qui n'est pas tenable.
+2. **Peu de temps sur les robots.** Les étudiants n'ont le robot qu'aux séances 1 et 5, puis à l'évaluation. Le process doit rester simple. Aux séances 3 et 4, le travail se fait sur le serveur réel, mais avec un process simulé et une API en mode simulé.
+3. **Typage des séances.** Toutes les lignes du planning sont en « CM » sauf le test du 28/01, alors que les séances 1 et 5 sont des TP et que le 21/01 est un test.
+4. **Long intervalle entre les séances 3 et 4** (17/11 → 20/01). Fixer une date de rendu intermédiaire du dossier v2 (par exemple mi-décembre) pour maintenir le rythme.
