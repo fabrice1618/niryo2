@@ -3,9 +3,10 @@
 **Promotion :** BACH INGE 2024-0 (3e année), 22 étudiants alternants, groupes G1 et G2
 **Année :** 2026-2027
 **Intervenant :** Fabrice Guichard
-**Version :** v1.1 (brouillon), 01/10/2026
+**Version :** v1.2 (brouillon), 04/10/2026
 **Prérequis :** Python (cours de 1re année)
 **Sources :** `seances.xlsx` (planning) et supports 2025-2026 (`/home/fab/cours/niryo`)
+**Présentation du projet :** `README.md` à la racine (contexte, besoins, objectifs, fonctions, synoptique, données échangées), commun aux trois classes
 **Supports de cours :** dossier `cours/` (voir la fin de la section 4)
 
 
@@ -37,47 +38,23 @@ Par rapport à l'an dernier :
 
 ## 3. Architecture cible du fil rouge
 
-Chaque brique indique la séance où elle est construite.
+L'architecture, les fonctions F1 à F7, le cycle instrumenté et le scénario complet des échanges sont présentés dans le `README.md` (sections 4 et 5). Dans cette classe, le serveur du module est une machine ISTP (voir section 6) et les robots sont au fab lab.
 
-```mermaid
-flowchart TB
-    OP["Poste opérateur<br/>navigateur"]
-    subgraph SRV["Serveur (machine ISTP)"]
-        BROKER["Broker Mosquitto"]
-        COLL["Collecteur Python<br/>S3"]
-        DB[("Base SQLite<br/>S3")]
-        WEB["Site web Flask<br/>tableau de bord + commandes<br/>S4"]
-    end
-    subgraph ROBOT["Robot Ned2 (fab lab)"]
-        PROC["Programme process<br/>S1, complété en S5"]
-        API["API Flask de commande<br/>S4 en simulé, S5 sur le robot"]
-    end
+![Architecture de la cellule](../robot_niryo-architecture.drawio.png)
 
-    PROC -- "MQTT : événements" --> BROKER
-    BROKER -- "MQTT" --> COLL
-    COLL -- "INSERT" --> DB
-    DB -- "SELECT" --> WEB
-    OP -- "HTTP" --> WEB
-    WEB -- "HTTP : start / stop / calibration" --> API
-    API -- "pilote" --> PROC
-```
+**Séance où chaque fonction est réalisée**
 
-Exemple de process : une pièce est posée sur le convoyeur, le convoyeur tourne jusqu'au capteur (DI5), le robot prend la pièce, la dépose dans une zone, le cycle est compté et horodaté.
+| Fonction | Brique | Réalisée en | Passage sur le robot réel |
+|----------|--------|-------------|---------------------------|
+| F1 Exécuter le cycle | Programme process | S1 (Blockly, export Python) | S5 |
+| F2 Recevoir les commandes | API CQRS | S4, en mode simulé sur le serveur | S5 |
+| F3 Exposer l'état | API CQRS | S4, en mode simulé sur le serveur | S5 |
+| F4 Publier les événements | Client MQTT du robot | S3 avec le simulateur de process fourni, puis entre S3 et S4 dans le programme robot | S5 |
+| F5 Transmettre les messages | Broker Mosquitto | Préparé par l'enseignant sur le serveur (section 6) | (sur le serveur) |
+| F6 Collecter et stocker | Collecteur Python + base SQLite | S3 | (sur le serveur) |
+| F7 Présenter | Site web Flask | S4 | (sur le serveur) |
 
-```mermaid
-%%{init: {"flowchart": {"rankSpacing": 22, "nodeSpacing": 30}}}%%
-flowchart TD
-    A["Pièce posée sur le convoyeur"] --> B["Publication MQTT : début de cycle"]
-    B --> C["Convoyeur en marche"]
-    C --> D{"Capteur DI5 :<br/>pièce détectée ?"}
-    D -- non --> C
-    D -- oui --> E["Arrêt du convoyeur"]
-    E --> F["Prise de la pièce"]
-    F --> G["Dépose dans la zone"]
-    G --> H["Retour en position d'attente"]
-    H --> I["Publication MQTT : fin de cycle, durée"]
-    I --> A
-```
+Exemple de process : une pièce est posée sur le convoyeur, le convoyeur tourne jusqu'au capteur (DI5), le robot prend la pièce, la dépose dans une zone, le cycle est compté et horodaté (diagramme dans le `README.md`, section 5, « Le cycle instrumenté »).
 
 Données remontées (à définir par chaque équipe en S2) : début / fin de cycle, durée de cycle, nombre de pièces, état du robot, défauts.
 
@@ -123,10 +100,11 @@ gantt
 
 **Organisation des équipes :** 4 robots, 1 équipe de 3 étudiants par robot : 4 équipes par groupe, soit 8 équipes au total (22 étudiants : 6 équipes de 3 et 2 équipes de 2). Les équipes sont constituées en S1 et restent les mêmes jusqu'à l'évaluation.
 
-**Supports de cours** (dossier `cours/`)
+**Supports de cours** (dossier `cours/`, et `README.md` à la racine)
 
 | Fichier | Titre | Séances |
 |---------|-------|---------|
+| `README.md` | Présentation du projet : contexte, besoins, objectifs, fonctions, synoptique | S1 (présentation), S2 |
 | `reseau_TCP_IP.md` | Révisions réseau : TCP/IP, adressage, routage, sous-réseaux, configuration statique et DHCP | S3 (révision), S5 |
 | `collecteur_MQTT.md` | Collecteur de messages MQTT en Python vers une base de données | S3 |
 | `SQL.md` | Rappels de SQL | S3 |
@@ -152,7 +130,7 @@ gantt
 
 | Durée | Activité |
 |-------|----------|
-| 20 min | Présentation du module et du fil rouge, constitution des équipes, consignes de sécurité (zone de travail, arrêt d'urgence, vitesses) |
+| 20 min | Présentation du module et du fil rouge (`README.md`, sections 1 à 3), constitution des équipes, consignes de sécurité (zone de travail, arrêt d'urgence, vitesses) |
 | 60 min | Prise en main : connexion Niryo Studio, calibration, mode apprentissage, mouvements articulaires et cartésiens, pince |
 | 70 min | Scénario guidé : convoyeur jusqu'au capteur DI5, prise de la pièce, dépose, retour en position d'attente |
 | 30 min | Export Python : lecture du code généré (`calibrate_auto`, `move_pose`, `pick_from_pose`, `control_conveyor`, `digital_read`), repérage des poses et des fonctions |
@@ -184,11 +162,13 @@ gantt
 
 | Durée | Activité |
 |-------|----------|
-| 45 min | Cours : architecture client / serveur en contexte industriel (niveaux terrain, supervision, gestion), rôle de chaque brique du fil rouge, notion de cahier des charges et de recette |
+| 45 min | Cours : architecture client / serveur en contexte industriel (niveaux terrain, supervision, gestion), du besoin (piloter, informer, observer) aux fonctions F1 à F7 et au rôle de chaque brique du fil rouge, notion de cahier des charges et de recette |
 | 2h | Atelier par équipe : rédaction du dossier d'analyse à partir d'un gabarit fourni |
 | 45 min | Présentations flash (5 min par équipe, 8 équipes) et retours |
 
 **Contenu attendu du dossier d'analyse**
+
+Le dossier peut suivre le plan du `README.md` (contexte, besoins, objectifs, fonctions, synoptique), appliqué au process de l'équipe :
 
 - Description du process (séquence ou grafcet simplifié)
 - Schéma d'architecture : composants et flux
@@ -201,6 +181,10 @@ La partie technique (topics MQTT, table SQL, routes de l'API) reste au niveau fo
 **Livrables**
 
 - Dossier d'analyse v1 et cahier de recette v1
+
+**Supports de cours**
+
+- `README.md` (présentation du projet, à utiliser comme modèle de plan pour le dossier)
 
 
 ### S3 – MQTT, rappel SQL, collecte des données dans SQLite
@@ -232,7 +216,7 @@ sequenceDiagram
     participant B as Broker Mosquitto
     participant C as Collecteur Python
     participant DB as Base SQLite
-    C->>B: Abonnement à cellule/<equipe>/#
+    C->>B: Abonnement à cellule/<equipe>/#35;
     SIM->>B: Publication sur cellule/<equipe>/cycle (JSON)
     B->>C: Transmission du message
     C->>DB: INSERT INTO messages (message brut)
@@ -242,7 +226,7 @@ sequenceDiagram
 
 **Proposition de modèle de données (point de départ)**
 
-Conventions reprises des supports `cours/collecteur_MQTT.md` et `cours/SQL.md` :
+Conventions reprises des supports `cours/collecteur_MQTT.md` et `cours/SQL.md` (détail et exemples de messages dans le `README.md`, section 6) :
 
 - Topics : `cellule/<equipe>/cycle`, `cellule/<equipe>/etat` (message retenu), `cellule/<equipe>/defaut`, avec `<equipe>` de la forme `g1e1`
 - Message : `{"evenement": "fin_cycle", "piece": 12, "duree": 18.2, "zone": "A", "horodatage": "2026-11-17T08:30:18"}`
@@ -307,6 +291,8 @@ sequenceDiagram
     A-->>W: 202 Accepted + id de commande
     W-->>O: Confirmation affichée
 ```
+
+Le scénario complet, de la commande jusqu'à l'affichage des cycles, est dans le `README.md` (section 5, « Les échanges : un scénario complet »).
 
 **Livrables**
 
