@@ -2,28 +2,85 @@
 
 Ce cours est organisé autour d'un **projet fil rouge** : chaque équipe conçoit, réalise et fait recetter une **cellule robotisée supervisée**. Il est **modulaire** : un même socle de supports est décliné en une progression pédagogique par classe.
 
+Ce document se lit dans l'ordre : on part de la cellule telle qu'elle existe (**contexte**), on exprime ce qui lui manque (**besoins**), on fixe le résultat attendu (**objectifs**), on en déduit les **fonctions** à réaliser, puis on montre comment elles s'assemblent et communiquent (**synoptique**).
 
-## Contexte
+
+## 1. Contexte : la cellule robotisée existante
 
 Dans l'industrie, un poste de production n'est plus isolé : les machines remontent leurs données vers des serveurs, qui les stockent, les affichent aux opérateurs et renvoient des ordres aux machines. Cette chaîne repose sur des architectures **client / serveur** et sur des protocoles standards (TCP/IP, MQTT, HTTP, SQL).
 
-Le support matériel du cours est un poste de pick & place : un **robot Niryo Ned2** associé à un **convoyeur** équipé d'un capteur de présence (entrée DI5). Plusieurs robots sont disponibles au fab lab, un par équipe.
+Le point de départ du cours est un poste de pick & place du fab lab, qui fonctionne déjà de façon autonome :
+
+- un **robot Niryo Ned2** (bras six axes avec pince) ;
+- un **convoyeur** piloté par le robot, avec un **capteur de présence** de pièce câblé sur l'entrée **DI5** du robot ;
+- un **PC** équipé de **Niryo Studio**, relié au robot, qui sert à le programmer en Blockly et à lancer le programme. Le programme peut être exporté en Python (bibliothèque `pyniryo`).
+
+Plusieurs postes identiques sont disponibles, un par équipe.
+
+```mermaid
+flowchart LR
+    PC["PC + Niryo Studio<br/>programmation Blockly"] -- "Wi-Fi" --> R["Robot Ned2"]
+    R -- "marche / arrêt" --> CV["Convoyeur"]
+    CV -- "capteur DI5 :<br/>pièce présente" --> R
+```
+
+**Ce que fait la cellule aujourd'hui**
+
+```mermaid
+%%{init: {"flowchart": {"rankSpacing": 22, "nodeSpacing": 30}}}%%
+flowchart TD
+    A["Pièce posée sur le convoyeur"] --> C["Convoyeur en marche"]
+    C --> D{"Capteur DI5 :<br/>pièce détectée ?"}
+    D -- non --> C
+    D -- oui --> E["Arrêt du convoyeur"]
+    E --> F["Prise de la pièce"]
+    F --> G["Dépose dans la zone"]
+    G --> H["Retour en position d'attente"]
+    H --> A
+```
+
+**Ses limites** : la cellule fonctionne en îlot.
+
+- Pour savoir ce que fait le robot, il faut être devant lui ou devant le PC qui le programme.
+- Rien n'est conservé : nombre de pièces, durées de cycle et défauts sont perdus à la fin du programme.
+- Le programme se lance depuis Niryo Studio : aucun autre poste ne peut démarrer, arrêter ou calibrer la cellule.
+- Chaque robot est isolé : il n'existe aucune vue d'ensemble des cellules de l'atelier.
 
 
-## Besoin
+## 2. Besoins : ce que l'on veut ajouter
 
-Le responsable de production veut superviser la cellule sans être à côté du robot :
-
-- savoir à tout moment **ce que fait le robot** (en cycle, arrêté, en défaut) ;
-- conserver l'**historique de production** : cycles, durées, pièces, défauts ;
-- consulter ces informations depuis un **navigateur**, sur le réseau de l'atelier ;
-- **piloter** la cellule à distance : démarrer, arrêter, calibrer ;
-- disposer d'un **cahier de recette** qui prouve que le système fait ce qui est demandé.
+Le responsable de production veut superviser la cellule sans être à côté du robot. Ses besoins se résument en trois verbes.
 
 ![Principe de la cellule](robot_niryo-principe.drawio.png)
 
+| Besoin | Question à laquelle il répond | Exemple |
+|--------|-------------------------------|---------|
+| **Piloter** | « Que doit faire le robot ? » | Démarrer une série de 10 pièces, arrêter, calibrer, à distance |
+| **Informer** | « Que fait le robot maintenant ? » | En cycle, au repos, arrêté, hors ligne |
+| **Observer** | « Qu'a fait le robot ? » | Cycles, durées, nombre de pièces, défauts, conservés dans le temps |
 
-## Objectifs pédagogiques
+S'y ajoutent des contraintes :
+
+- tout se consulte depuis un **navigateur**, sur le réseau de l'atelier, sans logiciel à installer ;
+- plusieurs cellules partagent le même serveur, et **chaque équipe ne voit et ne commande que la sienne** ;
+- le fonctionnement doit être **prouvé** par un cahier de recette.
+
+
+## 3. Objectifs : ce que l'on souhaite obtenir
+
+### Le résultat attendu
+
+À la fin du projet, chaque équipe démontre sa cellule supervisée :
+
+1. depuis un navigateur, l'opérateur ouvre le tableau de bord de sa cellule et voit l'état du robot ;
+2. il clique sur « Démarrer » : le robot enchaîne les cycles sans passer par Niryo Studio ;
+3. chaque cycle apparaît dans le tableau de bord peu après sa fin, avec sa durée ;
+4. l'historique et les compteurs (pièces produites, durée moyenne, défauts) restent disponibles après l'arrêt du robot ;
+5. chaque test du cahier de recette, rédigé par l'équipe, est déroulé et déclaré conforme.
+
+**Livrables** : dossier d'analyse (process, architecture, dictionnaire des données), cahier de recette, code (programme process, collecteur, site web, API).
+
+### Les compétences visées
 
 | Code | Compétence |
 |------|------------|
@@ -37,50 +94,92 @@ Le responsable de production veut superviser la cellule sans être à côté du 
 Prérequis : bases de Python, notions de réseau (révisées dans le support `reseau_TCP_IP.md`).
 
 
-## Fonctionnalités de la cellule à réaliser
+## 4. Fonctions : ce qu'il faut réaliser
 
-| Brique | Rôle | Technologie |
-|--------|------|-------------|
-| Programme process | Exécute le cycle (convoyeur, détection, prise, dépose) et publie les événements | Python, `pyniryo`, `paho-mqtt` |
-| Broker | Reçoit les messages des robots et les distribue aux abonnés | Mosquitto, un compte par équipe |
-| Collecteur | S'abonne aux messages de l'équipe, les valide et les enregistre | Python, `paho-mqtt`, `sqlite3` |
-| Base de données | Conserve le journal brut des messages et les cycles de production | SQLite (`cellule.db`) |
-| Site web | Tableau de bord : dernier état, liste des cycles, compteurs, boutons de commande | Flask, Jinja2, HTML / CSS |
-| API de commande | Reçoit les ordres et expose l'état du robot, selon le principe CQRS | Flask, mode simulé puis robot réel |
+Pour répondre aux trois besoins, la cellule existante est complétée par des fonctions réparties entre le robot et un serveur.
+
+| Fonction | Rôle | Besoin servi | Brique | Technologie |
+|----------|------|--------------|--------|-------------|
+| F1 Exécuter le cycle | Convoyeur, détection DI5, prise, dépose : le cycle existant, repris en Python | (existant) | Programme process | Python, `pyniryo` |
+| F2 Recevoir les commandes | Accepter « démarrer », « arrêter », « calibrer » et les exécuter sur le robot | Piloter | API de commande (CQRS) | Flask, `pyniryo` |
+| F3 Exposer l'état | Répondre à tout moment à « que fait le robot ? », sans gêner un mouvement en cours | Informer | API de commande (CQRS) | Flask |
+| F4 Publier les événements | Signaler début et fin de cycle, changements d'état, défauts | Observer | Client MQTT du robot | `paho-mqtt` |
+| F5 Transmettre les messages | Recevoir les messages des robots, les distribuer aux abonnés, isoler les équipes | Observer | Broker | Mosquitto, un compte par équipe |
+| F6 Collecter et stocker | S'abonner, valider les messages, enregistrer le journal brut et les cycles | Observer | Collecteur + base | Python, `sqlite3`, SQLite (`cellule.db`) |
+| F7 Présenter | Tableau de bord (état, cycles, compteurs) et boutons de commande | Les trois | Site web | Flask, Jinja2, HTML / CSS |
+
+L'API suit le principe **CQRS** : les ordres (commandes, pour piloter) et la lecture de l'état (requêtes, pour informer) ont chacun leur propre chemin.
 
 La pile est volontairement légère : pas de Docker, pas de serveur de base de données, pas d'outil de supervision tiers. Le tableau de bord est le site Flask.
 
 
-## Synoptiques
+## 5. Synoptique : comment tout s'assemble
 
-### Architecture de la cellule
+### Architecture
 
-```mermaid
-flowchart TB
-    OP["Poste opérateur<br/>navigateur"]
-    subgraph SRV["Serveur du module"]
-        BROKER["Broker Mosquitto"]
-        COLL["Collecteur Python"]
-        DB[("Base SQLite")]
-        WEB["Site web Flask<br/>tableau de bord + commandes"]
-    end
-    subgraph ROBOT["Robot Ned2 + convoyeur"]
-        PROC["Programme process"]
-        API["API Flask de commande<br/>(CQRS)"]
-    end
-
-    PROC -- "MQTT : événements" --> BROKER
-    BROKER -- "MQTT" --> COLL
-    COLL -- "INSERT" --> DB
-    DB -- "SELECT" --> WEB
-    OP -- "HTTP" --> WEB
-    WEB -- "HTTP : démarrer / arrêter / calibrer" --> API
-    API -- "pilote" --> PROC
-```
+Les fonctions se répartissent sur deux machines : le **robot** (programme process, client MQTT, API) et le **serveur du module** (broker, collecteur, base, site web). L'opérateur n'utilise qu'un navigateur. Chaque élément porte le numéro des fonctions qu'il réalise (F1 à F7, voir section 4).
 
 ![Architecture de la cellule](robot_niryo-architecture.drawio.png)
 
-### Cycle du process (exemple)
+### Deux modes de communication
+
+| Canal | Modèle | Qui parle à qui | Besoins servis |
+|-------|--------|-----------------|----------------|
+| HTTP | Requête / réponse : le client attend une réponse | Navigateur → site web, site web → API du robot | Piloter, informer |
+| MQTT | Publication / abonnement : l'émetteur ne sait pas qui écoute | Robot → broker → collecteur | Observer |
+| SQL | Écriture puis lecture d'une base commune | Collecteur → base → site web | Observer |
+
+L'historique ne passe pas par l'API : l'API répond à « que fait le robot maintenant ? », la base à « qu'a-t-il fait ? ».
+
+### Les échanges : un scénario complet
+
+Exemple de l'équipe `g1e1` : l'opérateur lance une série de pièces, puis consulte le tableau de bord.
+
+```mermaid
+sequenceDiagram
+    actor O as Opérateur
+    participant W as Site web Flask
+    participant A as API CQRS (robot)
+    participant P as Programme process (robot)
+    participant B as Broker Mosquitto
+    participant C as Collecteur Python
+    participant DB as Base SQLite
+
+    Note over B,C: Au démarrage du serveur
+    C->>B: SUBSCRIBE cellule/g1e1/#35;
+
+    Note over O,P: Piloter
+    O->>W: Clic sur « Démarrer »
+    W->>A: POST /commandes/demarrer {"pieces": 10}
+    A-->>W: 202 Accepted + id de commande
+    W-->>O: « Commande envoyée »
+    A->>P: Lance la série de cycles (tâche de fond)
+
+    Note over P,DB: Observer
+    P->>B: PUBLISH cellule/g1e1/etat {"etat": "en_cycle"} (retenu)
+    B->>C: Transmission
+    C->>DB: INSERT INTO messages
+    loop Pour chaque pièce
+        P->>B: PUBLISH cellule/g1e1/cycle {"evenement": "debut_cycle"}
+        B->>C: Transmission
+        C->>DB: INSERT INTO messages
+        P->>B: PUBLISH cellule/g1e1/cycle {"evenement": "fin_cycle", "duree": 18.2}
+        B->>C: Transmission
+        C->>DB: INSERT INTO messages, puis INSERT INTO cycles
+    end
+
+    Note over O,DB: Informer et consulter
+    O->>W: GET / (tableau de bord)
+    W->>A: GET /requetes/etat
+    A-->>W: {"statut": "en_mouvement"}
+    W->>DB: SELECT des derniers cycles et des compteurs
+    DB-->>W: Résultats
+    W-->>O: Page HTML
+```
+
+### Le cycle instrumenté
+
+Par rapport au cycle existant (section 1), seules les publications MQTT sont ajoutées (en couleur) : le mouvement du robot ne change pas.
 
 ```mermaid
 %%{init: {"flowchart": {"rankSpacing": 22, "nodeSpacing": 30}}}%%
@@ -95,45 +194,15 @@ flowchart TD
     G --> H["Retour en position d'attente"]
     H --> I["Publication MQTT : fin de cycle, durée"]
     I --> A
+    classDef ajout fill:#fde2c4,stroke:#d9822b,color:#000
+    class B,I ajout
 ```
 
 Chaque équipe définit son propre process sur ce modèle.
 
-### Collecte des données
+### Le réseau
 
-```mermaid
-sequenceDiagram
-    participant R as Robot (ou simulateur de process)
-    participant B as Broker Mosquitto
-    participant C as Collecteur Python
-    participant DB as Base SQLite
-    C->>B: Abonnement à cellule/<equipe>/#
-    R->>B: Publication sur cellule/<equipe>/cycle (JSON)
-    B->>C: Transmission du message
-    C->>DB: INSERT INTO messages (message brut)
-    C->>C: Validation du JSON
-    C->>DB: INSERT INTO cycles (fin de cycle valide)
-```
-
-### Consultation et commande
-
-```mermaid
-sequenceDiagram
-    actor O as Opérateur
-    participant W as Site web Flask
-    participant DB as Base SQLite
-    participant A as API de commande
-    O->>W: GET / (tableau de bord)
-    W->>DB: SELECT des derniers cycles
-    DB-->>W: Résultats
-    W-->>O: Page HTML
-    O->>W: Clic sur « Démarrer »
-    W->>A: POST /commandes/demarrer
-    A-->>W: 202 Accepted + id de commande
-    W-->>O: Confirmation affichée
-```
-
-### Réseau du fab lab
+Pour le projet, les robots quittent leur Wi-Fi propre et rejoignent le réseau du fab lab, où ils peuvent joindre le serveur.
 
 ```mermaid
 flowchart LR
@@ -143,20 +212,35 @@ flowchart LR
 ```
 
 
-## Conventions communes
+## 6. Données échangées
+
+Le contenu exact des messages est fixé par chaque équipe dans son dossier d'analyse (dictionnaire des données). Les supports de cours partent de la proposition suivante.
 
 | Élément | Convention |
 |---------|------------|
 | Topics MQTT | `cellule/<equipe>/cycle`, `cellule/<equipe>/etat` (message retenu), `cellule/<equipe>/defaut`, avec `<equipe>` de la forme `g1e1` |
-| Message | `{"evenement": "fin_cycle", "piece": 12, "duree": 18.2, "zone": "A", "horodatage": "2026-11-17T08:30:18"}` |
-| Tables | `messages(id, recu_le, sujet, charge, qos, retain)`, `robots(id, nom, equipe, adresse_ip)`, `cycles(id, robot_id, debut, duree, zone, statut)` |
+| Tables | `messages(id, recu_le, sujet, charge, qos, retain)` (journal brut), `robots(id, nom, equipe, adresse_ip)`, `cycles(id, robot_id, debut, duree, zone, statut)` (lue par le site web) |
 | API CQRS | `GET /requetes/etat`, `POST /commandes/demarrer`, `POST /commandes/arreter`, `POST /commandes/calibrer` |
 | Ports | API simulée 5001 à 5008, site web 8001 à 8008 (un par équipe), API sur le robot 5000 |
 
+Exemples de messages (JSON) :
 
-## Démarche du projet
+```json
+{"evenement": "debut_cycle", "piece": 12, "horodatage": "2026-11-17T08:30:00"}
+{"evenement": "fin_cycle", "piece": 12, "duree": 18.2, "zone": "A", "horodatage": "2026-11-17T08:30:18"}
+{"etat": "en_cycle", "horodatage": "2026-11-17T08:30:00"}
+{"defaut": "piece_non_detectee", "message": "DI5 inactif après 30 s", "horodatage": "2026-11-17T08:42:03"}
+```
 
-Le robot n'est disponible qu'au fab lab : la partie serveur est développée en premier, avec un process simulé, puis le robot réel prend sa place lors de l'intégration.
+
+## 7. Démarche du projet
+
+Le robot n'est disponible qu'au fab lab : la partie serveur est développée en premier, avec des éléments simulés, puis le robot réel prend leur place lors de l'intégration.
+
+| Élément réel | Remplacé avant l'intégration par |
+|--------------|----------------------------------|
+| Programme process du robot | Un **simulateur de process** qui publie les mêmes messages sur les mêmes topics : le collecteur ne voit pas la différence |
+| API sur le robot | La même API en **mode simulé** (`RobotSimule`), exécutée sur le serveur du module |
 
 ```mermaid
 flowchart LR
@@ -170,7 +254,7 @@ flowchart LR
 L'évaluation repose sur l'exécution, devant l'enseignant, du cahier de recette rédigé par l'équipe, complétée par des questions individuelles. Le découpage en séances, les dates et la pondération sont propres à chaque classe.
 
 
-## Organisation du dossier
+## 8. Organisation du dossier
 
 **Supports de cours** (`cours/`, communs à toutes les classes)
 
@@ -193,4 +277,4 @@ L'évaluation repose sur l'exécution, devant l'enseignant, du cahier de recette
 
 Chaque progression précise le calendrier, les séances, les supports utilisés, les livrables, la configuration du serveur et la grille d'évaluation de la classe.
 
-**Schémas** (racine) : `robot_niryo.drawio` (principe et architecture, exportés en PNG) et `architecture_mqtt_niryo.drawio`, modifiables avec draw.io.
+**Schémas** (racine) : `robot_niryo.drawio` (pages principe et architecture, exportées en PNG), modifiable avec draw.io.
