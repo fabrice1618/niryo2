@@ -1,6 +1,6 @@
 # Révisions réseau : TCP/IP, adressage, routage, sous-réseaux, configuration statique et DHCP
 
-Fabrice Guichard · Infrastructure client / serveur dans un contexte industriel
+Infrastructure client / serveur dans un contexte industriel
 
 Ce cours de révision reprend les bases d'un réseau IP : comment les machines sont adressées, découpées en sous-réseaux, reliées par des routeurs et configurées, à la main ou automatiquement avec DHCP. Une dernière partie applique ces notions au réseau de la cellule robotisée : robots Ned2, serveur du module et postes étudiants.
 

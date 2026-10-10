@@ -2,17 +2,17 @@
 
 - **Promotion :** BACH INGE 2024-0 (3e année), 22 étudiants alternants, groupes G1 et G2
 - **Année :** 2026-2027
-- **Intervenant :** Fabrice Guichard
-- **Version :** v1.4 (brouillon), 04/10/2026
+- **Version :** v1.5 (brouillon), 08/10/2026
 - **Prérequis :** Python (cours de 1re année)
-- **Sources :** `seances_planifie.xlsx` (planning officiel : dates et horaires), `seances_prevu.xlsx` (planning envisagé : lieux et matériel) et supports 2025-2026 (`/home/fab/cours/niryo`)
+- **Sources :** `seances_BACHINGE24.xlsx` (planning : dates, horaires, salles et matériel, à confirmer) et supports 2025-2026 (dossier de l'année précédente)
 - **Présentation du projet :** `README.md` à la racine (contexte, besoins, objectifs, fonctions, synoptique, données échangées), commun aux trois classes
 - **Supports de cours :** dossier `cours/` (voir la fin de la section 4)
 
 **En bref**
 
-- 6 séances, d'octobre 2026 à janvier 2027, soit 17h30 par étudiant.
+- 6 séances, du 12 octobre au 19 novembre 2026, soit 19h15 par étudiant.
 - 22 étudiants en 8 équipes de 2 ou 3, sur 4 robots.
+- Le serveur est un Raspberry Pi, installé en salle D3.10 puis au fab lab (voir `materiel_ISTP.md`).
 - Un projet fil rouge : une cellule robotisée supervisée, construite séance après séance.
 - Évaluation : chaque équipe déroule son propre cahier de recette devant l'enseignant.
 
@@ -45,7 +45,7 @@ Par rapport à l'an dernier :
 
 ## 3. Architecture cible du fil rouge
 
-L'architecture, les fonctions F1 à F7, le cycle instrumenté et le scénario complet des échanges sont présentés dans le `README.md` (sections 4 et 5). Dans cette classe, le serveur du module est une machine ISTP (voir section 6) et les robots sont au fab lab.
+L'architecture, les fonctions F1 à F7, le cycle instrumenté et le scénario complet des échanges sont présentés dans le `README.md` (sections 4 et 5). Dans cette classe, le serveur du module est un Raspberry Pi (voir section 6) et les robots sont au fab lab.
 
 ![Architecture de la cellule](../robot_niryo-architecture.drawio.png)
 
@@ -72,46 +72,47 @@ L'architecture, les fonctions F1 à F7, le cycle instrumenté et le scénario co
 |--------|-------|--------|------|------|-------|---------------------------|
 | Séance 1 | Prise en main du robot, export Python, définition du process | G1 | lun. 12/10/2026, 08:30-12:00 | Fab lab | 3h30 | Programme Blockly et export `.py`, fiche process v0 |
 | Séance 1 | (idem) | G2 | lun. 12/10/2026, 13:30-17:00 | Fab lab | 3h30 | (idem) |
-| Séance 2 | Analyse, dossier, présentation, tests de recette | G2 | mar. 17/11/2026, 08:30-12:00 | Salle de cours | 3h30 | Dossier d'analyse v1, cahier de recette v1 |
-| Séance 2 | (idem) | G1 | mar. 17/11/2026, 13:30-17:00 | Salle de cours | 3h30 | (idem) |
-| Séance 3 | MQTT, rappel SQL, collecte des données dans SQLite | G1 + G2 | jeu. 19/11/2026, 13:30-17:00 | Salle de cours, serveur | 3h30 | Collecteur MQTT → SQLite sur le serveur, alimenté par des données simulées |
-| Séance 4 | Python, site web et API | G1 + G2 | mer. 20/01/2027, 08:30-12:00 | Salle de cours, serveur | 3h30 | Site web et API (mode simulé) sur le serveur |
-| Séance 5 | Intégration sur les robots, recette à blanc | G1 + G2 | jeu. 21/01/2027, 15:15-17:00 | Fab lab | 1h45 | Système intégré, recette à blanc |
-| Séance 6 | Évaluation : recette | G1 + G2 | jeu. 28/01/2027, 09:45-11:30 | Fab lab | 1h45 | Recette signée, code déposé |
+| Séance 2 | Analyse, dossier, présentation, tests de recette | G1 + G2 | mer. 14/10/2026, 08:30-12:00 | Salle C1.07 | 3h30 | Dossier d'analyse v1, cahier de recette v1 |
+| Séance 3 | MQTT, rappel SQL, collecte des données dans SQLite | G1 + G2 | mer. 14/10/2026, 13:30-17:00 | Salle D3.10, serveur | 3h30 | Collecteur MQTT → SQLite sur le serveur, alimenté par des données simulées |
+| Séance 4 | Python, site web et API | G1 + G2 | lun. 09/11/2026, 08:30-12:00 | Salle D3.10, serveur | 3h30 | Site web et API (mode simulé) sur le serveur |
+| Séance 5 | Intégration sur les robots, recette à blanc | G1 | mar. 17/11/2026, 08:30-12:00 | Fab lab | 3h30 | Système intégré, recette à blanc |
+| Séance 5 | (idem) | G2 | mar. 17/11/2026, 13:30-17:00 | Fab lab | 3h30 | (idem) |
+| Séance 6 | Évaluation : recette | G1 | jeu. 19/11/2026, 13:30-15:15 | Fab lab | 1h45 | Recette signée, code déposé |
+| Séance 6 | (idem) | G2 | jeu. 19/11/2026, 15:15-17:00 | Fab lab | 1h45 | (idem) |
 
-Dates et horaires : planning officiel (`seances_planifie.xlsx`). Lieux et matériel : ceux du planning envisagé (`seances_prevu.xlsx`), à confirmer pour les créneaux qui ont changé (voir la section 7).
+Dates, horaires, salles et matériel : planning `seances_BACHINGE24.xlsx`. Les dates et les salles sont à confirmer (voir la section 7).
 
 ```mermaid
 gantt
     title Calendrier 2026-2027
     dateFormat YYYY-MM-DD
     axisFormat %d/%m
-    tickInterval 2week
+    tickInterval 1week
     todayMarker off
     section G1 + G2
-        Séance 3 · MQTT, SQL, collecte            : 2026-11-19, 1d
-        Rendu dossier v2 (proposé)                : milestone, 2026-12-15, 0d
-        Séance 4 · Python, site web, API          : 2027-01-20, 1d
-        Séance 5 · Intégration (1h45)             : crit, 2027-01-21, 1d
-        Séance 6 · Évaluation                     : milestone, 2027-01-28, 0d
+        Séances 2 et 3 · Analyse, MQTT, collecte  : 2026-10-14, 1d
+        Séance 4 · Python, site web, API          : 2026-11-09, 1d
+        Rendu dossier v2 (proposé)                : milestone, 2026-11-16, 0d
+        Séance 6 · Évaluation (1h45 par groupe)  : milestone, 2026-11-19, 0d
     section G1
         Séance 1 · Prise en main du robot         : 2026-10-12, 1d
-        Séance 2 · Analyse, dossier, recette      : 2026-11-17, 1d
+        Séance 5 · Intégration (3h30)             : crit, 2026-11-17, 1d
     section G2
         Séance 1 · Prise en main du robot         : 2026-10-12, 1d
-        Séance 2 · Analyse, dossier, recette      : 2026-11-17, 1d
+        Séance 5 · Intégration (3h30)             : crit, 2026-11-17, 1d
 ```
 
-**Volumes horaires** (planning officiel)
+**Volumes horaires** (planning)
 
-- **Par étudiant :** 4 séances de 3h30 + 2 séances de 1h45, soit **17h30**.
-- **Pour l'enseignant :** séances 1 et 2 assurées deux fois (4 × 3h30) + séances 3 et 4 (2 × 3h30) + séances 5 et 6 (2 × 1h45), soit **24h30**.
+- **Par étudiant :** 5 séances de 3h30 + 1 séance de 1h45, soit **19h15**.
+- **Pour l'enseignant :** séances 1 et 5 assurées deux fois (4 × 3h30) + séances 2, 3 et 4 (3 × 3h30) + séance 6 assurée deux fois (2 × 1h45), soit **28h**.
 
 **Organisation des équipes**
 
 - 4 robots, une équipe par robot dans chaque groupe : 4 équipes par groupe, 8 équipes au total.
 - 22 étudiants : 6 équipes de 3 et 2 équipes de 2.
 - Les équipes sont constituées à la séance 1 et restent les mêmes jusqu'à l'évaluation.
+- Identifiants `g1e1` à `g2e4` et noms (thème des métaux) : voir `materiel_ISTP.md`.
 
 **Supports de cours** (dossier `cours/`, et `README.md` à la racine)
 
@@ -153,7 +154,7 @@ gantt
 
 **Livrables**
 
-- Programme Blockly et export `.py` déposés (avec les poses relevées, à conserver pour l'intégration de janvier)
+- Programme Blockly et export `.py` déposés (avec les poses relevées, à conserver pour l'intégration du 17/11)
 - Fiche process v0 (une page)
 
 **Ressources reprises de l'an dernier**
@@ -166,7 +167,7 @@ gantt
 
 | Lieu | Groupes | Durée | Matériel |
 |------|---------|-------|----------|
-| Salle de cours | Par groupe : G2 le matin, G1 l'après-midi | 3h30 | Pas de robot |
+| Salle C1.07 | G1 + G2 ensemble (22 étudiants) | 3h30 | Pas de robot, pas de serveur. Vidéoprojecteur |
 
 **Objectifs**
 
@@ -181,7 +182,7 @@ gantt
 |-------|----------|
 | 45 min | **Cours** : architecture client / serveur en contexte industriel (niveaux terrain, supervision, gestion) ; du besoin (piloter, informer, observer) aux fonctions F1 à F7 et au rôle de chaque brique du fil rouge ; cahier des charges et recette |
 | 2h | **Atelier par équipe** : rédaction du dossier d'analyse à partir d'un gabarit fourni |
-| 45 min | **Présentations flash** : 5 min par équipe (4 équipes par groupe), puis retours |
+| 45 min | **Présentations flash** : 5 min par équipe (8 équipes), puis retours |
 
 **Contenu attendu du dossier d'analyse**
 
@@ -193,7 +194,7 @@ Le dossier peut suivre le plan du `README.md` (contexte, besoins, objectifs, fon
 - Fonctions attendues du site web (maquette papier acceptée)
 - Cahier de recette : au moins 8 tests (identifiant, exigence, préconditions, procédure, résultat attendu)
 
-La partie technique (topics MQTT, table SQL, routes de l'API) reste au niveau fonctionnel. Elle sera précisée dans la v2 du dossier, après les séances 3 et 4.
+La partie technique (topics MQTT, table SQL, routes de l'API) reste au niveau fonctionnel. Elle sera précisée dans la v2 du dossier, après les séances 3 et 4 (rendu proposé : lun. 16/11/2026, avant la séance 5).
 
 **Livrables**
 
@@ -208,7 +209,9 @@ La partie technique (topics MQTT, table SQL, routes de l'API) reste au niveau fo
 
 | Lieu | Groupes | Durée | Matériel |
 |------|---------|-------|----------|
-| Salle de cours | G1 + G2 ensemble | 3h30 | Serveur (section 6) : broker Mosquitto, base SQLite, exécution du collecteur. Pas de robot : le process est simulé |
+| Salle D3.10 | G1 + G2 ensemble (22 étudiants) | 3h30 | Serveur Raspberry Pi (section 6) sur le réseau séparé de la salle, postes Linux et laptops des étudiants. Pas de robot : le process est simulé |
+
+La séance a lieu l'après-midi même de la séance 2 : les données définies le matin dans le dossier v1 servent de point de départ au simulateur.
 
 **Objectifs**
 
@@ -223,7 +226,7 @@ La partie technique (topics MQTT, table SQL, routes de l'API) reste au niveau fo
 | Durée | Activité |
 |-------|----------|
 | 40 min | **Cours MQTT** : broker, clients, topics, payload JSON, QoS, authentification. Démonstration avec `mosquitto_pub` / `mosquitto_sub` sur le broker du serveur |
-| 50 min | **TP connexion et MQTT** : connexion au serveur (SSH, VS Code Remote SSH) avec le compte de l'équipe, puis publier et s'abonner sur le broker du serveur (MQTT Explorer puis `paho-mqtt`) |
+| 50 min | **TP connexion et MQTT** : connexion au serveur (SSH, avec VS Code Remote SSH si la salle a accès à Internet) avec le compte de l'équipe (mêmes identifiant et mot de passe sur le serveur et sur les postes Linux de la salle), puis publier et s'abonner sur le broker du serveur (MQTT Explorer puis `paho-mqtt`) |
 | 30 min | **Rappel SQL** : table, types, clé primaire, `CREATE`, `INSERT`, `SELECT`, `WHERE`, `GROUP BY`. SQLite (module `sqlite3`, DB Browser for SQLite) |
 | 1h30 | **TP collecte** : un simulateur publie les événements du process de l'équipe ; le collecteur tourne sur le serveur, reçoit les messages, les valide et les insère dans SQLite. Requêtes de contrôle (nombre de cycles, durée moyenne) |
 
@@ -267,7 +270,7 @@ Conventions reprises des supports `cours/collecteur_MQTT.md` et `cours/SQL.md` (
 - `essai_robot/script4_mqtt_send.py`, `script5_mqtt_receive.py`
 - `tp/fiche_configuration.md` (à adapter : comptes, topics, ports par équipe)
 
-**Travail entre les séances 3 et 4 (2 mois)**
+**Travail entre les séances 3 et 4 (4 semaines)**
 
 - Dossier v2 : topics, format des messages, schéma de la base, routes de l'API
 - Finaliser le collecteur
@@ -278,7 +281,7 @@ Conventions reprises des supports `cours/collecteur_MQTT.md` et `cours/SQL.md` (
 
 | Lieu | Groupes | Durée | Matériel |
 |------|---------|-------|----------|
-| Salle de cours | G1 + G2 ensemble | 3h30 | Serveur (section 6) : exécution de l'API et du site web, base SQLite de la séance 3. Pas de robot : l'API fonctionne en mode simulé |
+| Salle D3.10 | G1 + G2 ensemble (22 étudiants) | 3h30 | Serveur Raspberry Pi (section 6) : exécution de l'API et du site web, base SQLite de la séance 3. Pas de robot : l'API fonctionne en mode simulé |
 
 **Objectifs**
 
@@ -331,16 +334,21 @@ Le scénario complet, de la commande jusqu'à l'affichage des cycles, est dans l
 - `code/website_commande/specification.md`
 - `essai_robot/script6_api.py`, `script7_API_mqtt.py`
 
+**Travail entre les séances 4 et 5 (8 jours)**
+
+- Terminer le dossier v2 (rendu proposé : lun. 16/11/2026)
+- Tester le programme process et l'API en mode simulé : seul le passage au robot réel doit rester à faire à la séance 5
+
 
 ### Séance 5 : intégration sur les robots
 
 | Lieu | Groupes | Durée | Matériel |
 |------|---------|-------|----------|
-| Fab lab | G1 + G2 ensemble | 1h45 | Robots et serveur |
+| Fab lab | Par groupe : G1 le matin, G2 l'après-midi | 3h30 | Robots, convoyeurs et serveur (Raspberry Pi apporté de la salle D3.10) |
 
 Le collecteur, la base et le site web tournent déjà sur le serveur depuis les séances 3 et 4 : la séance porte sur le robot et sa liaison avec le serveur.
 
-Le créneau est court : 1h45 pour les 8 équipes, soit deux équipes par robot (une de G1, une de G2). L'intégration n'est possible dans ce temps que si le programme process et l'API ont été testés en mode simulé à la séance 4 (voir la section 7).
+Chaque groupe a le fab lab pendant 3h30, avec une équipe par robot (4 équipes, 4 robots). Le robot n'a pas été utilisé depuis la séance 1, cinq semaines plus tôt : la séance commence par une reprise en main. L'intégration n'est possible dans ce temps que si le programme process et l'API ont été testés en mode simulé avant la séance (voir la section 7).
 
 **Objectifs**
 
@@ -354,8 +362,10 @@ Le créneau est court : 1h45 pour les 8 équipes, soit deux équipes par robot (
 | Durée | Activité |
 |-------|----------|
 | 15 min | **Vérifications réseau** (préparées par l'enseignant avant la séance) : IP du robot et du serveur, accès du robot au broker, accès du serveur à l'API du robot |
-| 2 × 40 min | **Passage sur le robot**, une équipe après l'autre sur chaque robot : déploiement du programme process, de la publication MQTT et de l'API (passage du mode simulé aux appels réels), essai de bout en bout (robot → serveur → site web → robot), reprise des poses si besoin, recette à blanc. Pendant ce temps, l'autre équipe prépare son déploiement |
-| 10 min | **Bilan** : corrections à faire avant l'évaluation, mise à jour du cahier de recette |
+| 30 min | **Reprise en main** : consignes de sécurité, calibration, relecture de l'export Python de la séance 1 et des poses relevées |
+| 1h30 | **Déploiement** sur le robot : programme process, publication MQTT et API (passage du mode simulé aux appels réels), reprise des poses si besoin |
+| 45 min | **Essai de bout en bout** (robot → serveur → site web → robot) et **recette à blanc** sur une sélection de tests du cahier |
+| 30 min | **Bilan** : corrections à faire avant l'évaluation, deux jours plus tard, mise à jour du cahier de recette |
 
 **Livrables**
 
@@ -375,16 +385,16 @@ Le créneau est court : 1h45 pour les 8 équipes, soit deux équipes par robot (
 
 | Lieu | Groupes | Durée | Matériel |
 |------|---------|-------|----------|
-| Fab lab | G1 + G2 ensemble | 1h45 | Cellule intégrée de chaque équipe (robot et serveur) |
+| Fab lab | Par groupe : G1 de 13:30 à 15:15, G2 de 15:15 à 17:00 | 1h45 | Cellule intégrée de chaque équipe (robot et serveur) |
 
-**Déroulé** (8 équipes, environ 12 min par équipe)
+**Déroulé** (4 équipes par groupe, environ 25 min par équipe)
 
 Pendant qu'une équipe passe, l'équipe suivante prépare sa cellule sur un autre robot.
 
 | Durée | Activité |
 |-------|----------|
-| 8 min | **Recette** : l'équipe déroule les tests de son cahier choisis par l'enseignant ; chaque test est noté conforme ou non conforme |
-| 4 min | **Questions individuelles** sur l'architecture et le code |
+| 18 min | **Recette** : l'équipe déroule les tests de son cahier choisis par l'enseignant ; chaque test est noté conforme ou non conforme |
+| 7 min | **Questions individuelles** sur l'architecture et le code |
 
 **Proposition de grille** (à valider)
 
@@ -395,23 +405,23 @@ Pendant qu'une équipe passe, l'équipe suivante prépare sa cellule sur un autr
 | Questions individuelles | 20 % |
 
 
-## 6. Serveur : machine ISTP démarrée sur disque externe
+## 6. Serveur : Raspberry Pi
 
-ISTP fournit une machine qui fait office de serveur. Elle démarre sur un disque externe (SSD USB) contenant un Linux préparé à l'avance par l'enseignant. Le disque interne de la machine n'est ni utilisé ni modifié.
+ISTP met à disposition un Raspberry Pi qui fait office de serveur. Il démarre sur un SSD USB contenant un Linux préparé à l'avance par l'enseignant. Le matériel demandé, le réseau, les comptes et les vérifications sont détaillés dans `materiel_ISTP.md`.
 
-Le serveur sert aux séances 3 et 4 (salle de cours), puis aux séances 5 et 6 (fab lab). Le travail des équipes reste sur le disque d'une séance à l'autre.
+Le serveur sert aux séances 3 et 4 (salle D3.10, sur un réseau séparé), puis aux séances 5 et 6 (fab lab). Le travail des équipes reste sur le SSD d'une séance à l'autre.
 
 **Intérêts**
 
-- Aucune installation sur le parc ISTP : seule la machine est demandée
+- Aucune installation sur le parc ISTP, hors les comptes du projet sur les postes Linux de la salle D3.10
 - Environnement identique pour toutes les équipes, maîtrisé par l'enseignant
-- Le disque suit l'enseignant : en cas de panne, il peut démarrer sur une autre machine
-- Remise à zéro rapide à partir d'une image du disque
+- Le Pi se transporte facilement de la salle D3.10 au fab lab ; en cas de panne, le SSD de secours démarre sur un autre Raspberry Pi
+- Remise à zéro rapide à partir d'une image du SSD
 
-**Contenu préparé sur le disque**
+**Contenu préparé sur le SSD**
 
-- Distribution Linux (par exemple Ubuntu Server 24.04 LTS) avec serveur SSH
-- Un compte par équipe (8 comptes), avec son dossier personnel
+- Distribution Linux 64 bits pour Raspberry Pi (par exemple Ubuntu Server 24.04 LTS) avec serveur SSH
+- Un compte par équipe (8 comptes : `g1e1` à `g2e4`), avec son dossier personnel, créés avec `scripts/creer_comptes_equipes.sh` (mêmes comptes sur les postes Linux de la salle D3.10)
 - Broker Mosquitto avec authentification : un utilisateur MQTT par équipe, limité aux topics de l'équipe
 - Python 3 et les paquets du projet (`paho-mqtt`, `flask`, `requests`), installés à l'avance
 - SQLite (bibliothèque et outil en ligne de commande)
@@ -420,35 +430,37 @@ Le serveur sert aux séances 3 et 4 (salle de cours), puis aux séances 5 et 6 (
 
 **Réseau**
 
-- **En salle de cours (séances 3 et 4)** : le serveur et les postes étudiants doivent être sur le même réseau. Soit le réseau ISTP, si SSH (22), MQTT (1883) et les ports HTTP sont autorisés entre postes, soit un routeur dédié apporté en salle.
-- **Au fab lab (séances 5 et 6)** : le serveur rejoint le réseau des robots avec une adresse IP fixe (plan d'adressage proposé dans `cours/reseau_TCP_IP.md` : réseau `192.168.10.0/24`, serveur en `.10`, robots en `.21` à `.24`). L'API tourne alors sur chaque robot, port 5000.
+- **En salle D3.10 (séances 3 et 4)** : un réseau séparé permet d'utiliser le serveur. Les postes Linux de la salle y sont raccordés ; un switch apporté par l'enseignant connecte les laptops des étudiants et le Pi. SSH (22), MQTT (1883) et les ports HTTP (5001 à 5008 et 8001 à 8008) doivent être autorisés entre les postes et le Pi.
+- **Au fab lab (séances 5 et 6)** : le serveur rejoint le réseau des robots avec une adresse IP fixe (plan d'adressage proposé dans `cours/reseau_TCP_IP.md` : réseau `192.168.10.0/24`, robots en `.21` à `.24`). Le NUC de l'IRUP occupe l'adresse `.10` : le Pi prend `.11` (voir `materiel_ISTP.md`). L'API tourne alors sur chaque robot, port 5000.
 
 ```mermaid
 flowchart TB
-    subgraph SALLE["Séances 3 et 4 : salle de cours"]
+    subgraph SALLE["Séances 3 et 4 : salle D3.10"]
         direction LR
-        PE1["Postes étudiants"] --- R1["Réseau ISTP<br/>ou routeur dédié"]
-        R1 --- SV1["Serveur<br/>démarré sur le disque externe"]
+        PE1["Postes Linux et laptops étudiants"] --- SW1["Switch<br/>réseau séparé de la salle"]
+        SW1 --- SV1["Raspberry Pi<br/>serveur"]
     end
     subgraph FAB["Séances 5 et 6 : fab lab"]
         direction LR
-        PE2["Postes étudiants"] --- R2["Réseau des robots"]
-        R2 --- SV2["Serveur<br/>même disque, IP fixe"]
+        PE2["Laptops étudiants"] --- R2["Réseau des robots"]
+        R2 --- SV2["Raspberry Pi<br/>même SSD, IP fixe"]
         R2 --- ROB["4 robots Ned2"]
     end
-    SALLE -. "même disque : travail des équipes conservé" .-> FAB
+    SALLE -. "même SSD : travail des équipes conservé" .-> FAB
 ```
 
 **À vérifier avec ISTP**
 
-- Disponibilité de la machine aux dates des séances 3 à 6, en salle de cours et au fab lab
-- Démarrage sur périphérique USB autorisé (réglages BIOS / UEFI, Secure Boot, mot de passe BIOS)
-- Port Ethernet et port USB 3 disponibles
+- Disponibilité de la salle C1.07 (séance 2), de la salle D3.10 (séances 3 et 4) et du fab lab (séances 1, 5 et 6), ainsi que de la salle D3.10 la veille de la séance 3 pour l'installation
+- Réseau séparé de la salle D3.10 : distribution d'adresses, nombre de prises, ports autorisés, accès à Internet
+- Postes Linux de la salle D3.10 : nombre, état, droits pour créer les comptes
+- Fourniture du Raspberry Pi et de ses accessoires (demande du 06/10/2026), délai de livraison
 
 **Calendrier de préparation**
 
-- Disque prêt et testé sur la machine ISTP avant la séance 3 (19/11), par exemple lors de la séance 2 (17/11)
-- Sauvegarde du disque après chaque séance (image complète ou copie des dossiers des équipes)
+- Robots et fab lab vérifiés avant la séance 1 (lun. 12/10)
+- Salle D3.10 remise en état et Raspberry Pi prêt et testé avant la séance 3, soit au plus tard le mar. 13/10, la veille. Si le Pi n'est pas livré à temps, un serveur de secours (laptop de l'intervenant avec la même configuration) assure la séance 3
+- Sauvegarde du SSD après chaque séance (image complète ou copie des dossiers des équipes)
 
 **Ressources reprises de l'an dernier**
 
@@ -458,11 +470,13 @@ flowchart TB
 
 ## 7. Points à arbitrer
 
-1. **Intégration trop courte.** Le planning officiel ne prévoit qu'un créneau commun de 1h45 (séance 5, jeu. 21/01) pour les 8 équipes, au lieu des 3h30 par groupe envisagées.
-   - Le déroulé proposé (deux passages de 40 min par robot) ne suffit que si le code a été testé en mode simulé à la séance 4.
-   - Si possible, demander un créneau par groupe au fab lab entre le 21/01 et le 28/01.
-2. **Évaluation resserrée.** La séance 6 (jeu. 28/01, 1h45) réunit les deux groupes : environ 12 min par équipe au lieu des 25 min envisagées. La recette porte donc sur une sélection de tests ; les questions individuelles sont courtes.
-3. **Lieux à confirmer.** Le planning officiel ne donne pas les salles. À vérifier pour les créneaux qui ont changé : séance 2 par groupe (17/11), séance 3 (19/11), séance 5 (21/01, fab lab avec les robots).
-4. **Peu de temps sur les robots.** Les étudiants n'ont le robot qu'à la séance 1, à la séance 5 (1h45) et à l'évaluation. Le process doit rester simple. Aux séances 3 et 4, le travail se fait sur le serveur réel, mais avec un process simulé et une API en mode simulé.
-5. **Typage des séances.** Toutes les lignes du planning sont en « CM » sauf l'évaluation du 28/01 (« TEST »), alors que les séances 1 et 5 sont des TP et la séance 2 un atelier.
-6. **Long intervalle entre les séances 3 et 4** (19/11 → 20/01). Fixer une date de rendu intermédiaire du dossier v2 (par exemple mi-décembre) pour maintenir le rythme.
+1. **Début de module très rapproché.** Les séances 2 et 3 ont lieu le même jour (mer. 14/10) : analyse le matin en salle C1.07, serveur l'après-midi en salle D3.10. La salle D3.10 et le Raspberry Pi doivent être prêts au plus tard le mar. 13/10 (liste dans `materiel_ISTP.md`).
+   - Le dossier d'analyse v1 est produit le matin même : le simulateur de la séance 3 part des données qu'il définit, ou des messages proposés dans cette progression si le dossier est en retard.
+   - Si le Pi n'est pas livré à temps, prévoir un serveur de secours (laptop de l'intervenant).
+2. **Fin de module en trois jours.** Les séances 4, 5 et 6 sont séparées de 8 jours, puis de 2 jours (09/11, 17/11, 19/11). Le programme process et l'API doivent être testés en mode simulé avant le 17/11, et les corrections se font entre la séance 5 et l'évaluation.
+   - Rendu du dossier v2 proposé le lun. 16/11, avant la séance 5 ; dossier final à l'évaluation.
+   - La recette de l'évaluation (environ 25 min par équipe, dont 18 min de recette) porte sur une sélection de tests ; les questions individuelles sont courtes.
+3. **Salles à confirmer.** Le planning donne les salles : C1.07 (séance 2), D3.10 (séances 3 et 4), fab lab (séances 1, 5 et 6). À vérifier : l'équipement de la salle C1.07 (vidéoprojecteur, prises pour 22 laptops) et le réseau séparé de la salle D3.10. Les dates restent à confirmer.
+4. **Peu de temps sur les robots.** Les étudiants n'ont le robot qu'à la séance 1 (3h30), à la séance 5 (3h30) et à l'évaluation (25 min par équipe). Le process doit rester simple. Aux séances 3 et 4, le travail se fait sur le serveur réel, mais avec un process simulé et une API en mode simulé.
+5. **Typage des séances.** Toutes les lignes du planning sont en « CM » sauf l'évaluation du 19/11 (« TEST »), alors que les séances 1 et 5 sont des TP et la séance 2 un atelier.
+6. **Intervalle de 4 semaines entre les séances 3 et 4** (14/10 → 09/11). Les équipes finalisent le collecteur et préparent dans le programme robot les appels de publication MQTT. Un point d'étape en début de séance 4 suffit à maintenir le rythme.

@@ -1,6 +1,6 @@
 # Cours simple : une API CQRS pour le robot Niryo, comparée à REST, avec Flask
 
-Fabrice Guichard · Infrastructure client / serveur dans un contexte industriel
+Infrastructure client / serveur dans un contexte industriel
 
 CQRS sépare les ordres donnés au robot (commandes) de la lecture de son état (requêtes) ; ce cours montre pourquoi c'est utile pour un bras robotique et comment le coder avec Flask. Dans le projet fil rouge, c'est l'API que le site web de supervision appelle pour démarrer, arrêter et calibrer la cellule.
 

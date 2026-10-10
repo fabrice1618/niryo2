@@ -1,6 +1,6 @@
 # Rappels de SQL : cours simple
 
-Fabrice Guichard · Infrastructure client / serveur dans un contexte industriel
+Infrastructure client / serveur dans un contexte industriel
 
 SQL est le langage standard pour interroger et modifier une base de données relationnelle ; ce rappel couvre l'essentiel en dix étapes, avec une même base d'exemple : les cycles de production de la cellule robotisée.
 

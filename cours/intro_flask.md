@@ -1,6 +1,6 @@
 # Le framework Flask : premiers pas
 
-Fabrice Guichard · Infrastructure client / serveur dans un contexte industriel
+Infrastructure client / serveur dans un contexte industriel
 
 Flask est un micro-framework web Python. Dans le projet fil rouge, il sert deux fois : pour le **site web** de supervision de la cellule robotisée (tableau de bord, commandes) et pour l'**API de commande** du robot Ned2.
 

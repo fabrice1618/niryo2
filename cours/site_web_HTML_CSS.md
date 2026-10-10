@@ -1,6 +1,6 @@
 # Cours HTML et CSS : réaliser les pages d'un site web
 
-Fabrice Guichard · Infrastructure client / serveur dans un contexte industriel
+Infrastructure client / serveur dans un contexte industriel
 
 Ce cours apprend à construire les pages d'un site web : HTML pour le contenu, CSS pour l'apparence, et le principe des routes pour les servir. Le fil conducteur est le tableau de bord de supervision de la cellule robotisée (robot Ned2 + convoyeur). La logique côté serveur (templates, base de données, formulaires) fait l'objet du cours *Le framework Flask : premiers pas*.
 

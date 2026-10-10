@@ -1,6 +1,6 @@
 # Collecteur de messages MQTT en Python vers une base de données : présentation du principe
 
-Fabrice Guichard · Infrastructure client / serveur dans un contexte industriel
+Infrastructure client / serveur dans un contexte industriel
 
 Un collecteur MQTT est un petit programme Python qui s'abonne aux messages publiés par des capteurs ou des appareils, puis les enregistre dans une base de données pour les conserver et les interroger. Dans le projet fil rouge, il reçoit les événements publiés par le programme du robot Ned2 (début et fin de cycle, défauts) et les range dans la base SQLite lue par le site web.
 
