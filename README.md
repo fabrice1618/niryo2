@@ -13,7 +13,7 @@ Le point de départ du cours est un poste de pick & place du fab lab, qui foncti
 
 - un **robot Niryo Ned2** (bras six axes avec pince) ;
 - un **convoyeur** piloté par le robot, avec un **capteur de présence** de pièce câblé sur l'entrée **DI5** du robot ;
-- un **PC** équipé de **Niryo Studio**, relié au robot, qui sert à le programmer en Blockly et à lancer le programme. Le programme peut être exporté en Python (bibliothèque `pyniryo`).
+- un **PC** équipé de **Niryo Studio**, relié au robot, qui sert à le programmer en Blockly et à lancer le programme. Le programme peut être exporté en Python : l'export utilise le Python ROS Wrapper de Niryo et s'exécute sur le robot. La bibliothèque `pyniryo` permet, elle, de piloter le robot depuis un autre poste du réseau.
 
 Plusieurs postes identiques sont disponibles, un par équipe.
 
@@ -100,7 +100,7 @@ Pour répondre aux trois besoins, la cellule existante est complétée par des f
 
 | Fonction | Rôle | Besoin servi | Brique | Technologie |
 |----------|------|--------------|--------|-------------|
-| F1 Exécuter le cycle | Convoyeur, détection DI5, prise, dépose : le cycle existant, repris en Python | (existant) | Programme process | Python, `pyniryo` |
+| F1 Exécuter le cycle | Convoyeur, détection DI5, prise, dépose : le cycle existant, repris en Python | (existant) | Programme process | Python (export Niryo Studio, ou `pyniryo`) |
 | F2 Recevoir les commandes | Accepter « démarrer », « arrêter », « calibrer » et les exécuter sur le robot | Piloter | API de commande (CQRS) | Flask, `pyniryo` |
 | F3 Exposer l'état | Répondre à tout moment à « que fait le robot ? », sans gêner un mouvement en cours | Informer | API de commande (CQRS) | Flask |
 | F4 Publier les événements | Signaler début et fin de cycle, changements d'état, défauts | Observer | Client MQTT du robot | `paho-mqtt` |
@@ -260,20 +260,25 @@ L'évaluation repose sur l'exécution, devant l'enseignant, du cahier de recette
 
 | Fichier | Contenu | Étape |
 |---------|---------|-------|
+| `seance1.md` | Séance 1, commune à toutes les classes : prise en main du robot Ned2, export Python, définition du process | 1 |
 | `reseau_TCP_IP.md` | Révisions réseau : TCP/IP, adressage, routage, sous-réseaux, configuration statique et DHCP, réseau de la cellule | 3, 5 |
 | `collecteur_MQTT.md` | Collecteur de messages MQTT en Python vers une base de données | 3 |
 | `SQL.md` | Rappels de SQL avec SQLite | 3 |
 | `site_web_HTML_CSS.md` | HTML et CSS : réaliser les pages du tableau de bord | 4 |
 | `intro_flask.md` | Le framework Flask : routes, templates, lecture de la base, appel de l'API | 4 |
 | `API_CQRS_REST_Flask.md` | Une API CQRS pour le robot Niryo, comparée à REST, avec Flask | 4, 5 |
+| `vision_OpenCV.md` (à écrire) | Vision industrielle : la caméra du Ned2 et OpenCV (extension) | 5 |
+| `dashboard_Grafana.md` (à écrire) | Dashboard de production avec Grafana et SQLite (extension) | 4, 5 |
 
 **Progressions pédagogiques** (`progression_pedagogique/`, une par classe)
 
 | Classe | Fichier |
 |--------|---------|
 | BACHINGE24 | `BACHINGE24.md` |
-| B3RNSPP26 | à rédiger |
-| BACHTECH24 | à rédiger |
+| B3RNSPP26 | `B3RNSPP26.md` |
+| BACHTECH24 | `BACHTECH24.md` |
+
+La séance 1 (prise en main du robot) est la même pour toutes les classes : son support est `cours/seance1.md`.
 
 Chaque progression précise le calendrier, les séances, les supports utilisés, les livrables, la configuration du serveur et la grille d'évaluation de la classe.
 

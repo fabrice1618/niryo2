@@ -117,6 +117,7 @@ gantt
 
 | Fichier | Titre | Séances |
 |---------|-------|---------|
+| `seance1.md` | Séance 1 : prise en main du robot Ned2, export Python et définition du process | 1 |
 | `README.md` | Présentation du projet : contexte, besoins, objectifs, fonctions, synoptique | 1 (présentation) et 2 |
 | `reseau_TCP_IP.md` | Révisions réseau : TCP/IP, adressage, routage, sous-réseaux, configuration statique et DHCP | 3 (révision) et 4 |
 | `collecteur_MQTT.md` | Collecteur de messages MQTT en Python vers une base de données | 2 (libre service) et 3 |
@@ -155,6 +156,10 @@ gantt
 
 - Programme Blockly et export `.py` déposés (avec les poses relevées, à conserver pour l'intégration du 17/11)
 - Fiche process v0 (une page)
+
+**Supports de cours**
+
+- `cours/seance1.md` (support de la séance, commun à toutes les classes : points à réaliser, fonctions du robot, fiche des poses, fiche process)
 
 **Ressources reprises de l'an dernier**
 

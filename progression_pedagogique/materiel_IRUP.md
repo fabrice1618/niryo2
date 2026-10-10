@@ -149,7 +149,7 @@ Plan d'adressage proposé, à comparer avec la configuration réelle du fab lab 
 | Robots Ned2 | `192.168.10.21` à `192.168.10.24` |
 | Postes des étudiants (DHCP) | `192.168.10.100` à `192.168.10.199` |
 
-Le NUC et le Raspberry Pi d'ISTP ne doivent jamais avoir la même adresse : le NUC reste branché en permanence sur le réseau du fab lab, où le Pi vient les 12/10, 17/11 et 19/11/2026.
+Le NUC et le Raspberry Pi d'ISTP ne doivent jamais avoir la même adresse : le NUC reste branché en permanence sur le réseau du fab lab, où le Pi vient les 17/11 et 19/11/2026 (la séance 1 du 12/10 se fait sans serveur).
 
 | Service | Port | Machine |
 |---------|------|---------|
