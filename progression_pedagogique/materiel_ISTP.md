@@ -4,7 +4,7 @@
 - **Classe :** BACH INGE 2024-0 (BACHINGE24), 3e année, 22 étudiants alternants, groupes G1 et G2
 - **Cours :** Infrastructure client / serveur dans un contexte industriel (progression : `BACHINGE24.md`)
 - **Version :** v1.2 (brouillon), 10/10/2026
-- **Dates :** planning `seances_BACHINGE24.xlsx` mis à jour le 10/10/2026, à confirmer avec ISTP avant toute réservation
+- **Dates :** planning `seances_BACHINGE24.xlsx` mis à jour le 10/10/2026, salles déjà réservées
 - **Document associé :** `materiel_IRUP.md` (autres classes, autre établissement, autre serveur)
 
 **En bref**
@@ -198,7 +198,7 @@ sudo shred -u /root/comptes_inge.txt
 sudo ./creer_comptes_equipes.sh --supprimer inge
 ```
 
-- Imprimer une fiche par équipe (identifiant, nom, mot de passe) à distribuer à la séance 3, et conserver le fichier des mots de passe chez l'intervenant uniquement.
+- Imprimer une fiche par équipe (identifiant, nom, mot de passe) à distribuer à la séance 3 une fois les démonstrations des équipes faites, et conserver le fichier des mots de passe chez l'intervenant uniquement.
 - Un mot de passe oublié ou compromis se change avec `--reinitialiser` sur la machine concernée ; penser à le changer aussi sur les autres machines (relancer avec le fichier mis à jour).
 - Le script a été essayé dans un conteneur Ubuntu 24.04 (création, relance, réinitialisation, suppression). Une dernière vérification sur un poste de la salle D3.10 reste à faire.
 
@@ -254,13 +254,15 @@ Les dates sont celles du planning `seances_BACHINGE24.xlsx` : les échéances so
 | Après le jeu. 19/11/2026 | Suppression des comptes sur les postes de la salle D3.10 (`--supprimer`), remise en état de la salle | Fin du module |
 
 
-## 7. Points à confirmer avec ISTP
+## 7. Points à régler avec ISTP
 
-1. **Dates et salles.** Confirmer le planning `seances_BACHINGE24.xlsx` : séance 2 en salle C1.07, séance 3 en salle D3.10, séances 1, 4 et 5 au fab lab. Confirmer en particulier que la salle D3.10 n'est plus utilisée le 14/10 (séance supprimée) et qu'elle est libre le lun. 09/11.
+Les salles sont déjà réservées (planning `seances_BACHINGE24.xlsx`) : séance 2 en salle C1.07, séance 3 en salle D3.10, séances 1, 4 et 5 au fab lab. Le calendrier est une contrainte non modifiable. Restent à obtenir d'ISTP les points suivants, tous à régler avant la séance 3 (lun. 09/11).
+
+1. **Salles.** Réservées : rien à confirmer, sauf l'accès à la salle D3.10 avant la séance 3 (point 4).
 2. **Réseau séparé de la salle D3.10.** Distribution d'adresses (DHCP) et taille de la plage, nombre de prises murales, ports autorisés (22, 1883, 5001 à 5008, 8001 à 8008), isolation des clients, accès à Internet.
 3. **Postes Linux.** Combien de postes ? Qui administre ? L'intervenant peut-il avoir les droits (`sudo`) pour installer des logiciels et créer des comptes ? Les postes sont-ils déjà reliés au réseau séparé ?
 4. **Accès à la salle D3.10.** Possibilité d'y entrer avant la séance 3 (au plus tard le ven. 06/11) pour l'installation, et une heure avant la séance du lun. 09/11.
-5. **Vidéoprojecteur ou écran** dans les salles C1.07 et D3.10, et prises électriques pour 22 laptops en salle C1.07.
+5. **Équipement des salles.** À vérifier sur place : vidéoprojecteur ou écran dans les salles C1.07 et D3.10, et prises électriques pour 22 laptops en salle C1.07.
 6. **Fourniture du Raspberry Pi et de ses accessoires** (section 3.1), délai de livraison (le Pi doit être prêt le 06/11), qui conserve le matériel entre les séances.
 7. **Laptops des étudiants.** Tous les laptops ont-ils une prise Ethernet ? Sinon, quels adaptateurs prévoir ?
 8. **Équipes.** La section 2 suppose 4 équipes par groupe (8 au total), comme dans la progression `BACHINGE24.md`. À corriger si le découpage des équipes est différent.

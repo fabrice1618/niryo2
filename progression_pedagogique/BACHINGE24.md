@@ -4,7 +4,7 @@
 - **Année :** 2026-2027
 - **Version :** v1.6 (brouillon), 10/10/2026
 - **Prérequis :** Python (cours de 1re année)
-- **Sources :** `seances_BACHINGE24.xlsx` (planning : dates, horaires, salles et matériel, à confirmer) et supports 2025-2026 (dossier de l'année précédente)
+- **Sources :** `seances_BACHINGE24.xlsx` (planning : dates, horaires, salles et matériel) et supports 2025-2026 (dossier de l'année précédente)
 - **Présentation du projet :** `README.md` à la racine (contexte, besoins, objectifs, fonctions, synoptique, données échangées), commun aux trois classes
 - **Supports de cours :** dossier `cours/` (voir la fin de la section 4)
 
@@ -54,12 +54,12 @@ L'architecture, les fonctions F1 à F7, le cycle instrumenté et le scénario co
 | Fonction | Brique | Réalisée en | Passage sur le robot réel |
 |----------|--------|-------------|---------------------------|
 | F1 Exécuter le cycle | Programme process | Séance 1 (Blockly, export Python) | Séance 4 |
-| F2 Recevoir les commandes | API CQRS | Cours en séance 2, développement sur laptop puis déploiement en séance 3, en mode simulé sur le serveur | Séance 4 |
-| F3 Exposer l'état | API CQRS | Cours en séance 2, développement sur laptop puis déploiement en séance 3, en mode simulé sur le serveur | Séance 4 |
+| F2 Recevoir les commandes | API CQRS | Cours en libre service, développement sur laptop à partir des exemples fournis (séance 2), puis déploiement en séance 3, en mode simulé sur le serveur | Séance 4 |
+| F3 Exposer l'état | API CQRS | Cours en libre service, développement sur laptop à partir des exemples fournis (séance 2), puis déploiement en séance 3, en mode simulé sur le serveur | Séance 4 |
 | F4 Publier les événements | Client MQTT du robot | Séance 3 avec le simulateur de process fourni, puis entre les séances 3 et 4 dans le programme robot | Séance 4 |
 | F5 Transmettre les messages | Broker Mosquitto | Préparé par l'enseignant sur le serveur (section 6) | (sur le serveur) |
-| F6 Collecter et stocker | Collecteur Python + base SQLite | Cours en séance 2, développement sur laptop puis déploiement en séance 3 | (sur le serveur) |
-| F7 Présenter | Site web Flask | Cours en séance 2, développement sur laptop puis déploiement en séance 3 | (sur le serveur) |
+| F6 Collecter et stocker | Collecteur Python + base SQLite | Cours en libre service, développement sur laptop à partir des exemples fournis (séance 2), puis déploiement en séance 3 | (sur le serveur) |
+| F7 Présenter | Site web Flask | Cours en libre service, développement sur laptop à partir des exemples fournis (séance 2), puis déploiement en séance 3 | (sur le serveur) |
 
 **Exemple de process :** une pièce est posée sur le convoyeur, le convoyeur tourne jusqu'au capteur (DI5), le robot prend la pièce, la dépose dans une zone, le cycle est compté et horodaté (diagramme dans le `README.md`, section 5, « Le cycle instrumenté »).
 
@@ -72,14 +72,14 @@ L'architecture, les fonctions F1 à F7, le cycle instrumenté et le scénario co
 |--------|-------|--------|------|------|-------|---------------------------|
 | Séance 1 | Prise en main du robot, export Python, définition du process | G1 | lun. 12/10/2026, 08:30-12:00 | Fab lab | 3h30 | Programme Blockly et export `.py`, fiche process v0 |
 | Séance 1 | (idem) | G2 | lun. 12/10/2026, 13:30-17:00 | Fab lab | 3h30 | (idem) |
-| Séance 2 | Analyse, dossier, présentation, tests de recette ; cours MQTT, SQL, Python, site web et API | G1 + G2 | mer. 14/10/2026, 08:30-12:00 | Salle C1.07 | 3h30 | Dossier d'analyse v1, cahier de recette v1 |
+| Séance 2 | Analyse, dossier, tests de recette, mise en place du poste de développement (cours techniques en libre service) | G1 + G2 | mer. 14/10/2026, 08:30-12:00 | Salle C1.07 | 3h30 | Dossier d'analyse v1, cahier de recette v1 |
 | Séance 3 | Intégration sur le serveur : MQTT, collecte dans SQLite, site web et API | G1 + G2 | lun. 09/11/2026, 08:30-12:00 | Salle D3.10, serveur | 3h30 | Collecteur, site web et API (mode simulé) sur le serveur, alimentés par des données simulées |
 | Séance 4 | Intégration sur les robots, recette à blanc | G1 | mar. 17/11/2026, 08:30-12:00 | Fab lab | 3h30 | Système intégré, recette à blanc |
 | Séance 4 | (idem) | G2 | mar. 17/11/2026, 13:30-17:00 | Fab lab | 3h30 | (idem) |
 | Séance 5 | Évaluation : recette | G1 | jeu. 19/11/2026, 13:30-15:15 | Fab lab | 1h45 | Recette signée, code déposé |
 | Séance 5 | (idem) | G2 | jeu. 19/11/2026, 15:15-17:00 | Fab lab | 1h45 | (idem) |
 
-Dates, horaires, salles et matériel : planning `seances_BACHINGE24.xlsx`. Les dates et les salles sont à confirmer (voir la section 7).
+Dates, horaires, salles et matériel : planning `seances_BACHINGE24.xlsx`. Les salles sont réservées (voir la section 7).
 
 ```mermaid
 gantt
@@ -89,7 +89,7 @@ gantt
     tickInterval 1week
     todayMarker off
     section G1 + G2
-        Séance 2 · Analyse, cours MQTT, SQL, web   : 2026-10-14, 1d
+        Séance 2 · Analyse, dossier, poste de dév.  : 2026-10-14, 1d
         Séance 3 · Intégration sur le serveur      : 2026-11-09, 1d
         Rendu dossier v2 (proposé)                 : milestone, 2026-11-16, 0d
         Séance 5 · Évaluation (1h45 par groupe)   : milestone, 2026-11-19, 0d
@@ -119,11 +119,11 @@ gantt
 |---------|-------|---------|
 | `README.md` | Présentation du projet : contexte, besoins, objectifs, fonctions, synoptique | 1 (présentation) et 2 |
 | `reseau_TCP_IP.md` | Révisions réseau : TCP/IP, adressage, routage, sous-réseaux, configuration statique et DHCP | 3 (révision) et 4 |
-| `collecteur_MQTT.md` | Collecteur de messages MQTT en Python vers une base de données | 2 (cours) et 3 |
-| `SQL.md` | Rappels de SQL | 2 (cours) et 3 |
-| `site_web_HTML_CSS.md` | Cours HTML et CSS : réaliser les pages d'un site web | 2 (cours) et 3 |
-| `intro_flask.md` | Le framework Flask : premiers pas | 2 (cours) et 3 |
-| `API_CQRS_REST_Flask.md` | Une API CQRS pour le robot Niryo, comparée à REST, avec Flask | 2 (cours), 3 et 4 |
+| `collecteur_MQTT.md` | Collecteur de messages MQTT en Python vers une base de données | 2 (libre service) et 3 |
+| `SQL.md` | Rappels de SQL | 2 (libre service) et 3 |
+| `site_web_HTML_CSS.md` | Cours HTML et CSS : réaliser les pages d'un site web | 2 (libre service) et 3 |
+| `intro_flask.md` | Le framework Flask : premiers pas | 2 (libre service) et 3 |
+| `API_CQRS_REST_Flask.md` | Une API CQRS pour le robot Niryo, comparée à REST, avec Flask | 2 (libre service), 3 et 4 |
 
 
 ## 5. Détail des séances
@@ -162,32 +162,44 @@ gantt
 - `documentation/sdk.md`
 
 
-### Séance 2 : analyse, dossier, présentation, tests de recette, cours MQTT, SQL, Python, site web et API
+### Séance 2 : analyse, dossier, recette et mise en place du poste de développement
 
 | Lieu | Groupes | Durée | Matériel |
 |------|---------|-------|----------|
 | Salle C1.07 | G1 + G2 ensemble (22 étudiants) | 3h30 | Pas de robot, pas de serveur. Vidéoprojecteur, laptops des étudiants |
 
-Cette séance regroupe l'analyse et tous les cours du module : sans serveur, les cours sont suivis avec de courts exemples exécutés sur le laptop. Les TP sont faits en autonomie sur le laptop (travail entre les séances 2 et 3), puis déployés sur le serveur à la séance 3.
+La séance ne contient qu'un seul cours en présentiel (l'architecture). Les cours techniques (MQTT, SQL, Python, HTTP, Flask, API) sont **en libre service** : les supports de `cours/` sont lus et pratiqués à son rythme, sur le laptop, entre les séances 2 et 3. Pour avancer sans serveur, l'enseignant fournit un jeu d'exemples prêts à adapter (voir ci-dessous). Le déploiement sur le serveur a lieu à la séance 3.
 
 **Objectifs**
 
 - Situer le projet dans une architecture client / serveur industrielle
-- Rédiger un dossier d'analyse
-- Écrire des tests de recette vérifiables
+- Rédiger un dossier d'analyse et écrire des tests de recette vérifiables
 - Présenter son projet à l'oral
-- Expliquer le modèle publication / abonnement (MQTT), les bases de SQL et de SQLite, une requête HTTP et une API REST, et les principes de Flask
+- Disposer d'un laptop prêt pour le développement, avec la chaîne complète qui tourne en local
+- Savoir quoi adapter dans les exemples fournis et dans quel ordre
+
+**Dossier de départ** (à préparer avant la séance, remis à chaque équipe) : il regroupe les documents à remplir (gabarits et exemples) et les briques logicielles fournies par l'enseignant, pour que la séance serve à adapter et non à partir de zéro.
+
+| Fourniture | Contenu | À adapter par l'équipe |
+|------------|---------|------------------------|
+| Gabarit et exemple de dossier d'analyse | Dossier complet d'un process fictif différent des projets (par exemple le tri de pièces par zone), au plan du `README.md` | Le process, les données, le schéma d'architecture, la maquette du site |
+| Exemple de cahier de recette | Tableau de 3 tests entièrement rédigés (identifiant, exigence, préconditions, procédure, résultat attendu), et la liste des 8 exigences à couvrir | Les 8 tests au moins, propres au process de l'équipe |
+| Exemple de présentation flash | Une page ou 3 diapositives : process, architecture, données, un test de recette | Le contenu |
+| Howto du poste de développement | Pas à pas (Linux, Windows, macOS) : Python 3 et environnement virtuel, `pip install`, Mosquitto local ou broker public de test, SQLite et DB Browser, VS Code, et un script `verifier_poste.py` qui publie un message, le reçoit et écrit dans SQLite | Rien : il sert à valider le poste |
+| Simulateur de process et de robot | Publie les événements `cycle`, `etat` et `defaut` sur `cellule/<equipe>/…` ; classe `RobotSimule` pour l'API | L'équipe, les topics et les données propres au process (fichier de configuration) |
+| Collecteur MQTT configurable | Collecteur Python complet (abonnement, validation du JSON, insertion dans `messages` et `cycles`) lisant un fichier de configuration | L'adresse du broker, les topics, les champs du message |
+| Site web Flask de base | Tableau de bord minimal : dernier état, liste des cycles lue dans `cellule.db`, un bouton de commande qui appelle l'API simulée | Les pages, les compteurs, la mise en forme, les commandes |
 
 **Déroulé**
 
 | Durée | Activité |
 |-------|----------|
 | 30 min | **Cours** : architecture client / serveur en contexte industriel (niveaux terrain, supervision, gestion) ; du besoin (piloter, informer, observer) aux fonctions F1 à F7 et au rôle de chaque brique du fil rouge ; cahier des charges et recette |
-| 55 min | **Atelier par équipe** : rédaction du dossier d'analyse à partir d'un gabarit fourni (à terminer dans la semaine si besoin) |
+| 30 min | **Démonstration de la chaîne** avec les fournitures : le simulateur publie, le broker transmet, le collecteur écrit dans SQLite, le site affiche. Chaque brique est reliée à son support de cours (MQTT, SQL, Flask, API) et aux éléments à adapter |
+| 25 min | **Poste de développement** : suivre le howto et lancer `verifier_poste.py`. Les équipes dont le poste n'est pas valide terminent à la maison ; le howto couvre aussi leur cas |
+| 70 min | **Atelier par équipe** : dossier d'analyse et cahier de recette, à partir du gabarit et des exemples |
 | 40 min | **Présentations flash** : 5 min par équipe (8 équipes), puis retours |
-| 30 min | **Cours MQTT** : broker, clients, topics, payload JSON, QoS, authentification. Démonstration avec `mosquitto_pub` / `mosquitto_sub` sur le laptop de l'enseignant |
-| 20 min | **Rappel SQL** : table, types, clé primaire, `CREATE`, `INSERT`, `SELECT`, `WHERE`, `GROUP BY`. SQLite (module `sqlite3`, DB Browser for SQLite), collecte des données du process dans une base SQLite |
-| 35 min | **Cours Python, HTTP et web** : environnement virtuel et `pip`, bibliothèques `flask` et `requests` ; client / serveur, `GET` / `POST`, codes de retour, JSON, tests avec `curl` ; principe d'un site Flask et d'une API de commande (CQRS) |
+| 15 min | **Plan de travail** jusqu'à la séance 3 : jalons, répartition dans l'équipe, consignes de dépôt |
 
 **Contenu attendu du dossier d'analyse**
 
@@ -201,23 +213,32 @@ Le dossier peut suivre le plan du `README.md` (contexte, besoins, objectifs, fon
 
 La partie technique (topics MQTT, table SQL, routes de l'API) reste au niveau fonctionnel. Elle sera précisée dans la v2 du dossier, après la séance 3 (rendu proposé : lun. 16/11/2026, avant la séance 4).
 
-**Livrables**
+**Livrables de la séance** (déposés en fin de séance, ou au plus tard dans la semaine)
 
-- Dossier d'analyse v1 et cahier de recette v1
+| Livrable | Critère de validation |
+|----------|-----------------------|
+| Dossier d'analyse v1 | Les 5 rubriques ci-dessus sont présentes, le process et les données sont décrits |
+| Cahier de recette v1 | Au moins 8 tests complets, chacun relié à une exigence |
+| Présentation flash | Présentée en 5 min |
+| Poste validé | `verifier_poste.py` affiche « poste prêt » (capture ou sortie déposée) |
 
 **Supports de cours**
 
 - `README.md` (présentation du projet, à utiliser comme modèle de plan pour le dossier)
-- `cours/collecteur_MQTT.md`, `cours/SQL.md`, `cours/site_web_HTML_CSS.md`, `cours/intro_flask.md` et `cours/API_CQRS_REST_Flask.md` (cours de la séance, repris en autonomie pour les TP)
+- `cours/collecteur_MQTT.md`, `cours/SQL.md`, `cours/site_web_HTML_CSS.md`, `cours/intro_flask.md` et `cours/API_CQRS_REST_Flask.md` (libre service, à pratiquer entre les séances 2 et 3)
 
 **Travail entre les séances 2 et 3 (4 semaines, sur laptop)**
 
-Mosquitto, SQLite et Flask s'exécutent sans serveur : chaque équipe peut avancer sur son laptop, avec un broker local, pour arriver à la séance 3 avec un début de réalisation.
+Mosquitto, SQLite et Flask s'exécutent sans serveur. Chaque équipe travaille sur son laptop, avec un broker local ou un broker public de test, pour arriver à la séance 3 avec une chaîne qui fonctionne en local.
 
-- Installer sur le laptop Python 3, Mosquitto, SQLite et les paquets `paho-mqtt`, `flask`, `requests` (liste donnée en fin de séance)
-- Simulateur de process, collecteur et base SQLite en local
-- Squelette de l'API CQRS en mode simulé et premières pages du site web
-- Compléter le dossier (topics, format des messages, schéma de la base, routes de l'API)
+| Jalon | Travail | Support |
+|-------|---------|---------|
+| Semaine 1 | Poste validé, fournitures lancées en local, données du process définies (topics, message JSON) | Howto, `cours/collecteur_MQTT.md` |
+| Semaine 2 | Simulateur adapté aux données de l'équipe, collecteur configuré, tables SQLite créées | `cours/SQL.md`, `cours/collecteur_MQTT.md` |
+| Semaine 3 | Site web adapté (dernier état, cycles, compteurs) | `cours/site_web_HTML_CSS.md`, `cours/intro_flask.md` |
+| Semaine 4 | API de commande en mode simulé reliée au site, dossier complété | `cours/API_CQRS_REST_Flask.md` |
+
+**Broker public de test.** Sans serveur, les équipes peuvent utiliser un broker MQTT public (par exemple `test.mosquitto.org` ou `broker.hivemq.com`, sans compte) pour tester d'un poste à l'autre. À respecter : ces brokers sont ouverts à tous, donc préfixer les topics par un identifiant propre à l'équipe (`cellule/g1e1-<mot aléatoire>/…`), n'y envoyer aucune donnée sensible, et ne pas compter sur leur disponibilité. Le broker local reste la référence ; à la séance 3, on passe au broker authentifié du serveur en changeant le fichier de configuration.
 
 
 ### Séance 3 : intégration sur le serveur (MQTT, collecte dans SQLite, site web et API)
@@ -226,7 +247,7 @@ Mosquitto, SQLite et Flask s'exécutent sans serveur : chaque équipe peut avanc
 |------|---------|-------|----------|
 | Salle D3.10 | G1 + G2 ensemble (22 étudiants) | 3h30 | Serveur Raspberry Pi (section 6) sur le réseau séparé de la salle, postes Linux et laptops des étudiants. Pas de robot : le process est simulé et l'API fonctionne en mode simulé |
 
-Les cours ont eu lieu à la séance 2 et les équipes ont avancé sur leur laptop pendant quatre semaines : la séance est un TP d'intégration. Il s'agit de déployer sur le serveur réel ce qui a été développé en local (voir la section 7 si une équipe arrive sans rien de prêt).
+Les équipes ont avancé sur leur laptop pendant quatre semaines, à partir des exemples fournis à la séance 2 (simulateur, collecteur, site web de base) : la séance est un TP d'intégration. Il s'agit de déployer sur le serveur réel ce qui a été développé en local (voir la section 7 si une équipe arrive sans rien de prêt).
 
 **Objectifs**
 
@@ -239,11 +260,12 @@ Les cours ont eu lieu à la séance 2 et les équipes ont avancé sur leur lapto
 
 | Durée | Activité |
 |-------|----------|
-| 20 min | **Reprise** : point d'étape sur l'avancement de chaque équipe, connexion au serveur (SSH, avec VS Code Remote SSH si la salle a accès à Internet) avec le compte de l'équipe (mêmes identifiant et mot de passe sur le serveur et sur les postes Linux de la salle) |
-| 50 min | **TP MQTT sur le serveur** : publier et s'abonner sur le broker du serveur avec l'authentification et les topics de l'équipe (MQTT Explorer puis `paho-mqtt`), passage du broker local au broker du serveur |
-| 50 min | **TP collecte** : un simulateur publie les événements du process de l'équipe ; le collecteur tourne sur le serveur, reçoit les messages, les valide et les insère dans SQLite. Requêtes de contrôle (nombre de cycles, durée moyenne) |
-| 45 min | **TP API** : API de commande du robot selon le principe CQRS (`GET /requetes/etat`, `POST /commandes/demarrer`, `/commandes/arreter`, `/commandes/calibrer`) en mode simulé (`RobotSimule`), sans appel au robot. Exécution sur le serveur, sur le port attribué à l'équipe (5001 à 5008) |
-| 45 min | **TP site web** : tableau de bord exécuté sur le serveur (port 8001 à 8008), lisant la base SQLite (dernier état, liste des cycles, compteurs), avec des boutons de commande appelant l'API |
+| 40 min | **Démonstration par équipe** (5 min chacune, sur laptop, en local) : le simulateur, le collecteur, la base SQLite, le site web et l'API fonctionnent ensemble. Une équipe dont un sous-ensemble ne fonctionne pas le signale et repart des fournitures de la séance 2 |
+| 20 min | **Accès au serveur** : l'enseignant remet à chaque équipe ses codes d'accès (compte Linux, utilisateur MQTT) une fois les démonstrations faites. Connexion (SSH, avec VS Code Remote SSH si la salle a accès à Internet) ; mêmes identifiant et mot de passe sur le serveur et sur les postes Linux de la salle |
+| 30 min | **MQTT sur le serveur** : publier et s'abonner sur le broker du serveur avec l'authentification et les topics de l'équipe (MQTT Explorer puis `paho-mqtt`), passage du broker local au broker du serveur par le fichier de configuration |
+| 40 min | **Collecte** : le simulateur publie les événements du process de l'équipe ; le collecteur tourne sur le serveur, reçoit les messages, les valide et les insère dans SQLite. Requêtes de contrôle (nombre de cycles, durée moyenne) |
+| 40 min | **API** : API de commande du robot selon le principe CQRS (`GET /requetes/etat`, `POST /commandes/demarrer`, `/commandes/arreter`, `/commandes/calibrer`) en mode simulé (`RobotSimule`), sans appel au robot. Exécution sur le serveur, sur le port attribué à l'équipe (5001 à 5008) |
+| 40 min | **Site web** : tableau de bord exécuté sur le serveur (port 8001 à 8008), lisant la base SQLite (dernier état, liste des cycles, compteurs), avec des boutons de commande appelant l'API |
 
 **Flux de collecte**
 
@@ -448,16 +470,17 @@ flowchart TB
 
 ## 7. Points à arbitrer
 
-1. **Séance 2 très dense.** Le planning regroupe en une seule matinée (mer. 14/10, salle C1.07) l'analyse, le dossier, les présentations et tous les cours : MQTT, SQL, Python, site web et API. Sans serveur, les cours sont suivis avec des exemples sur le laptop et les TP sont faits en autonomie. Le dossier v1 risque d'être terminé après la séance.
-   - Alternative : déplacer les présentations flash au début de la séance 3, ou limiter le cours de la séance 2 à MQTT et SQL et faire le cours Flask / API au début de la séance 3.
-   - Les laptops doivent porter Python 3, Mosquitto, SQLite, `paho-mqtt`, `flask` et `requests` : liste à donner avant ou pendant la séance 2.
-2. **Séance 3 : trois briques à déployer en 3h30** (collecteur, API, site web), après quatre semaines sans cours. Une équipe qui n'a rien préparé sur laptop ne terminera pas.
-   - Prévoir un point d'étape en début de séance et des squelettes fournis (simulateur de process, collecteur, API simulée, site web) pour rattraper les équipes en retard.
-   - Raspberry Pi et salle D3.10 à préparer pour le lun. 09/11 (liste dans `materiel_ISTP.md`) : plus de contrainte au 13/10, ce qui laisse du temps pour la livraison du Pi.
-3. **Fin de module en trois jours.** Les séances 3, 4 et 5 sont séparées de 8 jours, puis de 2 jours (09/11, 17/11, 19/11). Le programme process et l'API doivent être testés en mode simulé avant le 17/11, et les corrections se font entre la séance 4 et l'évaluation.
+Points arbitrés le 10/10/2026.
+
+1. **Alléger la séance 2.** Un dossier de départ est remis à chaque équipe : documents à remplir (gabarits et exemples de dossier, de recette et de présentation) et briques fournies (howto du poste, simulateur, collecteur configurable, site web de base). Son contenu est détaillé à la séance 2 (section 5). À écrire avant le 14/10.
+   - Les laptops doivent porter Python 3, Mosquitto, SQLite, `paho-mqtt`, `flask` et `requests` : le howto couvre Linux, Windows et macOS, et `verifier_poste.py` valide le poste.
+   - Sans serveur, les tests entre postes passent par un broker public (`test.mosquitto.org`, `broker.hivemq.com`) : topics préfixés par un identifiant propre à l'équipe, aucune donnée sensible. À vérifier : filtrage éventuel du port 1883 sur le réseau de l'établissement.
+   - Le dossier v1 peut être terminé dans la semaine si l'atelier de 70 min ne suffit pas.
+2. **Début de la séance 3.** Chaque équipe démontre d'abord le fonctionnement des sous-ensembles sur son laptop (simulateur, collecteur, base, site web, API). L'enseignant remet ensuite les codes d'accès au serveur. Les équipes qui n'ont pas de démonstration complète repartent des fournitures de la séance 2.
+3. **Fin de module en trois jours.** Tout doit être prêt avant la séance 3 : serveur, salle D3.10, comptes et fiches d'accès (liste dans `materiel_ISTP.md`). Les séances 3, 4 et 5 sont séparées de 8 jours, puis de 2 jours (09/11, 17/11, 19/11) : le programme process et l'API sont testés en mode simulé avant le 17/11, et les corrections se font entre la séance 4 et l'évaluation.
    - Rendu du dossier v2 proposé le lun. 16/11, avant la séance 4 ; dossier final à l'évaluation.
    - La recette de l'évaluation (environ 25 min par équipe, dont 18 min de recette) porte sur une sélection de tests ; les questions individuelles sont courtes.
-4. **Salles à confirmer.** Le planning donne les salles : C1.07 (séance 2), D3.10 (séance 3), fab lab (séances 1, 4 et 5). À vérifier : l'équipement de la salle C1.07 (vidéoprojecteur, prises pour 22 laptops) et le réseau séparé de la salle D3.10. Les dates restent à confirmer.
-5. **Peu de temps sur les robots.** Les étudiants n'ont le robot qu'à la séance 1 (3h30), à la séance 4 (3h30) et à l'évaluation (25 min par équipe). Le process doit rester simple. À la séance 3, le travail se fait sur le serveur réel, mais avec un process simulé et une API en mode simulé.
-6. **Typage des séances.** Toutes les lignes du planning sont en « CM » sauf l'évaluation du 19/11 (« TEST »), alors que les séances 1 et 4 sont des TP, la séance 2 un atelier et la séance 3 un TP d'intégration.
-7. **Intervalle de 4 semaines entre les séances 2 et 3** (14/10 → 09/11). Le travail sur laptop n'est ni encadré ni vérifié : un point d'étape en début de séance 3 suffit à maintenir le rythme.
+4. **Salles.** Les salles sont déjà réservées : C1.07 (séance 2), D3.10 (séance 3), fab lab (séances 1, 4 et 5). Reste à vérifier sur place l'équipement de la salle C1.07 (vidéoprojecteur, prises pour 22 laptops) et le réseau séparé de la salle D3.10.
+5. **Peu de temps sur les robots.** Contrainte de planning non modifiable : les étudiants n'ont le robot qu'à la séance 1 (3h30), à la séance 4 (3h30) et à l'évaluation (25 min par équipe). Le process doit rester simple. À la séance 3, le travail se fait sur le serveur réel, avec un process simulé et une API en mode simulé.
+6. **Typage des séances.** Le typage du planning (« CM » et « TEST ») est conservé tel quel.
+7. **Intervalle de 4 semaines entre les séances 2 et 3** (14/10 → 09/11). Travail en autonomie sur laptop, avec le calendrier de la séance 2 ; la démonstration du début de la séance 3 sert de point d'étape.
