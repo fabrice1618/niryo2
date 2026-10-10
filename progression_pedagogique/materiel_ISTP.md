@@ -3,16 +3,16 @@
 - **Établissement :** ISTP
 - **Classe :** BACH INGE 2024-0 (BACHINGE24), 3e année, 22 étudiants alternants, groupes G1 et G2
 - **Cours :** Infrastructure client / serveur dans un contexte industriel (progression : `BACHINGE24.md`)
-- **Version :** v1.1 (brouillon), 08/10/2026
-- **Dates :** planning `seances_BACHINGE24.xlsx` mis à jour le 08/10/2026, à confirmer avec ISTP avant toute réservation
+- **Version :** v1.2 (brouillon), 10/10/2026
+- **Dates :** planning `seances_BACHINGE24.xlsx` mis à jour le 10/10/2026, à confirmer avec ISTP avant toute réservation
 - **Document associé :** `materiel_IRUP.md` (autres classes, autre établissement, autre serveur)
 
 **En bref**
 
-- 6 séances du 12/10 au 19/11/2026 : séance 2 en salle C1.07, séances 3 et 4 en salle D3.10, séances 1, 5 et 6 au fab lab.
-- Le serveur est un **Raspberry Pi**. Il est installé en salle D3.10, sur un réseau séparé, pour les séances 3 et 4, puis transporté au fab lab pour les séances 5 et 6.
-- 8 équipes (4 par groupe) pour 4 robots. Jusqu'à 22 étudiants en salle D3.10 aux séances 3 et 4.
-- Échéances proches : robots vérifiés avant la séance 1 (lun. 12/10), puis **salle D3.10 remise en fonctionnement et Raspberry Pi prêt avant la séance 3** (mer. 14/10, 13:30), soit au plus tard le mar. 13/10 (sections 5.1 et 5.2).
+- 5 séances du 12/10 au 19/11/2026 : séance 2 en salle C1.07, séance 3 en salle D3.10, séances 1, 4 et 5 au fab lab.
+- Le serveur est un **Raspberry Pi**. Il est installé en salle D3.10, sur un réseau séparé, pour la séance 3, puis transporté au fab lab pour les séances 4 et 5.
+- 8 équipes (4 par groupe) pour 4 robots. Jusqu'à 22 étudiants en salle D3.10 à la séance 3.
+- Échéances proches : robots vérifiés avant la séance 1 (lun. 12/10), puis **salle D3.10 remise en fonctionnement et Raspberry Pi prêt avant la séance 3** (lun. 09/11, 08:30), soit au plus tard le ven. 06/11 (sections 5.1 et 5.2).
 
 
 ## 1. Séances et besoins
@@ -21,14 +21,13 @@
 |--------|-------------------|------|-----|------------------|
 | Séance 1 | lun. 12/10/2026, 08:30-12:00 (G1) et 13:30-17:00 (G2) | Fab lab | Un groupe à la fois, environ 11 étudiants | 4 robots, 4 convoyeurs, Niryo Studio. Pas de serveur |
 | Séance 2 | mer. 14/10/2026, 08:30-12:00 | Salle C1.07 | G1 + G2, 22 étudiants | Laptops des étudiants, vidéoprojecteur, prises électriques. Pas de robot, pas de serveur |
-| Séance 3 | mer. 14/10/2026, 13:30-17:00 | Salle D3.10 | G1 + G2, 22 étudiants | Raspberry Pi, réseau séparé, switch, postes Linux et laptops : 8 collecteurs MQTT |
-| Séance 4 | lun. 09/11/2026, 08:30-12:00 | Salle D3.10 | G1 + G2, 22 étudiants | Raspberry Pi, réseau séparé, switch, postes Linux et laptops : 8 sites Flask et 8 API simulées |
-| Séance 5 | mar. 17/11/2026, 08:30-12:00 (G1) et 13:30-17:00 (G2) | Fab lab | Un groupe à la fois, environ 11 étudiants | 4 robots, Raspberry Pi : une équipe par robot, 3h30 par groupe |
-| Séance 6 | jeu. 19/11/2026, 13:30-15:15 (G1) et 15:15-17:00 (G2) | Fab lab | Un groupe à la fois, environ 11 étudiants | 4 robots, Raspberry Pi : évaluation, environ 25 min par équipe |
+| Séance 3 | lun. 09/11/2026, 08:30-12:00 | Salle D3.10 | G1 + G2, 22 étudiants | Raspberry Pi, réseau séparé, switch, postes Linux et laptops : 8 collecteurs MQTT, 8 sites Flask et 8 API simulées |
+| Séance 4 | mar. 17/11/2026, 08:30-12:00 (G1) et 13:30-17:00 (G2) | Fab lab | Un groupe à la fois, environ 11 étudiants | 4 robots, Raspberry Pi : une équipe par robot, 3h30 par groupe |
+| Séance 5 | jeu. 19/11/2026, 13:30-15:15 (G1) et 15:15-17:00 (G2) | Fab lab | Un groupe à la fois, environ 11 étudiants | 4 robots, Raspberry Pi : évaluation, environ 25 min par équipe |
 
 Le fab lab est dans la même configuration pour toutes les classes (section 3.4). Seul le serveur change.
 
-Les séances 2 et 3 ont lieu le même jour, dans deux salles différentes : le Pi et le réseau de la salle D3.10 sont installés la veille, car la pause de midi est trop courte.
+La séance 3 a lieu quatre semaines après la séance 2 : le Pi et le réseau de la salle D3.10 peuvent être installés la veille ou une heure avant la séance, après un essai complet fait en amont (section 5.4). Entre les séances 2 et 3, les équipes travaillent sur leur laptop, sans serveur.
 
 
 ## 2. Équipes
@@ -46,7 +45,7 @@ Les séances 2 et 3 ont lieu le même jour, dans deux salles différentes : le P
 | `g2e3` | Cobalt | G2 | 3 (`192.168.10.23`) | 5007 | 8007 |
 | `g2e4` | Titane | G2 | 4 (`192.168.10.24`) | 5008 | 8008 |
 
-Aux séances 5 et 6, chaque groupe passe à son tour : l'équipe `g1eN`, puis l'équipe `g2eN`, utilisent le robot N, chacune seule sur son créneau. Un compte Linux et un utilisateur MQTT sont créés par identifiant sur le Raspberry Pi. Les mêmes comptes Linux, avec les mêmes identifiants, sont créés sur les postes Linux de la salle D3.10 (section 3.3).
+Aux séances 4 et 5, chaque groupe passe à son tour : l'équipe `g1eN`, puis l'équipe `g2eN`, utilisent le robot N, chacune seule sur son créneau. Un compte Linux et un utilisateur MQTT sont créés par identifiant sur le Raspberry Pi. Les mêmes comptes Linux, avec les mêmes identifiants, sont créés sur les postes Linux de la salle D3.10 (section 3.3).
 
 
 ## 3. Matériel
@@ -92,7 +91,7 @@ Des postes Linux (Ubuntu 24.04 desktop) sont disponibles pour le développement.
 |-----|-------------|----------|--------|
 | 8 au moins | Postes Linux Ubuntu 24.04 desktop | Un par équipe au minimum. Nombre réel à compter | Existant, à remettre en état |
 | 8 au moins | Écrans, claviers, souris | Des souris peuvent manquer | Existant, à compléter |
-| 1 | Vidéoprojecteur ou grand écran, câble HDMI, en salle D3.10 | Cours MQTT et HTTP des séances 3 et 4 | Existant, à vérifier |
+| 1 | Vidéoprojecteur ou grand écran, câble HDMI, en salle D3.10 | TP et démonstrations de la séance 3 | Existant, à vérifier |
 | 1 | Vidéoprojecteur ou grand écran, câble HDMI, en salle C1.07 | Cours et présentations flash de la séance 2 (8 équipes de 5 min) | Existant, à vérifier |
 | 22 | Places avec prise électrique, en salle C1.07 | Les étudiants travaillent sur leur laptop (séance 2) | À vérifier |
 | 1 | Poste ou laptop de l'intervenant, avec accès au Pi | Démonstrations, administration | Apporté |
@@ -114,7 +113,7 @@ Logiciels attendus sur chaque poste Linux : Python 3.12 avec `python3-venv` et `
 | 4 | Postes avec Niryo Studio (ou laptops des étudiants) | Une version de Niryo Studio compatible avec le firmware des robots | Existant, à vérifier |
 | 4 | Multiprises | Une par poste de travail | Existant, à vérifier |
 
-Aux séances 1, 5 et 6, un seul groupe (environ 11 étudiants) est au fab lab à la fois : vérifier la capacité du réseau (Wi-Fi ou câble) pour les laptops.
+Aux séances 1, 4 et 5, un seul groupe (environ 11 étudiants) est au fab lab à la fois : vérifier la capacité du réseau (Wi-Fi ou câble) pour les laptops.
 
 ### 3.5 Petit matériel de rechange (à apporter à chaque séance)
 
@@ -166,7 +165,7 @@ Le Raspberry Pi garde la même adresse (`192.168.10.11`) en salle D3.10 et au fa
 
 ### 5.1 Remise en fonctionnement des ordinateurs de la salle D3.10
 
-Étape dédiée, sur place, avant la première séance en salle D3.10 : la séance 3, mer. 14/10/2026 à 13:30. Prévoir une demi-journée à une journée, au plus tard le **mar. 13/10/2026**. La séance 2 du matin a lieu dans une autre salle (C1.07) et la pause de midi est trop courte pour installer le Pi.
+Étape dédiée, sur place, avant la seule séance en salle D3.10 : la séance 3, lun. 09/11/2026 à 08:30. Prévoir une demi-journée à une journée, au plus tard le **ven. 06/11/2026**.
 
 - [ ] Obtenir l'accès à la salle (clé, badge) et le droit d'intervenir sur les postes (compte administrateur)
 - [ ] Compter les postes Linux, les repérer et les numéroter (étiquettes)
@@ -214,7 +213,7 @@ sudo ./creer_comptes_equipes.sh --supprimer inge
 - [ ] **Essai de charge** : 8 simulateurs, 8 collecteurs et 16 serveurs Flask lancés en même temps, avec plusieurs connexions VS Code Remote SSH
 - [ ] Sauvegarde : copie du SSD de secours, procédure de restauration testée
 - [ ] Image propre conservée pour remettre le serveur à zéro
-- [ ] **Serveur de secours** si le Pi est livré trop tard pour la séance 3 : laptop de l'intervenant sous Ubuntu, avec Mosquitto, Python, SQLite et les 8 comptes (même script), branché au switch avec l'adresse prévue pour le Pi
+- [ ] **Serveur de secours** si le Pi est livré trop tard pour la séance 3 (lun. 09/11) : laptop de l'intervenant sous Ubuntu, avec Mosquitto, Python, SQLite et les 8 comptes (même script), branché au switch avec l'adresse prévue pour le Pi
 
 ### 5.3 Fab lab et robots
 
@@ -226,44 +225,43 @@ sudo ./creer_comptes_equipes.sh --supprimer inge
 - [ ] Pièces en nombre suffisant et en bon état
 - [ ] Les 4 robots sont connectés au réseau du fab lab (câble) avec les adresses `192.168.10.21` à `.24`
 - [ ] Adressage réel du fab lab relevé : routeur, plage DHCP, adresses déjà utilisées (voir la section 4.2)
-- [ ] Capacité du réseau pour une douzaine de laptops (un groupe à la fois, séances 1, 5 et 6)
+- [ ] Capacité du réseau pour une douzaine de laptops (un groupe à la fois, séances 1, 4 et 5)
 - [ ] Prises électriques, multiprises, zones de sécurité et arrêt d'urgence repérés
 
 ### 5.4 Répétition et installation le jour de la séance
 
-- [ ] **Veille de la séance 3 (mar. 13/10)** : installation complète en salle D3.10 (switch, câbles, Pi, 2 postes Linux et 2 laptops), connexion SSH, publication et réception MQTT, ouverture d'un site Flask depuis un laptop
-- [ ] **Chaque séance en salle D3.10** : arriver 1 heure avant, installer le switch et le Pi, tester une connexion depuis un poste Linux et depuis un laptop
-- [ ] **Avant la séance 5 (mar. 17/11, avant 08:30)** : transporter le Pi au fab lab, le brancher, vérifier l'accès du robot au broker et l'accès du serveur à l'API du robot (port 5000)
+- [ ] **Avant la séance 3 (au plus tard le ven. 06/11)** : installation complète en salle D3.10 (switch, câbles, Pi, 2 postes Linux et 2 laptops), connexion SSH, publication et réception MQTT, ouverture d'un site Flask depuis un laptop
+- [ ] **Jour de la séance 3 (lun. 09/11)** : arriver 1 heure avant, installer le switch et le Pi, tester une connexion depuis un poste Linux et depuis un laptop
+- [ ] **Avant la séance 4 (mar. 17/11, avant 08:30)** : transporter le Pi au fab lab, le brancher, vérifier l'accès du robot au broker et l'accès du serveur à l'API du robot (port 5000)
 - [ ] **Après chaque séance** : sauvegarde du SSD, relevé du matériel manquant, remise en état de la salle
 
 
 ## 6. Calendrier de préparation
 
-Les dates sont celles du planning `seances_BACHINGE24.xlsx` : les échéances sont à décaler si elles changent. Le calendrier est très serré au départ : la séance 3 a lieu 6 jours après la rédaction de ce document.
+Les dates sont celles du planning `seances_BACHINGE24.xlsx` : les échéances sont à décaler si elles changent. Le calendrier est serré en fin de module : les séances 3, 4 et 5 ont lieu les 09/11, 17/11 et 19/11.
 
 | Échéance | Action | Séance concernée |
 |----------|--------|------------------|
 | Avant le lun. 12/10/2026 | Vérification du fab lab et des robots (section 5.3) | Séance 1 |
-| Avant le mar. 13/10/2026 | Matériel de la section 3.1 reçu, SSD préparé et testé (section 5.2) ; remise en fonctionnement de la salle D3.10 (section 5.1) ; réponses d'ISTP sur le réseau et les salles (section 7). Sans Pi, préparer le serveur de secours | Séances 2 et 3 |
-| Mar. 13/10/2026 | Installation complète en salle D3.10 : switch, câbles, Pi, essai depuis un poste Linux et depuis un laptop (section 5.4) | Séance 3 |
-| Mer. 14/10/2026 | Séance 2 en salle C1.07 le matin ; séance 3 en salle D3.10 l'après-midi (accès dès 12:00 pour les derniers réglages) ; sauvegarde du SSD le soir | Séances 2 et 3 |
-| Entre les séances 3 et 4 (4 semaines) | Le Pi et le SSD de secours restent chez l'intervenant, sauf si la salle D3.10 peut être fermée à clé | Séance 4 |
-| Lun. 09/11/2026, 1 heure avant | Installation du Pi en salle D3.10 ; avant : mises à jour, état du disque, nouvel essai de charge | Séance 4 |
-| Lun. 09/11/2026, après la séance | Sauvegarde du SSD ; le Pi repart chez l'intervenant | Séance 5 |
-| Mar. 17/11/2026, avant 08:30 | Installation du Pi au fab lab (adresse distincte du NUC), vérifications réseau : robots vers le broker, serveur vers l'API des robots | Séance 5 |
-| Mar. 17/11/2026, entre les deux groupes | Contrôle du Pi, sauvegarde du SSD | Séance 5 |
-| Jeu. 19/11/2026, avant 13:30 | Pi allumé et vérifié, robots prêts | Séance 6 |
+| Mer. 14/10/2026 | Séance 2 en salle C1.07 (vidéoprojecteur, prises pour 22 laptops, accès à 08:30) : pas de matériel serveur | Séance 2 |
+| Avant le ven. 06/11/2026 | Matériel de la section 3.1 reçu, SSD préparé et testé (section 5.2) ; remise en fonctionnement de la salle D3.10 (section 5.1) ; réponses d'ISTP sur le réseau et les salles (section 7). Sans Pi, préparer le serveur de secours | Séance 3 |
+| Ven. 06/11/2026 | Installation complète en salle D3.10 : switch, câbles, Pi, essai depuis un poste Linux et depuis un laptop (section 5.4) | Séance 3 |
+| Lun. 09/11/2026, 1 heure avant | Installation du Pi en salle D3.10 ; avant : mises à jour, état du disque, nouvel essai de charge | Séance 3 |
+| Lun. 09/11/2026, après la séance | Sauvegarde du SSD ; le Pi repart chez l'intervenant | Séance 4 |
+| Mar. 17/11/2026, avant 08:30 | Installation du Pi au fab lab (adresse distincte du NUC), vérifications réseau : robots vers le broker, serveur vers l'API des robots | Séance 4 |
+| Mar. 17/11/2026, entre les deux groupes | Contrôle du Pi, sauvegarde du SSD | Séance 4 |
+| Jeu. 19/11/2026, avant 13:30 | Pi allumé et vérifié, robots prêts | Séance 5 |
 | Après le jeu. 19/11/2026 | Suppression des comptes sur les postes de la salle D3.10 (`--supprimer`), remise en état de la salle | Fin du module |
 
 
 ## 7. Points à confirmer avec ISTP
 
-1. **Dates et salles.** Confirmer le planning `seances_BACHINGE24.xlsx` : séance 2 en salle C1.07, séances 3 et 4 en salle D3.10, séances 1, 5 et 6 au fab lab. Confirmer en particulier que les séances 2 et 3 ont bien lieu le même jour (mer. 14/10).
+1. **Dates et salles.** Confirmer le planning `seances_BACHINGE24.xlsx` : séance 2 en salle C1.07, séance 3 en salle D3.10, séances 1, 4 et 5 au fab lab. Confirmer en particulier que la salle D3.10 n'est plus utilisée le 14/10 (séance supprimée) et qu'elle est libre le lun. 09/11.
 2. **Réseau séparé de la salle D3.10.** Distribution d'adresses (DHCP) et taille de la plage, nombre de prises murales, ports autorisés (22, 1883, 5001 à 5008, 8001 à 8008), isolation des clients, accès à Internet.
 3. **Postes Linux.** Combien de postes ? Qui administre ? L'intervenant peut-il avoir les droits (`sudo`) pour installer des logiciels et créer des comptes ? Les postes sont-ils déjà reliés au réseau séparé ?
-4. **Accès à la salle D3.10.** Possibilité d'y entrer le mar. 13/10 (veille de la séance 3) pour l'installation, une heure avant les séances 3 et 4, et d'y laisser du matériel (switch, câbles) entre les deux séances.
+4. **Accès à la salle D3.10.** Possibilité d'y entrer avant la séance 3 (au plus tard le ven. 06/11) pour l'installation, et une heure avant la séance du lun. 09/11.
 5. **Vidéoprojecteur ou écran** dans les salles C1.07 et D3.10, et prises électriques pour 22 laptops en salle C1.07.
-6. **Fourniture du Raspberry Pi et de ses accessoires** (section 3.1), délai de livraison (le Pi doit être prêt le 13/10), qui conserve le matériel entre les séances.
+6. **Fourniture du Raspberry Pi et de ses accessoires** (section 3.1), délai de livraison (le Pi doit être prêt le 06/11), qui conserve le matériel entre les séances.
 7. **Laptops des étudiants.** Tous les laptops ont-ils une prise Ethernet ? Sinon, quels adaptateurs prévoir ?
 8. **Équipes.** La section 2 suppose 4 équipes par groupe (8 au total), comme dans la progression `BACHINGE24.md`. À corriger si le découpage des équipes est différent.
-9. **Serveur de secours.** Si le Pi n'est pas livré avant le 13/10, ISTP peut-il prêter une machine Linux pour la séance 3, ou l'intervenant utilise-t-il son laptop ?
+9. **Serveur de secours.** Si le Pi n'est pas livré avant le 06/11, ISTP peut-il prêter une machine Linux pour la séance 3, ou l'intervenant utilise-t-il son laptop ?

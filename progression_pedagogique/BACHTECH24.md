@@ -30,7 +30,7 @@ Par rapport à l'an dernier :
 
 Par rapport aux autres classes (BACHINGE24 et B3RNSPP26) :
 
-- le socle occupe **9 séances (31h30)** au lieu de 17h30 en BACHINGE24 : cours, TP et intégration sont plus longs, et le robot est disponible plus souvent (séances 1, 8, 9, 10, 11 et 13) ;
+- le socle occupe **9 séances (31h30)** au lieu de 14h en BACHINGE24 : cours, TP et intégration sont plus longs, et le robot est disponible plus souvent (séances 1, 8, 9, 10, 11 et 13) ;
 - la classe ajoute deux **extensions propres** : la **vision** (caméra du robot et OpenCV) et le **dashboard Grafana**. Grafana sort de la pile allégée du socle : il sert ici à l'analyse de la production, pas au pilotage (la classe B3RNSPP26 l'utilise aussi, de façon plus légère) ;
 - une liste de **propositions complémentaires** (section 6) permet d'enrichir le parcours selon le niveau du groupe.
 
