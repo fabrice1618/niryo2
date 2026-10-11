@@ -135,7 +135,7 @@ Le robot n'est disponible qu'aux séances 1, 4 et 5 : **préparez tout le reste 
 
 | Étape | Vous devez savoir | Support |
 |-------|-------------------|---------|
-| Séance 1 | Bases de Python (1re année), consignes de sécurité du robot | `seance1`, `README.md` |
+| Séance 1 | Bases de Python (1re année), consignes de sécurité du robot | `01_prise_en_main_robot`, `README.md` |
 | Séance 2 | Notion de client / serveur, format JSON, plan d'un dossier | `README.md` |
 | Entre 2 et 3 | Publier et recevoir en MQTT, `CREATE` / `INSERT` / `SELECT`, routes Flask | `collecteur_MQTT`, `SQL`, `intro_flask` |
 | Entre 2 et 3 | HTML / CSS de base, requêtes HTTP `GET` / `POST` | `site_web_HTML_CSS`, `API_CQRS_REST_Flask` |
@@ -166,7 +166,7 @@ Le robot n'est disponible qu'aux séances 1, 4 et 5 : **préparez tout le reste 
 | 30 min | Décrire le process : étapes, entrées / sorties, cas d'erreur, premières données à remonter |
 
 **À déposer** : programme Blockly et `.py` (avec les poses, à conserver pour la séance 4), fiche process v0
-**Support** : `cours/seance1.md` (points à réaliser, fonctions du robot, fiche des poses)
+**Support** : `cours/01_prise_en_main_robot.md` (points à réaliser, fonctions du robot, fiche des poses)
 
 ---
 

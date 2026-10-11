@@ -524,6 +524,7 @@ Chaque exercice ajoute une commande ou une requête : c'est la meilleure façon 
 - [ ] Commande : ajouter `POST /commandes/retour-repos` qui ramène les axes à zéro
 - [ ] Validation : refuser `deplacer-axes` si un angle dépasse une limite propre à chaque axe
 - [ ] Commande : refuser tout ordre de mouvement tant que la commande `calibrer` n'a pas été exécutée avec succès (code `409`)
+- [ ] Requête : ajouter `GET /robot/etat`, qui renvoie l'état lu directement sur le robot à chaque appel (axes, pose, capteur DI5, températures), avec une méthode `etat_materiel()` dans chaque adaptateur (valeurs fixes pour `RobotSimule`) ; comparer avec `GET /requetes/etat`
 - [ ] Requête : ajouter au modèle de lecture le nombre de pièces traitées depuis le dernier `demarrer`, mis à jour à chaque cycle
 - [ ] Robustesse : si `cycle_pick_and_place` lève « pièce non détectée », arrêter le process et faire apparaître l'erreur dans le suivi de la commande
 - [ ] Comparaison : écrire la version REST (`GET` et `PUT /joints`) et comparer les deux fichiers : qu'est-ce qui est plus simple, plus clair, plus sûr ?

@@ -260,7 +260,7 @@ L'évaluation repose sur l'exécution, devant l'enseignant, du cahier de recette
 
 | Fichier | Contenu | Étape |
 |---------|---------|-------|
-| `seance1.md` | Séance 1, commune à toutes les classes : prise en main du robot Ned2, export Python, définition du process | 1 |
+| `01_prise_en_main_robot.md` | Séance 1, commune à toutes les classes : prise en main du robot Ned2, export Python, définition du process ; scripts d'essai sur le robot (partie 7) | 1, 5 |
 | `reseau_TCP_IP.md` | Révisions réseau : TCP/IP, adressage, routage, sous-réseaux, configuration statique et DHCP, réseau de la cellule | 3, 5 |
 | `collecteur_MQTT.md` | Collecteur de messages MQTT en Python vers une base de données | 3 |
 | `SQL.md` | Rappels de SQL avec SQLite | 3 |
@@ -278,10 +278,12 @@ L'évaluation repose sur l'exécution, devant l'enseignant, du cahier de recette
 | B3RNSPP26 | `B3RNSPP26.md` |
 | BACHTECH24 | `BACHTECH24.md` |
 
-La séance 1 (prise en main du robot) est la même pour toutes les classes : son support est `cours/seance1.md`.
+La séance 1 (prise en main du robot) est la même pour toutes les classes : son support est `cours/01_prise_en_main_robot.md`.
 
 Chaque progression précise le calendrier, les séances, les supports utilisés, les livrables, la configuration du serveur et la grille d'évaluation de la classe.
 
 **Installation sur les robots** (`install/`) : bibliothèques Python du projet (Flask, paho-mqtt) prêtes à installer hors ligne sur le Ned2, avec `install.sh`, le lanceur `lancer.sh` et le script de vérification `test.py` ; mode d'emploi dans `install/README.md`.
+
+**Scripts d'essai sur le robot** (`essai_robot/`) : neuf scripts courts qui testent chacun une brique sur le robot (calibration, convoyeur, cycle, MQTT, API, lecture de l'état et endpoint `GET /robot/etat`), avec leurs énoncés dans la partie 7 de `cours/01_prise_en_main_robot.md`.
 
 **Schémas** (racine) : `robot_niryo.drawio` (pages principe et architecture, exportées en PNG), modifiable avec draw.io.

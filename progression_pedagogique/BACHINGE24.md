@@ -117,7 +117,7 @@ gantt
 
 | Fichier | Titre | Séances |
 |---------|-------|---------|
-| `seance1.md` | Séance 1 : prise en main du robot Ned2, export Python et définition du process | 1 |
+| `01_prise_en_main_robot.md` | Séance 1 : prise en main du robot Ned2, export Python et définition du process ; scripts d'essai sur le robot (partie 7) | 1 (partie 7 : séances sur les robots) |
 | `README.md` | Présentation du projet : contexte, besoins, objectifs, fonctions, synoptique | 1 (présentation) et 2 |
 | `reseau_TCP_IP.md` | Révisions réseau : TCP/IP, adressage, routage, sous-réseaux, configuration statique et DHCP | 3 (révision) et 4 |
 | `collecteur_MQTT.md` | Collecteur de messages MQTT en Python vers une base de données | 2 (libre service) et 3 |
@@ -159,11 +159,11 @@ gantt
 
 **Supports de cours**
 
-- `cours/seance1.md` (support de la séance, commun à toutes les classes : points à réaliser, fonctions du robot, fiche des poses, fiche process)
+- `cours/01_prise_en_main_robot.md` (support de la séance, commun à toutes les classes : points à réaliser, fonctions du robot, fiche des poses, fiche process ; partie 7 : scripts d'essai pour les équipes en avance)
 
 **Ressources reprises de l'an dernier**
 
-- `essai_robot/script1_autocalibrate.py`, `script2_convoyeur.py`, `script3_convoyeur_pick.py`
+- `essai_robot/script1_autocalibrate.py`, `script2_convoyeur.py`, `script3_convoyeur_pick.py` : repris dans le dossier `essai_robot/` de ce dépôt (`script1_calibration.py` à `script3_convoyeur_prise.py`, énoncés 1 à 3 de `cours/01_prise_en_main_robot.md`, partie 7), pour les équipes en avance
 - `documentation/sdk.md`
 
 
@@ -335,7 +335,7 @@ Conventions reprises des supports `cours/collecteur_MQTT.md` et `cours/SQL.md` (
 - `code/mqtt_message/` : `sender.py` (à transformer en simulateur de process) et `subscriber.py` (à passer de MySQL à SQLite)
 - `code/api_robot_test/` (API simulée du robot de l'an dernier, port 3000 : remplacée par l'API CQRS du cours, ports 5001 à 5008)
 - `code/website_commande/specification.md`
-- `essai_robot/script4_mqtt_send.py`, `script5_mqtt_receive.py`, `script6_api.py`, `script7_API_mqtt.py`
+- `essai_robot/script4_mqtt_send.py` à `script7_API_mqtt.py` : repris dans le dossier `essai_robot/` de ce dépôt, avec un script 8 (lecture de l'état du robot) et un script 9 (`GET /robot/etat`) ; énoncés 4 à 9 de `cours/01_prise_en_main_robot.md`, partie 7, à préparer avant la séance 4 et à exécuter sur le robot pendant la séance 4
 - `tp/fiche_configuration.md` (à adapter : comptes, topics, ports par équipe)
 
 **Travail entre les séances 3 et 4 (8 jours)**

@@ -2,7 +2,7 @@
 
 Infrastructure client / serveur dans un contexte industriel
 
-Cette séance ouvre le projet fil rouge et elle est la même pour toutes les classes. Chaque équipe prend en main un robot Niryo Ned2 et son convoyeur, programme en Blockly le cycle de pick & place qui sera le cœur de la cellule (fonction F1 « Exécuter le cycle » du `README.md`), exporte ce programme en Python et décrit le process qu'elle va industrialiser. Le robot n'est ensuite plus disponible avant l'intégration : tout ce qui est produit aujourd'hui (programme, poses relevées, fiche process) doit être déposé et conservé.
+Cette séance ouvre le projet fil rouge et elle est la même pour toutes les classes. Chaque équipe prend en main un robot Niryo Ned2 et son convoyeur, programme en Blockly le cycle de pick & place qui sera le cœur de la cellule (fonction F1 « Exécuter le cycle » du `README.md`), exporte ce programme en Python et décrit le process qu'elle va industrialiser. Le robot n'est ensuite plus disponible avant l'intégration : tout ce qui est produit aujourd'hui (programme, poses relevées, fiche process) doit être déposé et conservé. La partie 7 propose ensuite des scripts d'essai sur le robot, pour les équipes en avance et pour l'intégration.
 
 
 ## Où se situe cette séance dans le projet
@@ -666,7 +666,343 @@ Ces valeurs seront reprises telles quelles lors de l'intégration, dans le progr
 | dire où s'exécute le code exporté, et avec quelle bibliothèque il commande le robot | | |
 
 
-## 7. Vocabulaire
+## 7. Scripts d'essai sur le robot
+
+Avant d'assembler la cellule complète, on vérifie chaque brique **seule, sur le robot** : un script court, un objectif, un résultat visible. Ces neuf énoncés vont du programme exporté de Niryo Studio jusqu'à l'API qui expose l'état du robot. Chacun prépare une partie du projet fil rouge : le cycle (énoncés 1 à 3), la publication des événements (4 et 7), les commandes (5 à 7), la supervision de l'état (8 et 9). Les scripts correspondants, qui servent de corrigés, sont dans le dossier `essai_robot/`, avec le fichier de paramètres `config.py`.
+
+**Quand les faire ?** Les énoncés 1 à 3 prolongent cette séance, pour les équipes en avance : ils refont en Python, sans Niryo Studio, ce que le scénario guidé a fait en Blockly. Les énoncés 4 à 9 demandent les bibliothèques installées sur le robot et le serveur du module : ils se préparent pendant le développement, sans robot, et s'exécutent sur le robot lors de l'intégration.
+
+### 7.1 Vue d'ensemble
+
+```mermaid
+flowchart LR
+    subgraph CYCLE["Le cycle"]
+        E1["1. Calibrer<br/>et signaler"] --> E2["2. Convoyeur<br/>jusqu'à DI5"] --> E3["3. Cycle<br/>complet"]
+    end
+    subgraph MQTT["MQTT"]
+        E4["4. Publier"] --> E5["5. Recevoir<br/>un ordre"]
+    end
+    subgraph API["API web"]
+        E6["6. POST /led"] --> E7["7. API + MQTT"]
+    end
+    subgraph ETAT["État du robot"]
+        E8["8. Lire l'état"] --> E9["9. GET /robot/etat"]
+    end
+    E3 --> E4
+    E5 --> E6
+    E7 --> E8
+```
+
+| Énoncé | Script (corrigé) | Notions | Bras en mouvement | Durée indicative | Cours lié |
+|---|---|---|---|---|---|
+| 1 | `script1_calibration.py` | Nœud ROS, `NiryoRosWrapper`, calibration, LED, son | Oui | 20 min | Ce support, parties 3 et 4 |
+| 2 | `script2_convoyeur.py` | Convoyeur, capteur DI5, boucle d'attente, `try` / `finally` | Non | 20 min | Ce support, parties 3 et 4 |
+| 3 | `script3_convoyeur_prise.py` | Poses, prise et dépose, découpage en fonctions | Oui | 30 min | Ce support, parties 3 et 4 |
+| 4 | `script4_mqtt_envoi.py` | Client MQTT, publication JSON, QoS | Non | 30 min | Collecteur MQTT |
+| 5 | `script5_mqtt_reception.py` | Abonnement, fonctions de rappel (`on_message`) | Non | 20 min | Collecteur MQTT |
+| 6 | `script6_api.py` | Flask, route `POST`, validation, codes 200 et 400 | Non | 30 min | Le framework Flask |
+| 7 | `script7_api_mqtt.py` | Action longue, publication après l'action, temps de réponse | Non | 30 min | Une API CQRS pour le robot Niryo |
+| 8 | `script8_etat_robot.py` | Lecture de l'état (axes, pose, DI5, températures), dictionnaire, JSON | Non | 30 min | Une API CQRS pour le robot Niryo |
+| 9 | `script9_api_etat.py` | Endpoint `GET /robot/etat`, mode simulé, requête et modèle de lecture | Non | 45 min | Une API CQRS pour le robot Niryo |
+
+### 7.2 Avant de commencer
+
+- **Bibliothèques** : Flask et paho-mqtt sont installés sur le robot (dossier `install/`). Le test `~/cellule/lancer.sh ~/cellule/test.py` doit se terminer sans échec.
+- **Paramètres** : tous les scripts lisent `config.py` (équipe, broker, port de l'API, poses, couleurs). Commencez par l'adapter à votre équipe et à votre robot.
+- **Lancer un script** sur le robot : `~/cellule/lancer.sh mon_script.py`, depuis le dossier qui contient `config.py`. Arrêter : `Ctrl+C`.
+- **Structure commune** : chaque script commence par les mêmes lignes que l'export de Niryo Studio, avec un nom de nœud propre au script.
+
+  ```python
+  import rospy
+  from niryo_robot_python_ros_wrapper.ros_wrapper import *
+
+  rospy.init_node("essai_script1")     # pas 'niryo_blockly_interpreted_code', utilisé par Niryo Studio
+  n = NiryoRosWrapper()                # n représente le robot
+  ```
+
+- **Sécurité** : les énoncés 1 et 3 font bouger le bras, l'énoncé 2 le convoyeur. Zone dégagée, arrêt d'urgence à portée de main, un seul programme à la fois (rien ne tourne depuis Niryo Studio).
+- **Travail sans robot** : les scripts ne s'exécutent que sur le robot. Avant d'y accéder, écrivez-les et relisez-les ; pour MQTT et Flask, la partie réseau peut s'essayer sur votre poste en remplaçant les appels au robot par des `print`.
+
+
+### Énoncé 1 : calibrer le robot et le signaler
+
+**Objectif** : écrire un premier programme Python qui s'exécute sur le robot, sans Niryo Studio.
+
+**À savoir**
+
+| Fonction | Rôle |
+|---|---|
+| `n.calibrate_auto()` | Calibre le robot, **sans effet** s'il est déjà calibré |
+| `n.request_new_calibration()` | Oublie la calibration en cours : le `calibrate_auto()` suivant recalibre vraiment |
+| `n.led_ring.flashing(couleur, period=0.5, iterations=3, wait=False)` | Fait clignoter l'anneau de LED ; couleur `[rouge, vert, bleu, 0]` |
+| `n.sound.play("ready.wav", wait_end=True)` | Joue un son du robot |
+
+**Travail demandé**
+
+1. Écrire deux fonctions `signal_debut()` et `signal_fin()` : un clignotement et un son différents pour chacune.
+2. Le programme appelle `signal_debut()`, force une nouvelle calibration, puis appelle `signal_fin()` et affiche « Calibration terminée ».
+3. Copier le script sur le robot et le lancer avec `lancer.sh`.
+
+**Vérifier**
+
+- [ ] Le signal de début, la calibration (le bras bouge), puis le signal de fin
+- [ ] Le message « Calibration terminée » dans le terminal
+
+**Questions**
+
+1. Que fait `calibrate_auto()` lancé deux fois de suite ? Pourquoi appeler `request_new_calibration()` avant ?
+2. Avec `wait=False`, le son démarre pendant que l'anneau clignote. Que changerait `wait=True` ?
+3. Pourquoi ne pas garder le nom de nœud `niryo_blockly_interpreted_code` de l'export ?
+
+**Pour aller plus loin** : faire du signal de fin un signal d'erreur (rouge, clignotement rapide) si la calibration lève une exception (`try` / `except`).
+
+
+### Énoncé 2 : faire avancer le convoyeur jusqu'à la pièce
+
+**Objectif** : piloter le convoyeur et lire le capteur de présence, le seul lien entre le convoyeur et le robot.
+
+**À savoir**
+
+| Fonction | Rôle |
+|---|---|
+| `n.set_conveyor()` | Active le convoyeur branché sur le robot |
+| `n.control_conveyor(ConveyorID.ID_1, True, 50, ConveyorDirection.BACKWARD)` | Marche à 50 % ; `False, 0` pour arrêter |
+| `n.digital_read("DI5")` | Vrai si DI5 est à `HIGH` : **pas de pièce** devant le capteur |
+
+**Travail demandé**
+
+1. Activer le convoyeur, attendre 2 secondes, puis le mettre en marche.
+2. Attendre la pièce : tant que DI5 est à `HIGH`, attendre 0,1 s.
+3. Arrêter le convoyeur dans un bloc `finally`, pour qu'il s'arrête aussi après `Ctrl+C` ou une erreur.
+4. Ajouter un **délai maximal** (`DELAI_MAX_PIECE` dans `config.py`) : au-delà, arrêter le convoyeur et afficher « défaut : pièce non détectée ».
+
+**Vérifier**
+
+- [ ] Le convoyeur s'arrête dès que la pièce passe devant le capteur
+- [ ] `Ctrl+C` pendant l'attente arrête aussi le convoyeur
+- [ ] Sans pièce, le défaut s'affiche au bout du délai maximal
+
+**Questions**
+
+1. Que se passe-t-il, sans délai maximal, si aucune pièce n'arrive ? Est-ce acceptable sur une ligne de production ?
+2. Le capteur est-il bien à `HIGH` sans pièce sur votre convoyeur ? Comment le vérifier ?
+3. Le défaut « pièce non détectée » deviendra un message MQTT : sur quel topic ?
+
+
+### Énoncé 3 : un cycle complet
+
+**Objectif** : enchaîner convoyeur, prise et dépose, avec un programme découpé en fonctions.
+
+**Travail demandé**
+
+1. Reporter dans `config.py` les poses relevées sur votre robot : `POSE_ATTENTE`, `POSE_PRISE`, `POSE_DEPOSE_A`.
+2. Écrire trois fonctions : `aller_en_attente()`, `attendre_piece()` (énoncé 2), `prendre_et_deposer()` (`n.pick_from_pose(*POSE_PRISE)`, puis `n.place_from_pose(*POSE_DEPOSE_A)`).
+3. Le programme calibre si besoin, détecte l'outil (`n.update_tool()`), va en attente, attend la pièce, la prend, la dépose et revient en attente.
+4. Ajouter une boucle de **trois pièces** et mesurer la **durée de chaque cycle** avec `time.monotonic()`.
+
+**Vérifier**
+
+- [ ] Trois cycles enchaînés sans intervention
+- [ ] La durée de chaque cycle affichée en secondes
+
+**Questions**
+
+1. Que signifie l'étoile dans `n.pick_from_pose(*POSE_PRISE)` ?
+2. Où, dans ce programme, faudra-t-il publier `debut_cycle` et `fin_cycle` ?
+
+**Pour aller plus loin** : ajouter une zone de dépose B et alterner A et B d'une pièce à l'autre.
+
+
+### Énoncé 4 : publier en MQTT depuis le robot
+
+**Objectif** : envoyer des messages du robot vers le broker du serveur, comme le fera le programme process.
+
+**À savoir**
+
+```python
+import paho.mqtt.client as mqtt
+
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id="g1e1_script4")
+client.username_pw_set("g1e1", "mot-de-passe-equipe")
+client.connect("192.168.10.10", 1883, keepalive=60)
+client.loop_start()                  # le réseau MQTT est géré en arrière-plan
+client.publish("cellule/g1e1/essai", json.dumps(message), qos=1)
+```
+
+**Travail demandé**
+
+1. Se connecter au broker avec les paramètres de `config.py`.
+2. Publier chaque seconde, sur `cellule/<equipe>/essai`, un message JSON : `evenement` (`"essai"`), `numero` (compteur), `di5` (`"HIGH"` ou `"LOW"`), `horodatage`.
+3. Sur votre poste, suivre les messages : `mosquitto_sub -h 192.168.10.10 -u g1e1 -P mot-de-passe-equipe -t 'cellule/g1e1/#' -v`.
+4. Fermer proprement la connexion à l'arrêt (`loop_stop`, `disconnect`).
+
+**Vérifier**
+
+- [ ] Un message par seconde reçu sur le poste, au format JSON attendu
+- [ ] La valeur de `di5` change quand on passe la main devant le capteur
+- [ ] Les messages apparaissent dans la table `messages` de la base, si le collecteur tourne
+
+**Questions**
+
+1. Que se passe-t-il si le broker est arrêté au lancement du script ? Et s'il s'arrête pendant ?
+2. À quoi sert `loop_start()` ? Que se passe-t-il sans ?
+3. Quelle différence entre `qos=0` et `qos=1` ?
+
+**Pour aller plus loin** : à partir du script 3, publier les messages du projet sur `cellule/<equipe>/cycle` : `debut_cycle` au début, `fin_cycle` avec la durée et la zone à la fin. C'est la fonction F4 du programme process.
+
+
+### Énoncé 5 : recevoir un ordre par MQTT
+
+**Objectif** : comprendre le sens inverse : le robot abonné, qui réagit aux messages reçus.
+
+**Travail demandé**
+
+1. S'abonner à `cellule/<equipe>/led` **dans** la fonction `on_connect` (appelée à chaque connexion).
+2. Dans `on_message`, lire la couleur reçue (`rouge`, `vert`, `bleu`) et faire clignoter l'anneau 2 secondes ; afficher « couleur inconnue » sinon.
+3. Le programme principal ne fait qu'attendre : tout se passe dans `on_message`.
+4. Depuis un poste : `mosquitto_pub -h 192.168.10.10 -u g1e1 -P mot-de-passe-equipe -t cellule/g1e1/led -m rouge`.
+
+**Vérifier**
+
+- [ ] L'anneau clignote dans la couleur publiée
+- [ ] Une couleur inconnue est signalée sans arrêter le script
+
+**Questions**
+
+1. Pourquoi s'abonner dans `on_connect` plutôt qu'une seule fois après `connect` ?
+2. Dans le projet, les commandes (démarrer, arrêter) passent par l'API web (HTTP), pas par MQTT. Pourquoi ? Pensez à la réponse attendue par celui qui envoie l'ordre.
+
+
+### Énoncé 6 : une API web sur le robot
+
+**Objectif** : faire du robot un **serveur HTTP** que le site web pourra appeler.
+
+**Travail demandé**
+
+1. Créer une application Flask avec une route `POST /led` qui lit le JSON `{"couleur": "bleu"}`.
+2. Couleur valide : faire clignoter l'anneau et répondre `{"statut": "ok", "couleur": "bleu"}` (code 200). Sinon : répondre une erreur avec le code **400**.
+3. Lancer Flask sur toutes les interfaces (`host="0.0.0.0"`) et sur le port 3000.
+4. Tester depuis un poste :
+
+   ```bash
+   curl -X POST http://192.168.10.21:3000/led -H "Content-Type: application/json" -d '{"couleur": "bleu"}'
+   ```
+
+**Vérifier**
+
+- [ ] Code 200 et clignotement pour une couleur valide
+- [ ] Code 400 pour une couleur inconnue, pour un JSON vide, et sans en-tête `Content-Type`
+
+**Questions**
+
+1. Pourquoi `host="0.0.0.0"` ? Que se passe-t-il avec la valeur par défaut ?
+2. Pourquoi le port 3000 et pas le port 5000, valeur par défaut de Flask ?
+3. `POST /led` est une **commande**. Ajouter une **requête** `GET /led` qui renvoie la dernière couleur demandée, sans rien modifier.
+
+
+### Énoncé 7 : API et MQTT ensemble
+
+**Objectif** : publier un événement **après** l'action, et mesurer ce que coûte une action longue dans une API.
+
+**Travail demandé**
+
+1. Reprendre l'énoncé 6, avec cette fois `wait=True` : la fonction ne rend la main qu'à la fin du clignotement.
+2. Une fois l'action terminée, publier sur `cellule/<equipe>/essai` l'événement `led_terminee` (avec la couleur et l'horodatage) ; en cas de couleur inconnue, publier `led_erreur`.
+3. Suivre les messages avec `mosquitto_sub` pendant les appels `curl`.
+4. Mesurer le temps de réponse : `time curl -X POST ...`.
+
+**Vérifier**
+
+- [ ] L'événement MQTT arrive à la fin du clignotement, pas au début
+- [ ] Le temps de réponse est d'environ 2 secondes
+
+**Questions**
+
+1. Pourquoi la réponse HTTP arrive-t-elle après 2 secondes ? Que se passerait-il avec un cycle de 20 secondes ? Et si un deuxième client envoie un ordre pendant ce temps ?
+2. Le cours *Une API CQRS pour le robot Niryo* répond `202 Accepted` tout de suite et exécute la commande en tâche de fond. Qu'est-ce que cela change pour le site web ? Comment sait-il ensuite que l'action est terminée ?
+
+**Pour aller plus loin** : répondre `202` immédiatement et faire clignoter l'anneau dans un `threading.Thread` ; l'événement MQTT reste publié à la fin de l'action.
+
+
+### Énoncé 8 : lire l'état du robot
+
+**Objectif** : rassembler en un seul dictionnaire tout ce que le superviseur veut savoir du robot, **sans le faire bouger**.
+
+**À savoir** : ces fonctions lisent des informations que le robot publie en continu (topics ROS). Elles sont rapides et ne gênent pas un mouvement en cours.
+
+| Fonction | Renvoie |
+|---|---|
+| `n.get_joints()` | Les angles des six axes (radians) |
+| `n.get_pose_as_list()` | La pose de la pince `[x, y, z, roll, pitch, yaw]` |
+| `n.get_learning_mode()` | Vrai si le bras est libre (FreeMotion) |
+| `n.get_current_tool_id()` | L'identifiant de l'outil monté |
+| `n.digital_read("DI5")` | L'état du capteur de présence |
+| `n.get_hardware_status()` | Température du Raspberry Pi, calibration nécessaire, et pour chaque moteur : nom, température, tension, erreur |
+
+**Travail demandé**
+
+1. Écrire une fonction `lire_etat(n)` qui renvoie un dictionnaire : `horodatage`, `axes`, `pose`, `mode_apprentissage`, `outil`, `di5`, `piece_detectee`, `materiel` (avec la liste des moteurs).
+2. Protéger chaque lecture : si l'une échoue, sa valeur vaut `None` et l'erreur est ajoutée à une liste `erreurs_lecture`, sans empêcher les autres lectures.
+3. Afficher le dictionnaire en JSON lisible (`json.dumps(etat, indent=2, ensure_ascii=False)`), une fois ou toutes les N secondes (option `--boucle N`).
+4. Le programme principal est protégé par `if __name__ == "__main__":`, pour que `lire_etat` puisse être importée par un autre script (énoncé 9).
+
+**Vérifier**
+
+- [ ] Le JSON complet s'affiche, sans erreur de lecture
+- [ ] En mode `--boucle 1` : les axes et la pose changent quand on déplace le bras en FreeMotion, `mode_apprentissage` passe à vrai
+- [ ] `di5` et `piece_detectee` changent quand une pièce passe devant le capteur
+- [ ] Débrancher le convoyeur : les autres valeurs restent lues, l'erreur apparaît dans `erreurs_lecture`
+
+**Questions**
+
+1. Pourquoi ce script n'appelle-t-il pas `calibrate_auto()` ?
+2. Pourquoi lire chaque valeur à part plutôt que tout dans un seul `try` ?
+3. Quelles valeurs seraient utiles sur le tableau de bord de l'opérateur ? Lesquelles relèvent plutôt de la maintenance ?
+
+
+### Énoncé 9 : l'endpoint `GET /robot/etat` de l'API
+
+**Objectif** : exposer l'état du robot dans l'API de commande, pour que le site web puisse l'afficher.
+
+**Réponse attendue** (extrait)
+
+```json
+{
+  "horodatage": "2026-11-17T08:30:00",
+  "axes": [0.0, 0.312, -0.71, 0.0, 0.398, 0.0],
+  "pose": [0.14, 0.0, 0.203, -0.017, 0.761, -0.001],
+  "mode_apprentissage": false,
+  "di5": "HIGH",
+  "piece_detectee": false,
+  "materiel": {"temperature_raspberry": 52, "calibration_necessaire": false, "moteurs": [...]},
+  "erreurs_lecture": []
+}
+```
+
+**Travail demandé**
+
+1. **Sur le robot** : écrire une petite API Flask avec la route `GET /robot/etat`, qui renvoie `lire_etat(n)` en JSON. Réutiliser la fonction de l'énoncé 8 avec `from script8_etat_robot import lire_etat`, sans la recopier.
+2. **Dans l'API CQRS du projet** (cours *Une API CQRS pour le robot Niryo*) : ajouter une méthode `etat_materiel()` aux deux adaptateurs.
+   - `RobotNiryo.etat_materiel()` renvoie `lire_etat(self._n)`.
+   - `RobotSimule.etat_materiel()` renvoie un dictionnaire de **même forme**, avec des valeurs fixes ou tirées au hasard (températures entre 30 et 45 °C, par exemple) : le site web peut être développé sans robot.
+3. Ajouter la route `GET /robot/etat`, qui renvoie `robot.etat_materiel()`.
+4. **Sur le site web** : ajouter un encadré « état du robot » (température du Raspberry Pi, capteur DI5, calibration nécessaire), alimenté par cette route.
+5. Ajouter au cahier de recette au moins deux tests de cette route.
+
+**Vérifier**
+
+- [ ] `curl http://192.168.10.21:3000/robot/etat` renvoie le JSON (code 200), en mode simulé comme sur le robot
+- [ ] La route répond aussi **pendant un cycle** lancé par `POST /commandes/demarrer`
+- [ ] L'encadré du site web se met à jour quand une pièce passe devant le capteur
+
+**Questions**
+
+1. Quelle différence entre `GET /requetes/etat` (le modèle de lecture, mis à jour à la fin de chaque commande) et `GET /robot/etat` (lu directement sur le robot à chaque appel) ? Quand utiliser l'une ou l'autre ?
+2. Cette route respecte-t-elle la règle d'or de CQRS (une requête ne modifie jamais rien) ? Les autres requêtes de l'API commencent par `/requetes/` : quel nom lui donner pour rester cohérent, et que gagne-t-on à la distinguer du modèle de lecture ?
+3. Le site web appelle cette route toutes les secondes, pour chacun de ses utilisateurs. Est-ce un problème pour le robot ? Que proposer à la place (pensez à MQTT et au message retenu sur `cellule/<equipe>/etat`) ?
+
+
+## 8. Vocabulaire
 
 | Mot | Sens |
 |-----|------|
@@ -681,7 +1017,7 @@ Ces valeurs seront reprises telles quelles lors de l'intégration, dans le progr
 | Export | Conversion du programme Blockly en fichier Python par Niryo Studio |
 
 
-## 8. Pour aller plus loin
+## 9. Pour aller plus loin
 
 Documentation Niryo, dans le dossier `documentation_Niryo_Ned2/` :
 
