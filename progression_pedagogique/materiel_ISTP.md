@@ -205,7 +205,7 @@ sudo ./creer_comptes_equipes.sh --supprimer inge
 ### 5.2 Serveur Raspberry Pi
 
 - [ ] Réception du matériel de la section 3.1 et contrôle de ce qui a été livré
-- [ ] Préparation du SSD : système, Mosquitto avec un utilisateur par équipe (8 comptes, accès limité aux topics de l'équipe), Python et paquets, SQLite, 8 comptes Linux créés par `scripts/creer_comptes_equipes.sh inge` (le fichier des mots de passe sert ensuite aux postes de la salle D3.10), ports attribués
+- [ ] Préparation du SSD : système, Mosquitto avec un utilisateur par équipe (8 comptes, accès limité aux topics de l'équipe), Python et paquets, SQLite, 8 comptes Linux créés par `scripts/creer_comptes_equipes.sh inge` (le fichier des mots de passe sert ensuite aux postes de la salle D3.10), ports attribués : procédure complète dans `install/install_raspberry.md`
 - [ ] Démarrage sur le SSD sans carte microSD, redémarrage automatique des services
 - [ ] Pile RTC installée et heure vérifiée après un arrêt complet
 - [ ] Adresse fixe et profils réseau (salle D3.10 et fab lab)
@@ -222,7 +222,7 @@ sudo ./creer_comptes_equipes.sh --supprimer inge
 - [ ] Chaque robot démarre, se calibre et exécute un mouvement ; noter le numéro et l'adresse IP de chacun
 - [ ] Firmware identique sur les 4 robots ; version de Niryo Studio compatible installée sur les postes
 - [ ] Chaque convoyeur tourne, son capteur répond sur DI5 (test avec une pièce)
-- [ ] Logiciel des robots en version 5.3 ou plus (Python 3.8), accès SSH avec le compte `niryo` ; bibliothèques du projet installées sur chaque robot avec le dossier `install/` du dépôt (`./install.sh`, puis `~/cellule/lancer.sh ~/cellule/test.py --robot`). Les robots sont communs aux trois classes : une seule installation suffit
+- [ ] Logiciel des robots en version 5.3 ou plus (Python 3.8), accès SSH avec le compte `niryo` ; bibliothèques du projet installées sur chaque robot avec le dossier `install_robot/` du dépôt (`./install.sh`, puis `~/cellule/lancer.sh ~/cellule/test.py --robot`). Les robots sont communs aux trois classes : une seule installation suffit
 - [ ] Pièces en nombre suffisant et en bon état
 - [ ] Les 4 robots sont connectés au réseau du fab lab (câble) avec les adresses `192.168.10.21` à `.24`
 - [ ] Adressage réel du fab lab relevé : routeur, plage DHCP, adresses déjà utilisées (voir la section 4.2)

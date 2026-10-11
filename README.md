@@ -282,7 +282,9 @@ La séance 1 (prise en main du robot) est la même pour toutes les classes : son
 
 Chaque progression précise le calendrier, les séances, les supports utilisés, les livrables, la configuration du serveur et la grille d'évaluation de la classe.
 
-**Installation sur les robots** (`install/`) : bibliothèques Python du projet (Flask, paho-mqtt) prêtes à installer hors ligne sur le Ned2, avec `install.sh`, le lanceur `lancer.sh` et le script de vérification `test.py` ; mode d'emploi dans `install/README.md`.
+**Installation des serveurs** (`install/`) : préparation pas à pas du Raspberry Pi d'ISTP (`install_raspberry.md`, SQLite) et du NUC de l'IRUP (`install_nuc.md`, SQLite et Grafana).
+
+**Installation sur les robots** (`install_robot/`) : bibliothèques Python du projet (Flask, paho-mqtt) prêtes à installer hors ligne sur le Ned2, avec `install.sh`, le lanceur `lancer.sh` et le script de vérification `test.py` ; mode d'emploi dans `install_robot/README.md`.
 
 **Scripts d'essai sur le robot** (`essai_robot/`) : neuf scripts courts qui testent chacun une brique sur le robot (calibration, convoyeur, cycle, MQTT, API, lecture de l'état et endpoint `GET /robot/etat`), avec leurs énoncés dans la partie 7 de `cours/01_prise_en_main_robot.md`.
 

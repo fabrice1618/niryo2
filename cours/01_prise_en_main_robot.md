@@ -707,7 +707,7 @@ flowchart LR
 
 ### 7.2 Avant de commencer
 
-- **Bibliothèques** : Flask et paho-mqtt sont installés sur le robot (dossier `install/`). Le test `~/cellule/lancer.sh ~/cellule/test.py` doit se terminer sans échec.
+- **Bibliothèques** : Flask et paho-mqtt sont installés sur le robot (dossier `install_robot/`). Le test `~/cellule/lancer.sh ~/cellule/test.py` doit se terminer sans échec.
 - **Paramètres** : tous les scripts lisent `config.py` (équipe, broker, port de l'API, poses, couleurs). Commencez par l'adapter à votre équipe et à votre robot.
 - **Lancer un script** sur le robot : `~/cellule/lancer.sh mon_script.py`, depuis le dossier qui contient `config.py`. Arrêter : `Ctrl+C`.
 - **Structure commune** : chaque script commence par les mêmes lignes que l'export de Niryo Studio, avec un nom de nœud propre au script.

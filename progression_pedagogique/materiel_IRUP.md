@@ -169,23 +169,23 @@ L'heure du NUC doit être correcte (horodatage des cycles). Elle est réglée pa
 
 Contenu du disque :
 
-- Ubuntu Server 24.04 LTS avec SSH, adresse IP fixe `192.168.10.10` (reprendre `documentation/config_nuc.md` de l'an dernier : netplan)
+- Ubuntu Server 24.04 LTS avec SSH, adresse IP fixe `192.168.10.10` (procédure complète dans `install/install_nuc.md`)
 - Mosquitto avec authentification : un utilisateur MQTT par équipe (6), limité aux topics de l'équipe
 - Python 3, paquets du projet (`paho-mqtt`, `flask`, `requests`) installés à l'avance, ainsi qu'un dépôt local de paquets pour une installation hors ligne (`package_nuc/` de l'an dernier)
-- SQLite (bibliothèque et outil en ligne de commande), bases en mode WAL pour que Grafana lise pendant que le collecteur écrit
-- Grafana (port 3000) avec le plugin SQLite, un utilisateur et un dossier de dashboards par équipe
+- SQLite (bibliothèque et outil en ligne de commande) : base `~/supervision/cellule.db` de chaque équipe, lue par son site web et par Grafana
+- Grafana (port 3000) avec l'adaptateur SQLite (`frser-sqlite-datasource`) : une source de données par équipe, qui lit sa base en lecture seule, un utilisateur et un dossier de dashboards par équipe
 - Un compte Linux par équipe (6), avec son dossier personnel, créés par `scripts/creer_comptes_equipes.sh irup` (mots de passe aléatoires, enregistrés dans un fichier que seul l'intervenant conserve)
 - Outils fournis : simulateur de process, squelette de l'API CQRS en mode simulé, script d'historique simulé pour Grafana
 - Services système (`systemd`) pour que le broker et Grafana redémarrent après une coupure
 
 Préparation et tests :
 
-- [ ] Disque préparé sur une machine avec accès à Internet (installation de Grafana et de son plugin), puis cloné sur le SSD de secours
+- [ ] Disque préparé sur une machine avec accès à Internet (installation de Grafana et de l'adaptateur SQLite) en suivant `install/install_nuc.md`, puis cloné sur le SSD de secours
 - [ ] Démarrage du NUC sur le disque externe, sans toucher au disque interne
 - [ ] Adresse fixe, connexion SSH depuis un laptop du fab lab
 - [ ] Publication et réception MQTT avec chaque utilisateur d'équipe ; refus d'accès sur les topics des autres équipes
 - [ ] Collecteur, API et site d'une équipe de test, ouverts depuis un laptop
-- [ ] Grafana : connexion, lecture d'une base SQLite, panneau de test, alerte de test
+- [ ] Grafana : connexion avec un compte d'équipe, lecture de la base SQLite de l'équipe (cycles fictifs), panneau de test, alerte de test
 - [ ] Redémarrage complet : les services repartent sans intervention
 - [ ] Sauvegarde du disque après chaque séance (image complète ou copie des dossiers des équipes)
 
@@ -208,7 +208,7 @@ Préparation et tests :
 - [ ] Chaque robot démarre, se calibre et exécute un mouvement ; noter le numéro et l'adresse IP de chacun
 - [ ] Firmware identique sur les 4 robots ; version de Niryo Studio compatible installée sur les postes
 - [ ] Chaque convoyeur tourne, son capteur répond sur DI5 (test avec une pièce)
-- [ ] Logiciel des robots en version 5.3 ou plus (Python 3.8), accès SSH avec le compte `niryo` ; bibliothèques du projet installées sur chaque robot avec le dossier `install/` du dépôt (`./install.sh`, puis `~/cellule/lancer.sh ~/cellule/test.py --robot`). Les robots sont communs aux trois classes : une seule installation suffit
+- [ ] Logiciel des robots en version 5.3 ou plus (Python 3.8), accès SSH avec le compte `niryo` ; bibliothèques du projet installées sur chaque robot avec le dossier `install_robot/` du dépôt (`./install.sh`, puis `~/cellule/lancer.sh ~/cellule/test.py --robot`). Les robots sont communs aux trois classes : une seule installation suffit
 - [ ] Pièces en nombre suffisant et en bon état
 - [ ] Les 4 robots sont connectés au réseau du fab lab (câble) avec les adresses `192.168.10.21` à `.24`
 - [ ] **Caméras** : repérer les robots équipés, afficher l'image dans Niryo Studio, vérifier la netteté et le champ de vue, lire une image depuis Python avec `pyniryo`
@@ -244,7 +244,7 @@ Préparation et tests :
 | Avant le mer. 24/02/2027 et le jeu. 25/03/2027 | Essai du robot publiant sur le broker du NUC ; poses des robots | B3RNSPP26 séance 9, BACHTECH24 séance 8 |
 | Avant le ven. 09/04/2027 | Caméras, espaces de travail, éclairage, pièces de couleurs | BACHTECH24, séances 10 et 11 |
 | Avant le mar. 04/05/2027 | Robots, API sur les robots, Grafana et historique simulé | B3RNSPP26, séances 10 à 12 |
-| Avant le mar. 11/05/2027 | Grafana, plugin, comptes et dossiers par équipe | BACHTECH24, séance 12 |
+| Avant le mar. 11/05/2027 | Grafana, adaptateur SQLite, comptes et dossiers par équipe | BACHTECH24, séance 12 |
 | Avant le jeu. 17/06/2027 | Contrôle complet de chaque cellule, sauvegarde | BACHTECH24, séance 13 |
 
 

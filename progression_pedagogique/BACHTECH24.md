@@ -518,7 +518,7 @@ Le robot n'a pas été utilisé depuis la séance 1 (28/10). La séance commence
 
 | Durée | Activité |
 |-------|----------|
-| 15 min | **Vérifications réseau** (préparées par l'enseignant avant la séance) : IP du robot et du serveur, accès du robot au broker, bibliothèques installées sur le robot (`install/`, vérifiées avec `test.py --broker`) |
+| 15 min | **Vérifications réseau** (préparées par l'enseignant avant la séance) : IP du robot et du serveur, accès du robot au broker, bibliothèques installées sur le robot (`install_robot/`, vérifiées avec `test.py --broker`) |
 | 30 min | **Reprise en main** : consignes de sécurité, calibration, relecture de l'export Python de la séance 1 et des poses |
 | 1h30 | **Déploiement** : programme process et publication MQTT sur le robot (début et fin de cycle, défaut), copié par `scp` et lancé par `~/cellule/lancer.sh`, essais avec le broker du serveur |
 | 1h | **Essai de bout en bout** : le robot publie, le collecteur enregistre, le site affiche les cycles réels. Premiers écarts avec le simulateur (durées, défauts) |
@@ -534,7 +534,7 @@ Le robot n'a pas été utilisé depuis la séance 1 (28/10). La séance commence
 
 **Ressources reprises de l'an dernier**
 
-- `flask_arm/` et `documentation/install_package_python.md` : remplacés par le dossier `install/` de ce dépôt (paquets compatibles avec le Python du robot, `install.sh`, `test.py`)
+- `flask_arm/` et `documentation/install_package_python.md` : remplacés par le dossier `install_robot/` de ce dépôt (paquets compatibles avec le Python du robot, `install.sh`, `test.py`)
 
 
 ### Séance 9 : intégration (2), l'API sur le robot, recette à blanc
@@ -665,7 +665,7 @@ Le robot n'a pas été utilisé depuis la séance 1 (28/10). La séance commence
 **Objectifs**
 
 - Expliquer la différence entre le tableau de bord de pilotage (site Flask) et le dashboard d'analyse de la production (Grafana)
-- Interroger la base SQLite depuis Grafana et construire des panneaux
+- Interroger la base SQLite de l'équipe depuis Grafana et construire des panneaux
 - Calculer des indicateurs de production et poser une alerte
 
 **Déroulé**
@@ -673,7 +673,7 @@ Le robot n'a pas été utilisé depuis la séance 1 (28/10). La séance commence
 | Durée | Activité |
 |-------|----------|
 | 30 min | **Cours** : indicateurs de production (cadence, durée de cycle, taux de rebut, disponibilité, indicateur de rendement simplifié), pilotage et analyse |
-| 20 min | **Mise en service** : connexion à l'instance Grafana du serveur, source de données SQLite, première requête SQL dans un panneau |
+| 20 min | **Mise en service** : connexion à l'instance Grafana du serveur, source de données SQLite de l'équipe, première requête SQL dans un panneau |
 | 1h30 | **TP panneaux** : cycles par heure, durée de cycle (série temporelle et moyenne), répartition par zone, pièces rejetées, dernier état ; plage de temps et variable d'équipe |
 | 40 min | **Indicateurs en SQL** : vue SQL du taux de rebut et du rendement simplifié (disponibilité × performance × qualité) à partir de `cycles` |
 | 30 min | **Alertes et lien avec le site** : alerte sur la durée de cycle ou l'absence de cycle ; lien du site Flask vers le dashboard |
@@ -691,7 +691,7 @@ Le robot n'a pas été utilisé depuis la séance 1 (28/10). La séance commence
 
 **Ressources reprises de l'an dernier**
 
-- `tp/sujet.md` : séance « Supervision avec Grafana » (à passer de MySQL à SQLite)
+- `tp/sujet.md` : séance « Supervision avec Grafana » (requêtes à passer de MySQL à SQLite)
 - `tp/fiche_configuration.md` : rubrique Grafana (l'an dernier, un conteneur Grafana par équipe sur le port 300X ; cette année, une instance unique)
 
 
@@ -746,7 +746,7 @@ Recommandation : conserver les deux propositions intégrées, proposer en défi 
 Le serveur est le **NUC du fab lab**, partagé avec la classe B3RNSPP26 (l'autre établissement, ISTP, utilise un Raspberry Pi). Il démarre sur un disque externe (SSD USB) préparé à l'avance par l'enseignant : le disque interne n'est ni utilisé ni modifié. Le NUC n'est **pas accessible depuis la salle de cours** : toutes les séances qui l'utilisent ont lieu au fab lab. Le contenu du disque, le matériel et les vérifications sont décrits dans `materiel_IRUP.md`. La configuration de base (Mosquitto avec authentification, comptes par équipe, Python et paquets du projet, SQLite) est la même que pour les autres classes. Les besoins propres à cette classe :
 
 - **Dates d'utilisation :** séances 3 à 7 (06/11/2026 au 28/01/2027), 8 et 9 (25/03 et 06/04/2027), 11 (29/04/2027), 12 (11/05/2027) et 13 (17/06/2027), toutes au fab lab. Les séances 1, 2 et 10 n'ont pas besoin du serveur.
-- **Grafana (séance 12) :** une instance unique pour toute la classe (port 3000, valeur par défaut), installée et configurée par l'enseignant. Grafana ne lit pas SQLite en natif : il faut le plugin communautaire SQLite (`frser-sqlite-datasource`), à installer avec un accès Internet pendant la préparation. Chaque équipe dispose d'un dossier de dashboards à elle. Grafana lit les bases en lecture seule ; SQLite doit être en mode WAL pour que Grafana puisse lire pendant que le collecteur écrit (le support `cours/collecteur_MQTT.md` ne le prévoit pas encore : à ajouter au script de création de la base).
+- **Grafana (séance 12) :** une instance unique pour toute la classe (port 3000, valeur par défaut), installée et configurée par l'enseignant. Grafana lit directement la base **SQLite** de chaque équipe (`~/supervision/cellule.db`, celle du collecteur et du site web) avec l'adaptateur communautaire `frser-sqlite-datasource`, installé avec un accès Internet pendant la préparation. La base est ouverte en lecture seule, Grafana attend la fin d'une écriture du collecteur : ni MySQL, ni double écriture, ni mode WAL, rien à changer dans le collecteur. SQLite n'ayant pas de type date, les requêtes convertissent l'heure du robot avec `unixepoch(debut, 'utc')`. Chaque équipe dispose d'un dossier de dashboards à elle. Installation détaillée dans `install/install_nuc.md`.
 - **Vision (séances 10 et 11) :** le traitement d'image s'exécute sur le poste de l'équipe (installation de `pyniryo` et `opencv-python` avec `pip`), pas sur le serveur : pas de charge supplémentaire côté serveur, seuls les résultats passent par le broker.
 - **Charge :** 6 équipes au plus sur le NUC (2 de cette classe, 4 de B3RNSPP26), jamais en même temps. Grafana s'ajoute aux autres services : à mesurer sur le NUC (mémoire disponible à vérifier).
 - **Réseau :** toutes les séances avec serveur se déroulent sur le réseau du fab lab (`192.168.10.0/24`, NUC en `.10`, robots en `.21` à `.24`, API sur chaque robot, port 3000, le port 5000 étant pris par le logiciel système de Niryo). SSH (22), MQTT (1883), HTTP (5001, 5002, 8001 et 8002) et Grafana (3000) doivent être joignables depuis les postes des étudiants.
@@ -759,7 +759,7 @@ Le serveur est le **NUC du fab lab**, partagé avec la classe B3RNSPP26 (l'autre
 2. **Effectif.** Effectif inférieur à 12 : 2 équipes (`t1e1` Vega, `t1e2` Altair), chacune sur son robot avec caméra. Pas de partage de robot : les séances 8 à 11 et 13 se déroulent avec les 2 équipes en parallèle.
 3. **Matériel de vision.** Plusieurs robots du fab lab ont une caméra : les identifier (2 au moins, un par équipe) et les affecter à `t1e1` et `t1e2` dès la séance 8. À vérifier avant de s'engager : un espace de travail (workspace) calibré dans Niryo Studio, des pièces de plusieurs couleurs et formes, un éclairage stable. Les noms des fonctions de vision de `pyniryo` cités dans les séances 10 et 11 sont à vérifier dans la version installée.
 4. **Où s'exécute le programme de vision ?** Proposition : sur le poste de l'équipe, avec `pyniryo` à distance (le robot est piloté depuis le poste). L'API de commande, elle, tourne sur le robot avec le programme embarqué du socle (Python ROS Wrapper) : un programme de vision qui pilote aussi le bras par `pyniryo` ne doit pas tourner en même temps qu'un cycle lancé par l'API ; relier la commande « démarrer » au cycle avec vision est à trancher (soit la vision reste un programme séparé lancé par l'équipe, soit l'API le démarre).
-5. **Grafana et la pile allégée.** Grafana n'est pas dans la pile du socle (`README.md`, section 4). Le choix reste une extension, utilisée aussi en B3RNSPP26 (séance 11). Le plugin SQLite de Grafana est communautaire : à tester sur le NUC (voir la section 7). Une alternative sans plugin serait une source de données HTTP vers les routes de lecture de l'API.
+5. **Grafana et la pile allégée.** Grafana n'est pas dans la pile du socle (`README.md`, section 4). Le choix reste une extension, utilisée aussi en B3RNSPP26 (séance 11). Retenu : Grafana lit directement les bases SQLite des équipes avec l'adaptateur communautaire `frser-sqlite-datasource` (voir la section 7), essayé avec Grafana 13.2 ; une seule base par équipe, comme dans le socle. Revers : l'adaptateur n'est pas maintenu par Grafana Labs (vérifier sa compatibilité avant une mise à jour de Grafana) et les requêtes du TP de l'an dernier, écrites pour MySQL, sont à adapter.
 6. **Longs intervalles entre séances.** 7 semaines entre les séances 5 et 6, 8 semaines entre les séances 7 et 8, 5 semaines entre les séances 12 et 13. Le robot n'est pas utilisé entre la séance 1 (28/10) et la séance 8 (25/03). Proposition : dossier v2 à la séance 7, code testé en mode simulé avant la séance 8, vérification de chaque cellule avant la séance 13.
 7. **Choix des propositions complémentaires.** Aucune séance n'est libre dans le plan. Pour en retenir une (sécurité, OPC UA), il faut alléger le socle : les séances 6 et 7 (site web et API) peuvent être réduites d'une demi-séance chacune si le groupe est à l'aise avec Python.
 8. **Prérequis Python.** Le niveau en Python du groupe n'est pas connu. S'il est faible, la séance 5 (Python pour le projet) est à renforcer, au détriment des extensions.

@@ -31,7 +31,7 @@ Ces scripts reprennent, en les adaptant aux conventions du projet, les essais r�
 
 ## Mode d'emploi
 
-Les bibliothèques Flask et paho-mqtt doivent être installées sur le robot (dossier `install/`, voir son `README.md`).
+Les bibliothèques Flask et paho-mqtt doivent être installées sur le robot (dossier `install_robot/`, voir son `README.md`).
 
 1. Adapter `config.py` : identifiant de l'équipe, adresse du broker, identifiant et mot de passe MQTT, poses relevées sur votre robot.
 2. Copier le dossier sur le robot (remplacer `.21` par l'adresse de votre robot) :
@@ -54,7 +54,7 @@ Les scripts 1 à 3 font bouger le bras ou le convoyeur : appliquer les consignes
 
 ## Essais réalisés
 
-Les scripts ont été essayés sous Python 3.8, avec les bibliothèques de `install/`, un broker Mosquitto et un **faux** robot (modules `rospy` et Python ROS Wrapper simulés). Ils restent à valider sur un vrai robot, en particulier :
+Les scripts ont été essayés sous Python 3.8, avec les bibliothèques de `install_robot/`, un broker Mosquitto et un **faux** robot (modules `rospy` et Python ROS Wrapper simulés). Ils restent à valider sur un vrai robot, en particulier :
 
 - les noms des champs de l'état matériel (`get_hardware_status`) et le topic du convoyeur (`/niryo_robot/conveyor/feedback`) lus par le script 8, pris dans la documentation ROS de Niryo ;
 - le sens du convoyeur (`BACKWARD` dans l'export de l'an dernier) et la polarité du capteur DI5.
