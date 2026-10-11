@@ -127,7 +127,7 @@ Le robot n'est disponible qu'aux séances 1, 4 et 5 : **préparez tout le reste 
 
 - Cours en **libre service** : MQTT, SQL, Python et HTTP, HTML / CSS, Flask, API CQRS, réseau TCP/IP
 - Un **compte par équipe** sur le serveur (séance 3), le **broker** et le serveur Raspberry Pi
-- Les robots, convoyeurs et pièces (séances 1, 4 et 5)
+- Les robots, convoyeurs et pièces (séances 1, 4 et 5), avec Flask et paho-mqtt **déjà installés** sur chaque robot
 
 ---
 
@@ -235,9 +235,9 @@ Le robot n'est disponible qu'aux séances 1, 4 et 5 : **préparez tout le reste 
 
 | Durée | Tâche à réaliser |
 |-------|------------------|
-| 15 min | Vérifier le réseau : IP du robot et du serveur, accès du robot au broker, accès du serveur à l'API |
+| 15 min | Vérifier le réseau : IP du robot et du serveur, accès du robot au broker, accès du serveur à l'API (port 3000) |
 | 30 min | **Reprise en main** : sécurité, calibration, relecture des poses |
-| 1h30 | **Déployer** le programme process, la publication MQTT et l'API sur le robot (de l'API simulée aux appels réels) |
+| 1h30 | **Déployer** sur le robot le programme process, la publication MQTT et l'API (`RobotNiryo`) : copie par `scp`, lancement par `~/cellule/lancer.sh` |
 | 45 min | **Essai de bout en bout** (robot → serveur → site web → robot) et recette à blanc |
 | 30 min | **Bilan** : corrections avant l'évaluation, mise à jour du cahier de recette |
 

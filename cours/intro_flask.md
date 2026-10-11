@@ -9,7 +9,7 @@ flowchart LR
     OP["Navigateur<br/>poste opérateur"] -- "HTTP" --> WEB["Site web Flask<br/>(ce cours)"]
     WEB -- "SELECT" --> DB[("Base SQLite<br/>remplie par le collecteur MQTT")]
     WEB -- "HTTP : start / stop / calibration" --> API["API Flask du robot<br/>(cours API CQRS)"]
-    API -- "pyniryo" --> ROBOT["Robot Ned2<br/>+ convoyeur"]
+    API -- "Python ROS Wrapper" --> ROBOT["Robot Ned2<br/>+ convoyeur"]
 ```
 
 ## Objectifs et prérequis
@@ -623,7 +623,7 @@ La vue relaie la commande avec la bibliothèque `requests` (`pip install request
 ```python
 import requests
 
-URL_API = "http://127.0.0.1:5001"          # mode simulé ; sur le robot : http://<IP du robot>:5000
+URL_API = "http://127.0.0.1:5001"          # mode simulé ; sur le robot : http://<IP du robot>:3000
 COMMANDES = {"demarrer", "arreter", "calibrer"}
 
 @app.post("/commande/<nom>")

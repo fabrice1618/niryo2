@@ -10,7 +10,7 @@ CQRS sépare les ordres donnés au robot (commandes) de la lecture de son état 
 
 **Pourquoi une API pour le robot ?**
 
-Un robot Niryo (Ned ou Ned2) se pilote en Python avec la bibliothèque `pyniryo`. Une API web permet de le commander depuis n'importe quel appareil du réseau : une page web, une tablette, un autre programme. L'API devient l'unique porte d'entrée vers le robot.
+Un robot Niryo Ned2 se pilote en Python avec le **Python ROS Wrapper** de Niryo, la bibliothèque qu'utilise aussi l'export Python de Niryo Studio : le programme s'exécute sur le robot lui-même. Une API web permet de le commander depuis n'importe quel appareil du réseau : une page web, une tablette, un autre programme. L'API devient l'unique porte d'entrée vers le robot.
 
 **Pourquoi un robot se prête bien à CQRS ?**
 
@@ -25,7 +25,7 @@ CQRS donne à chacune de ces interactions son propre chemin dans l'API.
 
 - Notions de Python et d'HTTP (routes, méthodes `GET` et `POST`, codes d'état) : voir le cours *Le framework Flask : premiers pas*
 - Flask installé : `pip install flask`
-- Pour le vrai robot : `pip install pyniryo`. Le code du cours inclut un robot simulé, vous pouvez donc tout tester sans robot.
+- Pour le vrai robot : rien à installer sur votre poste. L'API s'exécute sur le robot, où le Python ROS Wrapper est déjà présent et où Flask et paho-mqtt sont installés à l'avance par l'enseignant. Le code du cours inclut un robot simulé, vous pouvez donc tout tester sans robot.
 
 ## REST en bref
 
@@ -153,7 +153,7 @@ flowchart LR
     C -- "POST : agir" --> RC
     C -- "GET : observer" --> RQ
     RC -. "202 Accepted ou 400 / 409" .-> C
-    G -- "pyniryo" --> R["Robot Ned2<br/>+ convoyeur"]
+    G -- "Python ROS Wrapper" --> R["Robot Ned2<br/>+ convoyeur"]
 ```
 
 Un `POST` déclenche une commande : l'API la valide, répond `202` tout de suite, puis le gestionnaire l'exécute en tâche de fond sur le robot. Un `GET` lit le modèle de lecture, que le gestionnaire met à jour à la fin de chaque mouvement : aucune requête ne parle directement au robot, donc lire l'état ne gêne jamais un mouvement en cours.
@@ -164,7 +164,7 @@ Tout tient dans un fichier `app.py` d'environ 230 lignes ; les cinq blocs ci-des
 
 **Bloc 1 : l'adaptateur robot**
 
-L'API ne parle jamais directement à `pyniryo` : elle passe par un adaptateur. Le robot simulé permet de tester sans matériel ; pour le vrai robot, il suffit de changer une ligne.
+L'API ne parle jamais directement au Python ROS Wrapper : elle passe par un adaptateur. Le robot simulé permet de tester sans matériel, sur n'importe quel poste ; pour le vrai robot, il suffit de changer une ligne. L'adaptateur `RobotNiryo` n'importe le Python ROS Wrapper qu'à sa création : le fichier s'exécute donc aussi sur un poste où ROS n'est pas installé.
 
 ```python
 # app.py
@@ -214,48 +214,50 @@ class RobotSimule:
 
 
 class RobotNiryo:
-    """Adaptateur vers un vrai robot Niryo, via pyniryo."""
+    """Adaptateur vers le vrai robot Niryo, via le Python ROS Wrapper (l'API tourne sur le robot)."""
     # Poses relevées lors de la prise en main du robot (x, y, z, roll, pitch, yaw) : à reprendre du programme exporté
     POSE_ATTENTE = [0.14, 0.0, 0.20, 0.0, 1.57, 0.0]
     POSE_PRISE = [0.25, -0.20, 0.08, 0.0, 1.57, 0.0]
     POSE_DEPOSE = [0.20, 0.20, 0.10, 0.0, 1.57, 0.0]
 
-    def __init__(self, ip):
-        from pyniryo import NiryoRobot
-        self._robot = NiryoRobot(ip)
-        self._robot.calibrate_auto()
-        self._robot.update_tool()      # détecte l'outil monté (pince)
-        self._convoyeur = self._robot.set_conveyor()
+    def __init__(self, nom_noeud="cellule_api"):
+        import rospy
+        from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper
+        rospy.init_node(nom_noeud)     # nom propre à l'API, différent de celui des programmes de Niryo Studio
+        self._n = NiryoRosWrapper()
+        self._n.calibrate_auto()
+        self._n.update_tool()          # détecte l'outil monté (pince)
+        self._convoyeur = self._n.set_conveyor()
         self._pince = "inconnue"
 
     def get_joints(self):
-        return list(self._robot.get_joints())
+        return list(self._n.get_joints())
 
     def move_joints(self, joints):
-        self._robot.move_joints(joints)
+        self._n.move_joints(*joints)
 
     def open_gripper(self):
-        self._robot.open_gripper()
+        self._n.open_gripper()
         self._pince = "ouverte"
 
     def close_gripper(self):
-        self._robot.close_gripper()
+        self._n.close_gripper()
         self._pince = "fermee"
 
     def etat_pince(self):
         return self._pince
 
     def calibrer(self):
-        self._robot.calibrate_auto()
+        self._n.calibrate_auto()
 
     def piece_detectee(self):
-        from pyniryo import PinID, PinState
+        # digital_read vaut vrai si DI5 est à HIGH (pas de pièce) :
         # vérifiez la polarité du capteur avec le programme exporté de Niryo Studio
-        return self._robot.digital_read(PinID.DI5) == PinState.LOW
+        return not self._n.digital_read("DI5")
 
     def cycle_pick_and_place(self, delai_max=30):
-        from pyniryo import ConveyorDirection
-        self._robot.run_conveyor(self._convoyeur, speed=50, direction=ConveyorDirection.FORWARD)
+        from niryo_robot_python_ros_wrapper.ros_wrapper import ConveyorDirection
+        self._n.control_conveyor(self._convoyeur, True, 50, ConveyorDirection.FORWARD)
         debut = time.monotonic()
         try:
             while not self.piece_detectee():
@@ -263,14 +265,15 @@ class RobotNiryo:
                     raise RuntimeError("pièce non détectée")
                 time.sleep(0.1)
         finally:
-            self._robot.stop_conveyor(self._convoyeur)   # arrêt du convoyeur dans tous les cas
-        self._robot.pick_from_pose(self.POSE_PRISE)
-        self._robot.place_from_pose(self.POSE_DEPOSE)
-        self._robot.move_pose(self.POSE_ATTENTE)
+            # arrêt du convoyeur dans tous les cas
+            self._n.control_conveyor(self._convoyeur, False, 0, ConveyorDirection.FORWARD)
+        self._n.pick_from_pose(*self.POSE_PRISE)
+        self._n.place_from_pose(*self.POSE_DEPOSE)
+        self._n.move_pose(*self.POSE_ATTENTE)
         self._pince = "ouverte"
 
 
-robot = RobotSimule()                  # RobotNiryo("127.0.0.1") si l'API tourne sur le robot
+robot = RobotSimule()                  # RobotNiryo() quand l'API tourne sur le robot
 ```
 
 **Bloc 2 : le côté écriture (commandes)**
@@ -412,8 +415,10 @@ def commande_calibrer():
     return reponse_commande(soumettre("Calibrer", robot.calibrer))
 
 
+PORT = 5001                            # sur le serveur : le port de l'équipe (5001 à 5008) ; sur le robot : 3000
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=PORT)
 ```
 
 L'arrêt demandé par l'API est un arrêt **de production**, en fin de cycle : il ne remplace jamais l'arrêt d'urgence physique du robot.
@@ -421,10 +426,13 @@ L'arrêt demandé par l'API est un arrêt **de production**, en fin de cycle : i
 **Lancer**
 
 ```bash
-flask --app app run
+python3 app.py                         # sur le serveur ou sur votre poste, avec RobotSimule
+~/cellule/lancer.sh app.py             # sur le robot, avec RobotNiryo
 ```
 
-Si vous utilisez le vrai robot, n'activez pas `--debug` : le rechargeur de Flask lance le programme deux fois et ouvrirait deux connexions au robot.
+Sur le robot, Flask et paho-mqtt sont installés hors ligne dans `~/cellule/libs` ; le lanceur `~/cellule/lancer.sh` les rend visibles et charge l'environnement ROS. Le port 5000 du robot est déjà pris par le logiciel système de Niryo (Niryo Studio passe par lui) : l'API y écoute sur le port 3000.
+
+Avec le vrai robot, lancez l'API avec `python3`, pas avec `flask --app app run --debug` : le rechargeur de Flask lance le programme deux fois, et `rospy.init_node` doit être appelé par le programme principal.
 
 ## Tester l'API et points d'attention
 
@@ -434,27 +442,27 @@ Un test complet se déroule en quatre temps : lire l'état, envoyer une commande
 
 ```bash
 # 1. Requête : état initial
-curl http://127.0.0.1:5000/requetes/etat
+curl http://127.0.0.1:5001/requetes/etat
 # {"derniere_commande":null,"joints":[0,0,0,0,0,0],"pince":"fermee","statut":"au_repos"}
 
 # 2. Commande : déplacer les axes (réponse immédiate, code 202)
-curl -X POST http://127.0.0.1:5000/commandes/deplacer-axes \
+curl -X POST http://127.0.0.1:5001/commandes/deplacer-axes \
      -H "Content-Type: application/json" \
      -d '{"joints": [0.5, 0.2, 0, 0, 0, 0]}'
 # {"id":"a1b2c3d4","suivi":"/requetes/commandes/a1b2c3d4"}
 
 # 3. Pendant le mouvement : le statut change, une 2e commande est refusée (409)
-curl http://127.0.0.1:5000/requetes/etat
-curl -X POST http://127.0.0.1:5000/commandes/ouvrir-pince
+curl http://127.0.0.1:5001/requetes/etat
+curl -X POST http://127.0.0.1:5001/commandes/ouvrir-pince
 
 # 4. Une fois le mouvement fini : suivre la commande
-curl http://127.0.0.1:5000/requetes/commandes/a1b2c3d4
+curl http://127.0.0.1:5001/requetes/commandes/a1b2c3d4
 # {"erreur":null,"statut":"terminee","type":"DeplacerAxes"}
 
 # 5. Process : démarrer 3 pièces, puis demander l'arrêt
-curl -X POST http://127.0.0.1:5000/commandes/demarrer \
+curl -X POST http://127.0.0.1:5001/commandes/demarrer \
      -H "Content-Type: application/json" -d '{"pieces": 3}'
-curl -X POST http://127.0.0.1:5000/commandes/arreter
+curl -X POST http://127.0.0.1:5001/commandes/arreter
 ```
 
 **Codes d'état utilisés**
@@ -472,6 +480,7 @@ curl -X POST http://127.0.0.1:5000/commandes/arreter
 - **Une commande à la fois.** Le verrou et le statut `en_mouvement` évitent d'envoyer deux ordres contradictoires. Une file d'attente est une amélioration possible.
 - **Rien n'est conservé au redémarrage.** `journal` et `modele_lecture` vivent en mémoire ; au redémarrage, le modèle de lecture est relu depuis le robot.
 - **Un seul processus.** Gardez un seul worker (pas de serveur multi-processus) : l'état partagé et la connexion au robot ne se partagent pas entre processus.
+- **Un seul programme commande le robot.** Ne lancez pas de programme depuis Niryo Studio pendant que l'API tourne : les deux enverraient des ordres au bras en même temps.
 - **Sécurité réseau.** Cette API n'a aucune authentification : n'exposez-la que sur un réseau de confiance, et ajoutez au minimum une clé d'API avant tout usage sérieux, car n'importe qui pourrait bouger le bras.
 - **Arrêt d'urgence.** Prévoyez toujours l'arrêt physique du robot, indépendant de l'API.
 
@@ -482,7 +491,7 @@ L'API suit le projet en deux temps, sans changer de code : seul l'adaptateur et 
 | Étape | Où tourne l'API | Adaptateur | Adresse appelée par le site web |
 | --- | --- | --- | --- |
 | Développement, sans robot | Serveur du module | `RobotSimule()` | `http://127.0.0.1:5001` (un port par équipe, 5001 à 5008) |
-| Intégration et recette (fab lab) | Robot Ned2 | `RobotNiryo("127.0.0.1")` | `http://192.168.10.21:5000` (adresse du robot de l'équipe) |
+| Intégration et recette (fab lab) | Robot Ned2 | `RobotNiryo()` | `http://192.168.10.21:3000` (adresse du robot de l'équipe) |
 
 ```mermaid
 sequenceDiagram

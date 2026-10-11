@@ -406,10 +406,10 @@ Blockly est pratique pour apprendre, mais il ne sait pas envoyer de messages MQT
 | | Python ROS Wrapper | `pyniryo` |
 |---|---|---|
 | D'où vient le code | **Export de Niryo Studio** (bouton Export, fichier `.py`) | Écrit à la main |
-| Où il s'exécute | **Sur le robot** (le petit ordinateur de sa base) | Sur n'importe quel poste du réseau, ou sur le robot |
+| Où il s'exécute | **Sur le robot** (le petit ordinateur de sa base) | Sur n'importe quel poste du réseau |
 | Comment il parle au robot | Directement, par ROS | Par le réseau, en TCP (port 40001) |
 | Début du programme | `n = NiryoRosWrapper()` | `robot = NiryoRobot("192.168.10.21")` |
-| Dans le projet | Le programme process de cette séance | L'API de commande (cours *Une API CQRS pour le robot Niryo*) |
+| Dans le projet | **Le programme process et l'API de commande** (cours *Une API CQRS pour le robot Niryo*), qui tournent sur le robot | Pas utilisé dans le projet de base ; utile pour piloter le robot depuis un poste (par exemple pour la vision) |
 
 ```mermaid
 flowchart LR
@@ -424,7 +424,7 @@ flowchart LR
     PYN -- "ordres par le réseau" --> SRV
 ```
 
-Les noms des fonctions sont presque les mêmes dans les deux bibliothèques : ce qui est appris ici sert directement pour l'API.
+Le projet utilise le Python ROS Wrapper du début à la fin : le programme exporté aujourd'hui est la base du programme process et de l'API de commande, qui tourneront sur le robot. Ce qui est appris ici sert directement pour l'API.
 
 ### 4.2 Faire : lire le code exporté
 
@@ -476,24 +476,23 @@ Les valeurs des poses sont des exemples : chaque équipe reprend celles de son p
 
 ### 4.3 Les fonctions à connaître
 
-| Action | Bloc Blockly | Export Niryo Studio (`n`) | `pyniryo` (`robot`) |
-|--------|--------------|---------------------------|---------------------|
-| Calibrer | Calibrate auto | `n.calibrate_auto()` | `robot.calibrate_auto()` |
-| Forcer une nouvelle calibration | (bloc de calibration) | `n.request_new_calibration()` | `robot.request_new_calibration()` |
-| Détecter l'outil | Scan & update tool | `n.update_tool()` | `robot.update_tool()` |
-| Aller à une position articulaire | Move joints | `n.move_joints(j1, ..., j6)` | `robot.move_joints([j1, ..., j6])` |
-| Aller à une pose | Move pose | `n.move_pose(x, y, z, roll, pitch, yaw)` | `robot.move_pose([x, y, z, roll, pitch, yaw])` |
-| Prendre une pièce | Pick from pose | `n.pick_from_pose(*pose)` | `robot.pick_from_pose(pose)` |
-| Déposer une pièce | Place from pose | `n.place_from_pose(*pose)` | `robot.place_from_pose(pose)` |
-| Fermer / ouvrir la pince | Grasp / Release with tool | `n.grasp_with_tool()` / `n.release_with_tool()` | `robot.grasp_with_tool()` / `robot.release_with_tool()` |
-| Activer le convoyeur | Set conveyor | `n.set_conveyor()` | `convoyeur = robot.set_conveyor()` |
-| Faire tourner le convoyeur | Control conveyor | `n.control_conveyor(ConveyorID.ID_1, True, 50, ConveyorDirection.FORWARD)` | `robot.run_conveyor(convoyeur, speed=50, direction=ConveyorDirection.FORWARD)` |
-| Arrêter le convoyeur | Control conveyor (arrêt) | `n.control_conveyor(ConveyorID.ID_1, False, 0, ConveyorDirection.FORWARD)` | `robot.stop_conveyor(convoyeur)` |
-| Lire le capteur | Digital read | `n.digital_read('DI5')` : vrai si HIGH | `robot.digital_read(PinID.DI5)` : `PinState.HIGH` ou `PinState.LOW` |
-| Attendre | Wait | `n.wait(1)` | `robot.wait(1)` |
-| Signal lumineux | LED ring flashing | `n.led_ring.flashing([0, 255, 0, 0], period=0.5, iterations=3, wait=False)` | `robot.led_ring_flashing([0, 255, 0], period=0.5, iterations=3, wait=False)` |
-| Signal sonore | Play sound | `n.sound.play('ready.wav', wait_end=True)` | `robot.play_sound('ready.wav', wait_end=True)` |
-| Fermer la connexion | (aucun) | (aucun : le code tourne sur le robot) | `robot.close_connection()` |
+| Action | Bloc Blockly | Export Niryo Studio (`n`) |
+|--------|--------------|---------------------------|
+| Calibrer | Calibrate auto | `n.calibrate_auto()` |
+| Forcer une nouvelle calibration | (bloc de calibration) | `n.request_new_calibration()` |
+| Détecter l'outil | Scan & update tool | `n.update_tool()` |
+| Aller à une position articulaire | Move joints | `n.move_joints(j1, ..., j6)` |
+| Aller à une pose | Move pose | `n.move_pose(x, y, z, roll, pitch, yaw)` |
+| Prendre une pièce | Pick from pose | `n.pick_from_pose(*pose)` |
+| Déposer une pièce | Place from pose | `n.place_from_pose(*pose)` |
+| Fermer / ouvrir la pince | Grasp / Release with tool | `n.grasp_with_tool()` / `n.release_with_tool()` |
+| Activer le convoyeur | Set conveyor | `n.set_conveyor()` |
+| Faire tourner le convoyeur | Control conveyor | `n.control_conveyor(ConveyorID.ID_1, True, 50, ConveyorDirection.FORWARD)` |
+| Arrêter le convoyeur | Control conveyor (arrêt) | `n.control_conveyor(ConveyorID.ID_1, False, 0, ConveyorDirection.FORWARD)` |
+| Lire le capteur | Digital read | `n.digital_read('DI5')` : vrai si HIGH |
+| Attendre | Wait | `n.wait(1)` |
+| Signal lumineux | LED ring flashing | `n.led_ring.flashing([0, 255, 0, 0], period=0.5, iterations=3, wait=False)` |
+| Signal sonore | Play sound | `n.sound.play('ready.wav', wait_end=True)` |
 
 ### 4.4 Faire : préparer le programme pour la suite du projet
 
@@ -536,6 +535,8 @@ for piece in range(1, 4):
 
 **Pourquoi découper ?** Ajouter la publication d'un message, changer de zone de dépose ou ajouter un délai maximal dans `attendre_piece` ne touchera alors qu'**une seule fonction**, sans risquer de casser le reste du cycle.
 
+**Un nom de nœud propre à l'équipe.** Le programme sera ensuite lancé sur le robot sans Niryo Studio. Remplacer dès maintenant `rospy.init_node('niryo_blockly_interpreted_code')` par un nom propre à l'équipe, par exemple `rospy.init_node('cellule_g1e1')` : Niryo Studio utilise ce nom pour ses propres programmes, et deux nœuds ROS du même nom ne peuvent pas tourner ensemble.
+
 ### Vérifier
 
 - [ ] Programme exporté en `.py` depuis Niryo Studio
@@ -545,7 +546,7 @@ for piece in range(1, 4):
 
 ### À retenir
 
-- L'export de Niryo Studio s'exécute **sur le robot** (Python ROS Wrapper) ; `pyniryo` pilote le robot **depuis une autre machine**, par le réseau.
+- L'export de Niryo Studio utilise le **Python ROS Wrapper** et s'exécute **sur le robot** : le programme process et l'API de commande du projet seront écrits de la même façon, et tourneront sur le robot.
 - Un programme lisible se découpe en **fonctions nommées** : c'est ce qui permettra d'y brancher MQTT.
 
 
@@ -662,7 +663,7 @@ Ces valeurs seront reprises telles quelles lors de l'intégration, dans le progr
 | relever une pose en FreeMotion | | |
 | expliquer comment le programme attend la pièce sur DI5 | | |
 | retrouver dans le code exporté les lignes d'un bloc Blockly | | |
-| dire où s'exécute le code exporté, et où s'exécute un code `pyniryo` | | |
+| dire où s'exécute le code exporté, et avec quelle bibliothèque il commande le robot | | |
 
 
 ## 7. Vocabulaire

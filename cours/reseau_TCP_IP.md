@@ -370,8 +370,9 @@ Un port est un nombre de 16 bits (0 à 65 535). L'association adresse IP et port
 | 502 | Modbus TCP (automates, robot Ned2) | TCP |
 | 1883 | MQTT | TCP |
 | 8883 | MQTT sur TLS | TCP |
-| 5000 | Serveur de développement Flask (par défaut) | TCP |
-| 40001 | Serveur TCP du robot Niryo, utilisé par `pyniryo` | TCP |
+| 3000 | API de commande du projet, sur le robot Ned2 | TCP |
+| 5000 | Serveur de développement Flask (par défaut) ; sur le Ned2, logiciel système de Niryo (utilisé par Niryo Studio) | TCP |
+| 40001 | Serveur TCP du robot Niryo, utilisé par `pyniryo` pour piloter le robot depuis un autre poste | TCP |
 
 Une connexion est identifiée par quatre valeurs : IP source, port source, IP destination, port destination. Un navigateur ouvre ainsi plusieurs connexions vers le même serveur (port 443) avec des ports sources différents.
 
@@ -637,7 +638,7 @@ Le projet fil rouge fait communiquer plusieurs types de machines : les robots Ne
 ```mermaid
 flowchart LR
     subgraph LAN["Réseau du fab lab 192.168.10.0/24"]
-        R1["Robot Ned2 g1e1<br/>192.168.10.21<br/>API Flask :5000"]
+        R1["Robot Ned2 g1e1<br/>192.168.10.21<br/>API Flask :3000"]
         R2["Robots g1e2 à g1e4<br/>.22 à .24"]
         SRV["Serveur du module<br/>192.168.10.10 (statique)<br/>SSH :22 · MQTT :1883 · sites :8001-8008"]
         PC["Postes étudiants<br/>.100 à .199 (DHCP)"]
@@ -645,7 +646,7 @@ flowchart LR
     end
     R1 -- "MQTT, TCP 1883" --> SRV
     R2 -- "MQTT, TCP 1883" --> SRV
-    SRV -- "HTTP, TCP 5000" --> R1
+    SRV -- "HTTP, TCP 3000" --> R1
     PC -- "HTTP 8001-8008, SSH 22" --> SRV
     PC -. "Niryo Studio" .-> R1
     GW --- SRV
@@ -666,10 +667,10 @@ En mode hotspot, le robot et le poste sont seuls dans le réseau `10.10.10.0/24`
 | Flux | Client → serveur | Protocole, port | Remarque |
 | --- | --- | --- | --- |
 | Publication des événements | Robot → serveur | TCP 1883 (MQTT) | Le robot est client du broker |
-| Commandes start / stop / calibration | Serveur (site web) → robot | TCP 5000 (API Flask) | Le robot est serveur HTTP |
+| Commandes start / stop / calibration | Serveur (site web) → robot | TCP 3000 (API Flask) | Le robot est serveur HTTP |
 | Consultation du tableau de bord | Poste → serveur | TCP 8001 à 8008 (un port par équipe) | |
 | Administration, dépôt du code | Poste → serveur | TCP 22 (SSH) | |
-| Pilotage du robot par `pyniryo` | Programme → robot | TCP 40001 | En local sur le robot quand l'API tourne sur le robot |
+| Copie et lancement des programmes du robot | Poste → robot | TCP 22 (SSH, `scp`) | Le programme process et l'API tournent sur le robot ; ils commandent le bras par ROS, sans passer par le réseau |
 
 Les notions de client et de serveur dépendent du flux, pas de la machine : le robot est client pour MQTT et serveur pour l'API.
 
@@ -682,7 +683,7 @@ ping 192.168.10.10                       # 1. le robot joint-il le serveur ? (co
 nc -zv 192.168.10.10 1883                # 2. le port MQTT est-il ouvert ? (couche 4)
 ss -tlnp | grep -E ':1883|:500|:800'     # 3. sur le serveur : qui écoute, et sur quelle adresse ?
 mosquitto_sub -h 192.168.10.10 -u g1e1 -P mot-de-passe-equipe -t 'cellule/g1e1/#' -v   # 4. application
-curl http://192.168.10.21:5000/requetes/etat                                           # 5. API du robot
+curl http://192.168.10.21:3000/requetes/etat                                           # 5. API du robot
 ```
 
 | Symptôme | Cause probable |
@@ -827,6 +828,6 @@ Il faut alors un routeur entre les deux sous-réseaux, et le serveur doit être 
 | DHCP | DORA ; UDP 67 (serveur) et 68 (client) ; bail renouvelé à 50 % |
 | Config. statique | IP, masque, passerelle, DNS |
 | Diagnostic | ping local, passerelle, IP distante, nom |
-| Ports du projet | SSH 22, MQTT 1883, Flask 5000 (API robot) et 8001-8008 (sites), pyniryo 40001 |
+| Ports du projet | SSH 22, MQTT 1883, Flask 3000 (API robot), 5001-5008 (API simulées) et 8001-8008 (sites) ; 5000 pris sur le robot par Niryo |
 | Ned2 | Hotspot 10.10.10.10, Ethernet direct 169.254.200.200 |
 | Serveur joignable | Écouter sur `0.0.0.0`, pas sur `127.0.0.1` |

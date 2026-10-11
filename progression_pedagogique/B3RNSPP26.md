@@ -2,7 +2,7 @@
 
 - **Promotion :** B3 RNSPP 2026-0 (groupe ProN), effectif à renseigner
 - **Année :** 2026-2027
-- **Version :** v1.1 (brouillon), 08/10/2026
+- **Version :** v1.2 (brouillon), 11/10/2026
 - **Prérequis :** Python (cours de programmation informatique), à confirmer (voir la section 7)
 - **Sources :** `seances_B3RNSPP26.xlsx` (planning : dates et horaires) et supports 2025-2026 (dossier de l'année précédente)
 - **Présentation du projet :** `README.md` à la racine (contexte, besoins, objectifs, fonctions, synoptique, données échangées), commun aux trois classes
@@ -515,9 +515,9 @@ Le robot n'a pas été utilisé depuis la séance 1 (15/10). La séance commence
 
 | Durée | Activité |
 |-------|----------|
-| 15 min | **Vérifications réseau** (préparées par l'enseignant avant la séance) : IP du robot et du serveur, accès du robot au broker |
+| 15 min | **Vérifications réseau** (préparées par l'enseignant avant la séance) : IP du robot et du serveur, accès du robot au broker, bibliothèques installées sur le robot (`install/`, vérifiées avec `test.py --broker`) |
 | 30 min | **Reprise en main** : consignes de sécurité, calibration, relecture de l'export Python de la séance 1 et des poses |
-| 1h30 | **Déploiement** : programme process et publication MQTT sur le robot (début et fin de cycle, défaut), essais avec le broker du serveur |
+| 1h30 | **Déploiement** : programme process et publication MQTT sur le robot (début et fin de cycle, défaut), copié par `scp` et lancé par `~/cellule/lancer.sh`, essais avec le broker du serveur |
 | 1h | **Essai de bout en bout** : le robot publie, le collecteur enregistre, le site affiche les cycles réels. Premiers écarts avec le simulateur (durées, défauts) |
 | 15 min | **Bilan** : corrections à faire, mise à jour du dossier |
 
@@ -531,7 +531,7 @@ Le robot n'a pas été utilisé depuis la séance 1 (15/10). La séance commence
 
 **Ressources reprises de l'an dernier**
 
-- `flask_arm/` : paquets Python pour l'installation hors ligne sur le robot
+- `flask_arm/` et `documentation/install_package_python.md` : remplacés par le dossier `install/` de ce dépôt (paquets compatibles avec le Python du robot, `install.sh`, `test.py`)
 
 **Travail entre les séances 9 et 10 (10 semaines)**
 
@@ -558,7 +558,7 @@ Le robot n'a pas été utilisé depuis la séance 1 (15/10). La séance commence
 
 | Durée | Activité |
 |-------|----------|
-| 15 min | **Vérifications réseau** (préparées par l'enseignant) : accès du serveur à l'API du robot (port 5000) |
+| 15 min | **Vérifications réseau** (préparées par l'enseignant) : accès du serveur à l'API du robot (port 3000) |
 | 30 min | **Reprise** : calibration, vérification que le programme process publie toujours (non-régression de la séance 9) |
 | 1h30 | **Déploiement de l'API** sur le robot : passage de `RobotSimule` aux appels réels, site web pointé vers l'adresse du robot |
 | 1h | **Essai de bout en bout** : démarrer, arrêter, calibrer depuis le site ; cycles remontés et affichés ; reprise des poses si besoin |
@@ -642,7 +642,7 @@ Pendant qu'une équipe passe, les autres finalisent leur cellule sur leur robot.
 Le serveur est le **NUC du fab lab**, partagé avec la classe BACHTECH24 (l'autre établissement, ISTP, utilise un Raspberry Pi). Il démarre sur un disque externe (SSD USB) préparé à l'avance par l'enseignant : le disque interne n'est ni utilisé ni modifié. Le NUC n'est **pas accessible depuis la salle de cours** : toutes les séances qui l'utilisent ont lieu au fab lab. Le contenu du disque, le matériel et les vérifications sont décrits dans `materiel_IRUP.md`. La configuration (Mosquitto avec authentification, comptes par équipe, Python et paquets du projet, SQLite, Grafana) est la même que pour BACHTECH24. Les besoins propres à cette classe :
 
 - **Dates d'utilisation :** séances 3 (10/11/2026), 6 à 8 (17 et 18/02/2027), 9 (24/02/2027), 10 à 12 (04 et 05/05/2027). Les séances 4 et 5 (cours en salle) n'utilisent pas le serveur. Longues périodes sans utilisation : le travail des équipes doit rester sur le disque.
-- **Réseau :** toutes les séances avec serveur se déroulent sur le réseau du fab lab (`192.168.10.0/24`, NUC en `.10`, robots en `.21` à `.24`, API sur chaque robot, port 5000). SSH (22), MQTT (1883), HTTP (5003 à 5006 et 8003 à 8006) et Grafana (3000) doivent être joignables depuis les postes des étudiants.
+- **Réseau :** toutes les séances avec serveur se déroulent sur le réseau du fab lab (`192.168.10.0/24`, NUC en `.10`, robots en `.21` à `.24`, API sur chaque robot, port 3000, le port 5000 étant pris par le logiciel système de Niryo). SSH (22), MQTT (1883), HTTP (5003 à 5006 et 8003 à 8006) et Grafana (3000) doivent être joignables depuis les postes des étudiants.
 - **Identifiants et ports :** le NUC est partagé avec BACHTECH24. Les équipes de cette classe sont `r1e1` à `r1e4` (ports API 5003 à 5006, ports site 8003 à 8006) ; celles de BACHTECH24 sont `t1e1` et `t1e2` (ports 5001, 5002, 8001 et 8002). La classe BACHINGE24 utilise un autre serveur (le Raspberry Pi d'ISTP), avec l'adresse `192.168.10.11` les jours de séance au fab lab.
 - **Grafana (séance 11) :** une instance unique sur le NUC (port 3000), avec le plugin SQLite et un dossier de dashboards par équipe (détails dans `BACHTECH24.md`, section 7). SQLite en mode WAL pour que Grafana puisse lire pendant que le collecteur écrit.
 

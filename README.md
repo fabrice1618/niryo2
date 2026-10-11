@@ -13,7 +13,7 @@ Le point de départ du cours est un poste de pick & place du fab lab, qui foncti
 
 - un **robot Niryo Ned2** (bras six axes avec pince) ;
 - un **convoyeur** piloté par le robot, avec un **capteur de présence** de pièce câblé sur l'entrée **DI5** du robot ;
-- un **PC** équipé de **Niryo Studio**, relié au robot, qui sert à le programmer en Blockly et à lancer le programme. Le programme peut être exporté en Python : l'export utilise le Python ROS Wrapper de Niryo et s'exécute sur le robot. La bibliothèque `pyniryo` permet, elle, de piloter le robot depuis un autre poste du réseau.
+- un **PC** équipé de **Niryo Studio**, relié au robot, qui sert à le programmer en Blockly et à lancer le programme. Le programme peut être exporté en Python : l'export utilise le Python ROS Wrapper de Niryo et s'exécute sur le robot. Le projet garde cette bibliothèque : le programme process et l'API de commande tournent sur le robot.
 
 Plusieurs postes identiques sont disponibles, un par équipe.
 
@@ -100,8 +100,8 @@ Pour répondre aux trois besoins, la cellule existante est complétée par des f
 
 | Fonction | Rôle | Besoin servi | Brique | Technologie |
 |----------|------|--------------|--------|-------------|
-| F1 Exécuter le cycle | Convoyeur, détection DI5, prise, dépose : le cycle existant, repris en Python | (existant) | Programme process | Python (export Niryo Studio, ou `pyniryo`) |
-| F2 Recevoir les commandes | Accepter « démarrer », « arrêter », « calibrer » et les exécuter sur le robot | Piloter | API de commande (CQRS) | Flask, `pyniryo` |
+| F1 Exécuter le cycle | Convoyeur, détection DI5, prise, dépose : le cycle existant, repris en Python | (existant) | Programme process | Python (export Niryo Studio, Python ROS Wrapper) |
+| F2 Recevoir les commandes | Accepter « démarrer », « arrêter », « calibrer » et les exécuter sur le robot | Piloter | API de commande (CQRS) | Flask, Python ROS Wrapper |
 | F3 Exposer l'état | Répondre à tout moment à « que fait le robot ? », sans gêner un mouvement en cours | Informer | API de commande (CQRS) | Flask |
 | F4 Publier les événements | Signaler début et fin de cycle, changements d'état, défauts | Observer | Client MQTT du robot | `paho-mqtt` |
 | F5 Transmettre les messages | Recevoir les messages des robots, les distribuer aux abonnés, isoler les équipes | Observer | Broker | Mosquitto, un compte par équipe |
@@ -208,7 +208,7 @@ Pour le projet, les robots quittent leur Wi-Fi propre et rejoignent le réseau d
 flowchart LR
     PE["Postes étudiants"] --- SW["Réseau du fab lab<br/>192.168.10.0/24"]
     SW --- SV["Serveur du module<br/>192.168.10.10<br/>SSH :22 · MQTT :1883 · sites :8001-8008"]
-    SW --- ROB["Robots Ned2<br/>192.168.10.21 à .24<br/>API :5000"]
+    SW --- ROB["Robots Ned2<br/>192.168.10.21 à .24<br/>API :3000"]
 ```
 
 
@@ -221,7 +221,7 @@ Le contenu exact des messages est fixé par chaque équipe dans son dossier d'an
 | Topics MQTT | `cellule/<equipe>/cycle`, `cellule/<equipe>/etat` (message retenu), `cellule/<equipe>/defaut`, avec `<equipe>` de la forme `g1e1` |
 | Tables | `messages(id, recu_le, sujet, charge, qos, retain)` (journal brut), `robots(id, nom, equipe, adresse_ip)`, `cycles(id, robot_id, debut, duree, zone, statut)` (lue par le site web) |
 | API CQRS | `GET /requetes/etat`, `POST /commandes/demarrer`, `POST /commandes/arreter`, `POST /commandes/calibrer` |
-| Ports | API simulée 5001 à 5008, site web 8001 à 8008 (un par équipe), API sur le robot 5000 |
+| Ports | API simulée 5001 à 5008, site web 8001 à 8008 (un par équipe), API sur le robot 3000 (le port 5000 du robot est pris par le logiciel système de Niryo) |
 
 Exemples de messages (JSON) :
 
@@ -281,5 +281,7 @@ L'évaluation repose sur l'exécution, devant l'enseignant, du cahier de recette
 La séance 1 (prise en main du robot) est la même pour toutes les classes : son support est `cours/seance1.md`.
 
 Chaque progression précise le calendrier, les séances, les supports utilisés, les livrables, la configuration du serveur et la grille d'évaluation de la classe.
+
+**Installation sur les robots** (`install/`) : bibliothèques Python du projet (Flask, paho-mqtt) prêtes à installer hors ligne sur le Ned2, avec `install.sh`, le lanceur `lancer.sh` et le script de vérification `test.py` ; mode d'emploi dans `install/README.md`.
 
 **Schémas** (racine) : `robot_niryo.drawio` (pages principe et architecture, exportées en PNG), modifiable avec draw.io.

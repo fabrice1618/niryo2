@@ -2,7 +2,7 @@
 
 - **Promotion :** BACH INGE 2024-0 (3e année), 22 étudiants alternants, groupes G1 et G2
 - **Année :** 2026-2027
-- **Version :** v1.6 (brouillon), 10/10/2026
+- **Version :** v1.7 (brouillon), 11/10/2026
 - **Prérequis :** Python (cours de 1re année)
 - **Sources :** `seances_BACHINGE24.xlsx` (planning : dates, horaires, salles et matériel) et supports 2025-2026 (dossier de l'année précédente)
 - **Présentation du projet :** `README.md` à la racine (contexte, besoins, objectifs, fonctions, synoptique, données échangées), commun aux trois classes
@@ -366,9 +366,9 @@ Chaque groupe a le fab lab pendant 3h30, avec une équipe par robot (4 équipes,
 
 | Durée | Activité |
 |-------|----------|
-| 15 min | **Vérifications réseau** (préparées par l'enseignant avant la séance) : IP du robot et du serveur, accès du robot au broker, accès du serveur à l'API du robot |
+| 15 min | **Vérifications réseau** (préparées par l'enseignant avant la séance) : IP du robot et du serveur, accès du robot au broker, accès du serveur à l'API du robot (port 3000), bibliothèques installées sur le robot (`install/`, vérifiées avec `test.py --broker`) |
 | 30 min | **Reprise en main** : consignes de sécurité, calibration, relecture de l'export Python de la séance 1 et des poses relevées |
-| 1h30 | **Déploiement** sur le robot : programme process, publication MQTT et API (passage du mode simulé aux appels réels), reprise des poses si besoin |
+| 1h30 | **Déploiement** sur le robot : programme process, publication MQTT et API (passage de `RobotSimule` à `RobotNiryo`), copiés par `scp` et lancés par `~/cellule/lancer.sh`, reprise des poses si besoin |
 | 45 min | **Essai de bout en bout** (robot → serveur → site web → robot) et **recette à blanc** sur une sélection de tests du cahier |
 | 30 min | **Bilan** : corrections à faire avant l'évaluation, deux jours plus tard, mise à jour du cahier de recette |
 
@@ -383,7 +383,7 @@ Chaque groupe a le fab lab pendant 3h30, avec une équipe par robot (4 équipes,
 
 **Ressources reprises de l'an dernier**
 
-- `flask_arm/` : paquets Python pour l'installation hors ligne sur le robot
+- `flask_arm/` et `documentation/install_package_python.md` : remplacés par le dossier `install/` de ce dépôt (paquets compatibles avec le Python du robot, `install.sh`, `test.py`)
 
 
 ### Séance 5 : évaluation par la recette
@@ -436,7 +436,7 @@ Le serveur sert à la séance 3 (salle D3.10, sur un réseau séparé), puis aux
 **Réseau**
 
 - **En salle D3.10 (séance 3)** : un réseau séparé permet d'utiliser le serveur. Les postes Linux de la salle y sont raccordés ; un switch apporté par l'enseignant connecte les laptops des étudiants et le Pi. SSH (22), MQTT (1883) et les ports HTTP (5001 à 5008 et 8001 à 8008) doivent être autorisés entre les postes et le Pi.
-- **Au fab lab (séances 4 et 5)** : le serveur rejoint le réseau des robots avec une adresse IP fixe (plan d'adressage proposé dans `cours/reseau_TCP_IP.md` : réseau `192.168.10.0/24`, robots en `.21` à `.24`). Le NUC de l'IRUP occupe l'adresse `.10` : le Pi prend `.11` (voir `materiel_ISTP.md`). L'API tourne alors sur chaque robot, port 5000.
+- **Au fab lab (séances 4 et 5)** : le serveur rejoint le réseau des robots avec une adresse IP fixe (plan d'adressage proposé dans `cours/reseau_TCP_IP.md` : réseau `192.168.10.0/24`, robots en `.21` à `.24`). Le NUC de l'IRUP occupe l'adresse `.10` : le Pi prend `.11` (voir `materiel_ISTP.md`). L'API tourne alors sur chaque robot (Python ROS Wrapper), port 3000 : le port 5000 du robot est pris par le logiciel système de Niryo. Les bibliothèques Python du projet sont installées à l'avance sur chaque robot avec le dossier `install/`.
 
 ```mermaid
 flowchart TB

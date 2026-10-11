@@ -3,7 +3,7 @@
 - **Établissement :** IRUP
 - **Classes :** BACH TECH 2024-0 (BACHTECH24, 2 équipes) et B3 RNSPP 2026-0 (B3RNSPP26, 4 équipes), effectifs inférieurs à 12 étudiants
 - **Cours :** Infrastructure client / serveur dans un contexte industriel (progressions : `BACHTECH24.md` et `B3RNSPP26.md`)
-- **Version :** v1.1 (brouillon), 08/10/2026
+- **Version :** v1.2 (brouillon), 11/10/2026
 - **Dates :** plannings `seances_BACHTECH24.xlsx` et `seances_B3RNSPP26.xlsx` ; les lieux sont à réserver (section 7)
 - **Document associé :** `materiel_ISTP.md` (autre établissement, autre serveur)
 
@@ -158,7 +158,7 @@ Le NUC et le Raspberry Pi d'ISTP ne doivent jamais avoir la même adresse : le N
 | API simulée de chaque équipe | 5001 à 5006 | NUC |
 | Site web de chaque équipe | 8001 à 8006 | NUC |
 | Grafana | 3000 | NUC |
-| API de commande sur le robot | 5000 | Robot |
+| API de commande sur le robot (le port 5000 est pris par le logiciel système de Niryo) | 3000 | Robot |
 
 L'heure du NUC doit être correcte (horodatage des cycles). Elle est réglée par NTP si le NUC a accès à Internet, sinon par le routeur ou à la main au démarrage.
 
@@ -208,6 +208,7 @@ Préparation et tests :
 - [ ] Chaque robot démarre, se calibre et exécute un mouvement ; noter le numéro et l'adresse IP de chacun
 - [ ] Firmware identique sur les 4 robots ; version de Niryo Studio compatible installée sur les postes
 - [ ] Chaque convoyeur tourne, son capteur répond sur DI5 (test avec une pièce)
+- [ ] Logiciel des robots en version 5.3 ou plus (Python 3.8), accès SSH avec le compte `niryo` ; bibliothèques du projet installées sur chaque robot avec le dossier `install/` du dépôt (`./install.sh`, puis `~/cellule/lancer.sh ~/cellule/test.py --robot`). Les robots sont communs aux trois classes : une seule installation suffit
 - [ ] Pièces en nombre suffisant et en bon état
 - [ ] Les 4 robots sont connectés au réseau du fab lab (câble) avec les adresses `192.168.10.21` à `.24`
 - [ ] **Caméras** : repérer les robots équipés, afficher l'image dans Niryo Studio, vérifier la netteté et le champ de vue, lire une image depuis Python avec `pyniryo`
@@ -224,7 +225,7 @@ Préparation et tests :
 ### 5.5 Répétition
 
 - [ ] **Avant la séance 3 de BACHTECH24 (ven. 06/11/2026)** : répétition complète au fab lab avec un laptop : connexion SSH, publication MQTT, collecteur, site web
-- [ ] **Avant la séance 9 de B3RNSPP26 et la séance 8 de BACHTECH24** : essai du robot réel publiant sur le broker du NUC
+- [ ] **Avant la séance 9 de B3RNSPP26 et la séance 8 de BACHTECH24** : essai du robot réel publiant sur le broker du NUC (`~/cellule/lancer.sh ~/cellule/test.py --broker 192.168.10.10` sur chaque robot)
 - [ ] **Avant la séance 11 de B3RNSPP26 et la séance 12 de BACHTECH24** : essai de Grafana avec l'historique simulé
 - [ ] **Après chaque séance** : sauvegarde du disque, relevé du matériel manquant
 

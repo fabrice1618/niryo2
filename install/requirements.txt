@@ -1,0 +1,11 @@
+# Bibliothèques installées sur le robot (versions compatibles Python 3.8 à 3.12)
+flask==3.0.3
+werkzeug==3.0.6
+jinja2==3.1.6
+markupsafe==2.1.5
+itsdangerous==2.2.0
+click==8.1.8
+blinker==1.8.2
+paho-mqtt==2.1.0
+importlib-metadata==8.5.0 ; python_version < "3.10"
+zipp==3.20.2 ; python_version < "3.10"
