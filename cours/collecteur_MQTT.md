@@ -316,6 +316,8 @@ if __name__ == "__main__":
 | `ecrivain` | Seul fil qui écrit en base, par lots, une transaction par lot |
 | `loop_forever` | Fait tourner le client et le reconnecte tout seul en cas de coupure |
 
+Une version simplifiée de ce squelette est fournie (`collecteur/`, mode d'emploi dans `collecteur/README.md`) : la base est créée à part par `creer_bdd.py`, l'écrivain écrit les messages un par un au lieu de les écrire par lots, et tire les cycles comme dans la section suivante.
+
 ## Extraire les cycles
 
 Le collecteur ci-dessus garde les messages bruts. Pour remplir aussi la table `cycles`, l'écrivain décode les messages de fin de cycle **dans la même transaction** que l'écriture brute. Un message mal formé est conservé dans `messages` mais ne produit pas de cycle : rien n'est perdu, il pourra être retraité.
