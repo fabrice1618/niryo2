@@ -69,7 +69,8 @@ def defaut():
 
 def tache():
     publier("tache", {"evenement": "debut_tache", "tache": "home", "horodatage": maintenant()})
-    publier("tache", {"evenement": "fin_tache", "tache": "home", "horodatage": maintenant()})
+    publier("tache", {"evenement": "fin_tache", "tache": "home", "statut": "terminee",
+                      "horodatage": maintenant()})
 
 
 def messages_invalides():

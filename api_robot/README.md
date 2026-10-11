@@ -11,7 +11,20 @@ Cette API de départ s'exécute **sur le robot**. Elle reprend les scripts d'ess
 | `POST` | `/robot/autocalibrate` | `autocalibrate()` | Calibration automatique des moteurs |
 | `POST` | `/robot/ledring/<couleur>` | `ledring(couleur)` | Clignotement de l'anneau de LED pendant 2 s (`rouge`, `vert`, `bleu`, `jaune`, `blanc`) |
 
-Une tâche répond quand elle est **finie**, par exemple `{"tache": "home", "statut": "terminee"}`. Une seule requête est traitée à la fois : le robot ne fait qu'une chose à la fois.
+## Une tâche à la fois, et l'état pour le tableau de bord
+
+Le robot ne fait qu'une tâche à la fois :
+
+| Situation | Réponse |
+|---|---|
+| Tâche terminée | `200` : `{"tache": "home", "statut": "terminee"}`, à la fin de la tâche |
+| Demande pendant une autre tâche | `409` tout de suite : `{"erreur": "robot occupé : tâche autocalibrate en cours", "tache_en_cours": "autocalibrate"}`. La demande n'est **pas** exécutée plus tard : les clics répétés ne s'accumulent pas |
+| Erreur du robot (par exemple un mouvement avant la calibration) | `500` : `{"tache": "home", "statut": "erreur", "erreur": "..."}` ; le robot est libéré |
+| Couleur inconnue | `400` |
+
+`GET /robot/etat` répond **tout de suite, même pendant une tâche**, avec un champ `tache_en_cours` : le nom de la tâche en cours, ou `null` quand le robot est libre. Le tableau de bord peut l'interroger régulièrement (par exemple toutes les secondes) pour afficher « calibration en cours » et griser les boutons.
+
+Dans le code, chaque endpoint suit le même modèle : `commencer()` réserve le robot (ou renvoie `False` s'il est occupé), la fonction de la tâche s'exécute, `terminer()` libère le robot, publie la fin de la tâche et prépare la réponse, en cas de réussite comme d'erreur.
 
 ## Messages MQTT
 
@@ -19,10 +32,11 @@ Sur `cellule/<equipe>/tache`, au début puis à la fin de chaque tâche :
 
 ```json
 {"evenement": "debut_tache", "tache": "ledring", "couleur": "vert", "horodatage": "2026-11-17T08:30:00"}
-{"evenement": "fin_tache", "tache": "ledring", "couleur": "vert", "horodatage": "2026-11-17T08:30:02"}
+{"evenement": "fin_tache", "tache": "ledring", "statut": "terminee", "couleur": "vert", "horodatage": "2026-11-17T08:30:02"}
+{"evenement": "fin_tache", "tache": "home", "statut": "erreur", "erreur": "...", "horodatage": "2026-11-17T08:31:10"}
 ```
 
-Le collecteur les enregistre avec les autres messages de l'équipe.
+Le collecteur les enregistre avec les autres messages de l'équipe. Un `fin_tache` est publié pour chaque tâche commencée, même en cas d'erreur.
 
 ## Mode d'emploi
 
@@ -46,13 +60,13 @@ Flask et paho-mqtt doivent être installés sur le robot (dossier `install_robot
    curl -X POST http://192.168.10.21:3000/robot/ledring/vert
    ```
 
-Chaque appel s'affiche dans la console de l'API, avec ses paramètres et les messages MQTT envoyés. En cas d'erreur du robot (par exemple un mouvement demandé avant la calibration), la réponse est `500` et l'erreur est affichée dans la console.
+Chaque appel s'affiche dans la console de l'API, avec ses paramètres et les messages MQTT envoyés. En cas d'erreur du robot (par exemple un mouvement demandé avant la calibration), la réponse est `500`, avec le message d'erreur.
 
 `home` et `autocalibrate` font bouger le bras : appliquer les consignes de sécurité de la prise en main. Aucun autre programme ne doit commander le robot en même temps (Niryo Studio, script d'essai).
 
 ## Ajouter une tâche
 
-Copier le modèle en fin de fichier (une fonction et son endpoint, du même nom) et enlever les `#`. La fonction contient les appels au robot, repris de l'export Python de Niryo Studio. Ajouter la même tâche au simulateur permet de développer le site web sans robot.
+Copier le modèle en fin de fichier (une fonction et son endpoint, du même nom) et enlever les `#`. L'endpoint garde la même forme que les autres (`commencer`, la fonction, `terminer`) : la nouvelle tâche profite alors du refus `409`, de `tache_en_cours` et des messages MQTT. La fonction contient les appels au robot, repris de l'export Python de Niryo Studio. Ajouter la même tâche au simulateur permet de développer le site web sans robot.
 
 ## Documentation
 
@@ -62,4 +76,4 @@ Copier le modèle en fin de fichier (une fonction et son endpoint, du même nom)
 
 ## Essais réalisés et points à vérifier
 
-L'API a été essayée sous Python 3.8, avec les versions de Flask et de paho-mqtt de `install_robot/`, un broker Mosquitto et un **faux** Python ROS Wrapper. Restent à vérifier sur un vrai robot : la position home (`JOINTS_HOME`, celle de Niryo Studio), le comportement de `calibrate_auto()` sur un robot déjà calibré, et les champs de l'état matériel.
+L'API a été essayée sous Python 3.8, avec les versions de Flask et de paho-mqtt de `install_robot/`, un broker Mosquitto et un **faux** Python ROS Wrapper : refus `409` pendant une tâche (une seule demande acceptée sur cinq envoyées en même temps), `tache_en_cours` lu pendant une calibration avec une réponse immédiate, erreur du robot (`500`, `fin_tache` en erreur, robot libéré). Restent à vérifier sur un vrai robot : la position home (`JOINTS_HOME`, celle de Niryo Studio), le comportement de `calibrate_auto()` sur un robot déjà calibré, et les champs de l'état matériel, et la lecture de l'état (`GET /robot/etat`) pendant un mouvement du bras.

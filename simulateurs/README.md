@@ -102,9 +102,9 @@ curl -X POST http://127.0.0.1:5001/robot/ledring/vert       # {"couleur": "vert"
 mosquitto_sub -h localhost -u g1e1 -P mot-de-passe-equipe -t 'cellule/g1e1/tache' -v
 ```
 
-Les endpoints, les réponses et les messages MQTT sont **ceux de l'API du robot** : le site web passe de l'un à l'autre en changeant seulement l'adresse (`http://127.0.0.1:5001` puis `http://192.168.10.21:3000`). Une seule requête est traitée à la fois, comme sur le robot : un appel qui arrive pendant une tâche attend qu'elle soit finie.
+Les endpoints, les réponses et les messages MQTT sont **ceux de l'API du robot** : le site web passe de l'un à l'autre en changeant seulement l'adresse (`http://127.0.0.1:5001` puis `http://192.168.10.21:3000`). Comme sur le robot, une seule tâche s'exécute à la fois : une demande qui arrive pendant une tâche est refusée tout de suite (`409`, « robot occupé »), et `GET /robot/etat` répond même pendant une tâche, avec le champ `tache_en_cours` (nom de la tâche, ou `null`). Le détail est dans `api_robot/README.md`.
 
-**Ajouter une tâche** : copier le modèle en fin de fichier (une fonction et son endpoint, du même nom), enlever les `#` et remplacer `cycle` par le nom de la tâche et `18` par sa durée en secondes. Une fois la tâche validée avec le site web, l'écrire de la même façon dans l'API du robot, avec les vrais appels au robot.
+**Ajouter une tâche** : copier le modèle en fin de fichier (une fonction et son endpoint, du même nom), enlever les `#` et remplacer `cycle` par le nom de la tâche et `18` par sa durée en secondes. L'endpoint garde la forme des autres (`commencer`, la fonction, `terminer`). Une fois la tâche validée avec le site web, l'écrire de la même façon dans l'API du robot, avec les vrais appels au robot.
 
 
 ## Essais réalisés
@@ -112,4 +112,4 @@ Les endpoints, les réponses et les messages MQTT sont **ceux de l'API du robot*
 Avec un broker Mosquitto configuré comme celui du serveur du module (un compte par équipe) :
 
 - simulateur MQTT : chaque choix du menu ; le collecteur du support *Collecteur de messages MQTT* a enregistré les 1023 messages envoyés et en a tiré les 1005 cycles attendus ; mauvais mot de passe et broker absent signalés ;
-- simulateur d'API : les quatre endpoints, la couleur inconnue (`400`), les messages MQTT de début et de fin, un appel qui attend la fin de la tâche en cours, et le modèle « Ajouter une tâche » une fois décommenté.
+- simulateur d'API : les quatre endpoints, la couleur inconnue (`400`), les messages MQTT de début et de fin, le refus `409` pendant une tâche (une seule demande acceptée sur cinq envoyées en même temps), `tache_en_cours` lu pendant une calibration avec une réponse immédiate.
