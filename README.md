@@ -239,8 +239,8 @@ Le robot n'est disponible qu'au fab lab : la partie serveur est développée en 
 
 | Élément réel | Remplacé avant l'intégration par |
 |--------------|----------------------------------|
-| Programme process du robot | Un **simulateur de process** qui publie les mêmes messages sur les mêmes topics : le collecteur ne voit pas la différence |
-| API sur le robot | La même API en **mode simulé** (`RobotSimule`), exécutée sur le serveur du module |
+| Programme process du robot | Un **simulateur de process** (`simulateurs/simulateur_mqtt.py`) qui publie les mêmes messages sur les mêmes topics : le collecteur ne voit pas la différence |
+| API sur le robot | La même API en **mode simulé** (`RobotSimule`), exécutée sur le serveur du module, ou le **simulateur d'API** (`simulateurs/simulateur_api.py`), qui a les endpoints de l'API fournie (`api_robot/`) |
 
 ```mermaid
 flowchart LR
@@ -285,6 +285,10 @@ Chaque progression précise le calendrier, les séances, les supports utilisés,
 **Installation des serveurs** (`install/`) : préparation pas à pas du Raspberry Pi d'ISTP (`install_raspberry.md`, SQLite) et du NUC de l'IRUP (`install_nuc.md`, SQLite et Grafana).
 
 **Installation sur les robots** (`install_robot/`) : bibliothèques Python du projet (Flask, paho-mqtt) prêtes à installer hors ligne sur le Ned2, avec `install.sh`, le lanceur `lancer.sh` et le script de vérification `test.py` ; mode d'emploi dans `install_robot/README.md`.
+
+**Simulateurs** (`simulateurs/`) : `simulateur_mqtt.py` envoie au choix, dans un menu, les messages du robot (cycles, état, défaut, tâche, messages mal formés, rafale) pour tester le collecteur ; `simulateur_api.py` a les endpoints de l'API du robot sans robot, pour développer le site web.
+
+**API fournie du robot** (`api_robot/`) : API de départ à lancer sur le robot (port 3000), qui reprend les scripts d'essai 7 à 9 : état du robot, retour en position home, calibration, anneau de LED. Un endpoint par tâche, qui appelle la fonction du même nom ; chaque tâche est annoncée sur MQTT au début et à la fin.
 
 **Scripts d'essai sur le robot** (`essai_robot/`) : neuf scripts courts qui testent chacun une brique sur le robot (calibration, convoyeur, cycle, MQTT, API, lecture de l'état et endpoint `GET /robot/etat`), avec leurs énoncés dans la partie 7 de `cours/01_prise_en_main_robot.md`.
 

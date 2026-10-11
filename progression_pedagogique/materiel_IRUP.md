@@ -175,7 +175,7 @@ Contenu du disque :
 - SQLite (bibliothèque et outil en ligne de commande) : base `~/supervision/cellule.db` de chaque équipe, lue par son site web et par Grafana
 - Grafana (port 3000) avec l'adaptateur SQLite (`frser-sqlite-datasource`) : une source de données par équipe, qui lit sa base en lecture seule, un utilisateur et un dossier de dashboards par équipe
 - Un compte Linux par équipe (6), avec son dossier personnel, créés par `scripts/creer_comptes_equipes.sh irup` (mots de passe aléatoires, enregistrés dans un fichier que seul l'intervenant conserve)
-- Outils fournis : simulateur de process, squelette de l'API CQRS en mode simulé, script d'historique simulé pour Grafana
+- Outils fournis : simulateurs de process et d'API (`simulateurs/`), API fournie du robot (`api_robot/`), squelette de l'API CQRS en mode simulé, script d'historique simulé pour Grafana
 - Services système (`systemd`) pour que le broker et Grafana redémarrent après une coupure
 
 Préparation et tests :

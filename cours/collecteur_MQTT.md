@@ -94,6 +94,7 @@ Le contenu des messages est une **convention** que chaque équipe fixe dans son 
 | `cellule/<equipe>/cycle` | Robot | Début et fin de chaque cycle | 1 | non |
 | `cellule/<equipe>/etat` | Robot | À chaque changement d'état (en cycle, attente, arrêté, hors ligne) | 1 | oui |
 | `cellule/<equipe>/defaut` | Robot | Pièce non détectée, prise manquée, erreur du robot | 1 | non |
+| `cellule/<equipe>/tache` | API du robot | Début et fin de chaque tâche commandée (`debut_tache`, `fin_tache`) | 1 | non |
 
 `<equipe>` vaut par exemple `g1e1` : sur le broker du module, chaque équipe n'a le droit de publier et de lire que sous `cellule/<son équipe>/`.
 
@@ -147,7 +148,7 @@ client.loop_stop()
 client.disconnect()
 ```
 
-Tant que le robot n'est pas intégré, un **simulateur de process** publie les mêmes messages sur les mêmes sujets : le collecteur ne voit pas la différence. C'est ce qui permet de développer le collecteur et le site web avant l'intégration sur le robot.
+Tant que le robot n'est pas intégré, un **simulateur de process** publie les mêmes messages sur les mêmes sujets : le collecteur ne voit pas la différence. C'est ce qui permet de développer le collecteur et le site web avant l'intégration sur le robot. Le simulateur fourni (`simulateurs/simulateur_mqtt.py`) envoie au choix, dans un menu, chacun de ces messages, mais aussi des messages mal formés et des rafales de 1000 messages : un collecteur doit les supporter sans s'arrêter ni perdre de messages.
 
 ## Architecture du collecteur
 
@@ -333,7 +334,7 @@ def extraire_cycle(conn, sujet, charge):
         if donnees.get("evenement") != "fin_cycle":
             return
         duree = float(donnees["duree"])
-    except (ValueError, KeyError, TypeError):
+    except (ValueError, KeyError, TypeError, AttributeError):   # AttributeError : JSON qui n'est pas un objet
         print("Message ignoré :", charge)
         return
     conn.execute(
@@ -352,7 +353,7 @@ with conn:
         extraire_cycle(conn, sujet, charge)
 ```
 
-- `json.loads` peut échouer : le `try` empêche un message mal formé d'arrêter l'écrivain.
+- `json.loads` peut échouer : le `try` empêche un message mal formé d'arrêter l'écrivain. Il intercepte aussi `AttributeError` : une charge comme `["fin_cycle", 7]` est du JSON valide, mais une liste n'a pas de méthode `get`. Une seule exception non interceptée arrêterait le fil d'écriture, et tous les messages suivants seraient perdus.
 - Les valeurs du message passent par des paramètres `?` : un message MQTT est une donnée extérieure, comme une saisie de formulaire.
 - Ici, l'heure du cycle est celle posée par le robot (`horodatage`, heure locale) ; la colonne `recu_le` de `messages` garde l'heure de réception en UTC.
 

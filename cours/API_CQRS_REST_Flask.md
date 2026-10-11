@@ -514,6 +514,7 @@ sequenceDiagram
 - Le site web relaie les boutons vers les routes `/commandes/…` (voir *Appeler l'API du robot depuis le site* dans le cours Flask) et peut afficher l'état du robot avec `GET /requetes/etat`.
 - L'historique de production ne passe pas par l'API : le programme publie ses cycles en MQTT, le collecteur les range dans la base, le site les lit. L'API répond à « que fait le robot maintenant ? », la base à « qu'a-t-il fait ? ».
 - Pour publier les cycles depuis l'API, appelez la fonction `publier()` du cours sur le collecteur MQTT au début et à la fin de `cycle_pick_and_place`.
+- Une API de départ est fournie (`api_robot/`) : état du robot, retour en position home, calibration et anneau de LED, sur des routes `/robot/…`. Plus simple que l'API de ce support, elle a un endpoint par tâche, qui appelle une fonction du même nom, et répond à la fin de la tâche ; elle annonce chaque tâche sur `cellule/<equipe>/tache`. Son simulateur (`simulateurs/simulateur_api.py`) a les mêmes endpoints, sans robot. Pour ajouter une tâche, on copie le modèle en fin de fichier.
 - Les tests du cahier de recette peuvent s'écrire directement avec `curl` : chaque ligne du scénario ci-dessus est un test (préconditions, commande, résultat attendu, code d'état).
 
 ## Exercices et pistes pour aller plus loin

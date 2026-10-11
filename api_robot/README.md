@@ -1,0 +1,59 @@
+# API du robot Ned2
+
+Infrastructure client / serveur dans un contexte industriel
+
+Cette API de départ s'exécute **sur le robot**. Elle reprend les scripts d'essai 7 à 9 (`essai_robot/`) : un endpoint par tâche, qui appelle une fonction du même nom, et un message MQTT au début et à la fin de chaque tâche. Le site web de l'équipe l'appelle pour commander le robot. Le simulateur `simulateurs/simulateur_api.py` a les mêmes endpoints, sans robot.
+
+| Méthode | Endpoint | Fonction appelée | Action |
+|---|---|---|---|
+| `GET` | `/robot/etat` | `etat()` | Lit l'état du robot : axes, pose, capteur DI5, calibration, températures |
+| `POST` | `/robot/home` | `home()` | Retour à la position home |
+| `POST` | `/robot/autocalibrate` | `autocalibrate()` | Calibration automatique des moteurs |
+| `POST` | `/robot/ledring/<couleur>` | `ledring(couleur)` | Clignotement de l'anneau de LED pendant 2 s (`rouge`, `vert`, `bleu`, `jaune`, `blanc`) |
+
+Une tâche répond quand elle est **finie**, par exemple `{"tache": "home", "statut": "terminee"}`. Une seule requête est traitée à la fois : le robot ne fait qu'une chose à la fois.
+
+## Messages MQTT
+
+Sur `cellule/<equipe>/tache`, au début puis à la fin de chaque tâche :
+
+```json
+{"evenement": "debut_tache", "tache": "ledring", "couleur": "vert", "horodatage": "2026-11-17T08:30:00"}
+{"evenement": "fin_tache", "tache": "ledring", "couleur": "vert", "horodatage": "2026-11-17T08:30:02"}
+```
+
+Le collecteur les enregistre avec les autres messages de l'équipe.
+
+## Mode d'emploi
+
+Flask et paho-mqtt doivent être installés sur le robot (dossier `install_robot/`).
+
+1. Adapter les **paramètres en haut de `api_robot.py`** : identifiant de l'équipe, mot de passe MQTT, adresse du broker.
+2. Copier le dossier sur le robot (remplacer `.21` par l'adresse de votre robot) et lancer l'API :
+
+   ```bash
+   scp -r api_robot niryo@192.168.10.21:~/cellule/
+   ssh niryo@192.168.10.21
+   cd ~/cellule/api_robot
+   ~/cellule/lancer.sh api_robot.py
+   ```
+
+3. Depuis un poste :
+
+   ```bash
+   curl http://192.168.10.21:3000/robot/etat
+   curl -X POST http://192.168.10.21:3000/robot/autocalibrate
+   curl -X POST http://192.168.10.21:3000/robot/ledring/vert
+   ```
+
+Chaque appel s'affiche dans la console de l'API, avec ses paramètres et les messages MQTT envoyés. En cas d'erreur du robot (par exemple un mouvement demandé avant la calibration), la réponse est `500` et l'erreur est affichée dans la console.
+
+`home` et `autocalibrate` font bouger le bras : appliquer les consignes de sécurité de la prise en main. Aucun autre programme ne doit commander le robot en même temps (Niryo Studio, script d'essai).
+
+## Ajouter une tâche
+
+Copier le modèle en fin de fichier (une fonction et son endpoint, du même nom) et enlever les `#`. La fonction contient les appels au robot, repris de l'export Python de Niryo Studio. Ajouter la même tâche au simulateur permet de développer le site web sans robot.
+
+## Essais réalisés et points à vérifier
+
+L'API a été essayée sous Python 3.8, avec les versions de Flask et de paho-mqtt de `install_robot/`, un broker Mosquitto et un **faux** Python ROS Wrapper. Restent à vérifier sur un vrai robot : la position home (`JOINTS_HOME`, celle de Niryo Studio), le comportement de `calibrate_auto()` sur un robot déjà calibré, et les champs de l'état matériel.

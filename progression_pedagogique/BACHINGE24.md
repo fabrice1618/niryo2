@@ -191,7 +191,7 @@ La séance ne contient qu'un seul cours en présentiel (l'architecture). Les cou
 | Exemple de cahier de recette | Tableau de 3 tests entièrement rédigés (identifiant, exigence, préconditions, procédure, résultat attendu), et la liste des 8 exigences à couvrir | Les 8 tests au moins, propres au process de l'équipe |
 | Exemple de présentation flash | Une page ou 3 diapositives : process, architecture, données, un test de recette | Le contenu |
 | Howto du poste de développement | Pas à pas (Linux, Windows, macOS) : Python 3 et environnement virtuel, `pip install`, Mosquitto local ou broker public de test, SQLite et DB Browser, VS Code, et un script `verifier_poste.py` qui publie un message, le reçoit et écrit dans SQLite | Rien : il sert à valider le poste |
-| Simulateur de process et de robot | Publie les événements `cycle`, `etat` et `defaut` sur `cellule/<equipe>/…` ; classe `RobotSimule` pour l'API | L'équipe, les topics et les données propres au process (fichier de configuration) |
+| Simulateurs de process et de robot (`simulateurs/`) | `simulateur_mqtt.py` envoie au choix, dans un menu, les événements `cycle`, `etat`, `defaut` et `tache` sur `cellule/<equipe>/…`, ainsi que des messages mal formés et des rafales pour éprouver le collecteur ; `simulateur_api.py` a les endpoints de l'API fournie (`api_robot/`) sans robot ; classe `RobotSimule` pour l'API CQRS | L'équipe et le mot de passe MQTT (en tête de chaque fichier), les messages propres au process |
 | Collecteur MQTT configurable | Collecteur Python complet (abonnement, validation du JSON, insertion dans `messages` et `cycles`) lisant un fichier de configuration | L'adresse du broker, les topics, les champs du message |
 | Site web Flask de base | Tableau de bord minimal : dernier état, liste des cycles lue dans `cellule.db`, un bouton de commande qui appelle l'API simulée | Les pages, les compteurs, la mise en forme, les commandes |
 
@@ -431,7 +431,7 @@ Le serveur sert à la séance 3 (salle D3.10, sur un réseau séparé), puis aux
 - Python 3 et les paquets du projet (`paho-mqtt`, `flask`, `requests`), installés à l'avance
 - SQLite (bibliothèque et outil en ligne de commande)
 - Ports attribués par équipe : 5001 à 5008 pour l'API simulée, 8001 à 8008 pour le site web
-- Outils fournis aux équipes : simulateur de process (publie sur `cellule/<equipe>/…`), squelette de l'API CQRS en mode simulé
+- Outils fournis aux équipes : simulateurs de process et d'API (`simulateurs/`), API fournie du robot (`api_robot/`), squelette de l'API CQRS en mode simulé
 
 **Réseau**
 
