@@ -16,65 +16,64 @@ EQUIPE = "g1e1"                        # identifiant de l'équipe, aussi compte 
 MOT_DE_PASSE = "mot-de-passe-equipe"   # mot de passe MQTT de l'équipe ; "" pour un broker sans mot de passe
 BROKER = "localhost"                   # "192.168.10.10" depuis un poste du fab lab, ou un broker public
 
+MENU = f"""
+Simulateur MQTT, équipe {EQUIPE}, broker {BROKER}
+  1. Cycle complet (début puis fin)
+  2. Début de cycle
+  3. Fin de cycle
+  4. Changer l'état du robot
+  5. Défaut
+  6. Tâche de l'API (début puis fin)
+  7. Messages mal formés
+  8. Production : plusieurs cycles à la suite
+  9. Rafale de 1000 messages
+ 10. Message libre
+  0. Quitter"""
 
-# --- Connexion au broker -----------------------------------------------------
-client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=f"{EQUIPE}_simulateur")
-if MOT_DE_PASSE:                       # pas de compte sur un broker sans mot de passe
-    client.username_pw_set(EQUIPE, MOT_DE_PASSE)
 piece = 0                              # numéro de la dernière pièce
 
 
-def maintenant():
-    """Heure locale, au format utilisé par le robot : 2026-11-17T08:30:18."""
-    return datetime.now().isoformat(timespec="seconds")
-
-
 def publier(sujet, message):
-    """Envoie un message sur cellule/<equipe>/<sujet>. Un dictionnaire est envoyé en JSON."""
+    """Envoie un message sur cellule/<equipe>/<sujet>.
+
+    Un dictionnaire est envoyé en JSON, avec l'heure ajoutée ; un texte est envoyé tel quel.
+    """
     if isinstance(message, dict):
+        message["horodatage"] = datetime.now().isoformat(timespec="seconds")   # ex. 2026-11-17T08:30:18
         message = json.dumps(message, ensure_ascii=False)
     info = client.publish(f"cellule/{EQUIPE}/{sujet}", message, qos=1, retain=(sujet == "etat"))
     info.wait_for_publish()            # attendre que le broker ait reçu le message
     print(f"  envoyé sur cellule/{EQUIPE}/{sujet} : {message}")
 
 
-# --- Les messages du menu ------------------------------------------------------
+# --- Les messages du robot -------------------------------------------------------
 def debut_cycle():
     global piece
     piece = piece + 1
-    publier("cycle", {"evenement": "debut_cycle", "piece": piece, "horodatage": maintenant()})
+    publier("cycle", {"evenement": "debut_cycle", "piece": piece})
 
 
 def fin_cycle():
     duree = round(random.uniform(15, 21), 1)
     zone = random.choice(["A", "B"])
-    publier("cycle", {"evenement": "fin_cycle", "piece": piece, "duree": duree, "zone": zone,
-                      "horodatage": maintenant()})
+    publier("cycle", {"evenement": "fin_cycle", "piece": piece, "duree": duree, "zone": zone})
 
 
-def cycle_complet():
-    debut_cycle()
-    fin_cycle()
-
-
-def changer_etat():
-    etat = input("  État (en_cycle, attente, arrete) : ").strip() or "en_cycle"
-    publier("etat", {"etat": etat, "horodatage": maintenant()})
+def etat(valeur):
+    publier("etat", {"etat": valeur})
 
 
 def defaut():
-    publier("defaut", {"defaut": "piece_non_detectee", "message": "DI5 inactif après 30 s",
-                       "horodatage": maintenant()})
+    publier("defaut", {"defaut": "piece_non_detectee", "message": "DI5 inactif après 30 s"})
 
 
 def tache():
-    publier("tache", {"evenement": "debut_tache", "tache": "home", "horodatage": maintenant()})
-    publier("tache", {"evenement": "fin_tache", "tache": "home", "statut": "terminee",
-                      "horodatage": maintenant()})
+    publier("tache", {"evenement": "debut_tache", "tache": "home"})
+    publier("tache", {"evenement": "fin_tache", "tache": "home", "statut": "terminee"})
 
 
-def messages_invalides():
-    """Des messages mal formés : le collecteur doit les garder sans s'arrêter."""
+def messages_mal_formes():
+    """Des messages incorrects : le collecteur doit les garder sans s'arrêter."""
     publier("cycle", "ceci n'est pas du JSON")
     publier("cycle", '{"evenement": "fin_cycle", "piece": 7')            # JSON coupé
     publier("cycle", '{"evenement": "fin_cycle", "piece": 7}')           # durée manquante
@@ -83,56 +82,31 @@ def messages_invalides():
     publier("cycle", "")                                                 # message vide
 
 
-def production():
-    """Plusieurs cycles à la suite, un toutes les 2 secondes ; Ctrl+C pour revenir au menu."""
-    nombre = int(input("  Nombre de cycles : ") or "10")
-    publier("etat", {"etat": "en_cycle", "horodatage": maintenant()})
-    try:
-        for i in range(nombre):
-            debut_cycle()
-            time.sleep(2)
-            if random.random() < 0.1:          # un cycle sur dix finit en défaut
-                defaut()
-            else:
-                fin_cycle()
-    except KeyboardInterrupt:
-        print("  interrompu")
-    publier("etat", {"etat": "arrete", "horodatage": maintenant()})
+def production(nombre):
+    """Plusieurs cycles à la suite, un toutes les 2 secondes ; un sur dix finit en défaut."""
+    etat("en_cycle")
+    for i in range(nombre):
+        debut_cycle()
+        time.sleep(2)
+        if random.random() < 0.1:
+            defaut()
+        else:
+            fin_cycle()
+    etat("arrete")
 
 
 def rafale():
-    """1000 fins de cycle envoyées d'un coup : le collecteur doit toutes les enregistrer."""
+    """1000 fins de cycle à la suite : le collecteur doit toutes les enregistrer."""
     global piece
     for i in range(1000):
         piece = piece + 1
-        message = {"evenement": "fin_cycle", "piece": piece, "duree": 18.0, "zone": "A",
-                   "horodatage": maintenant()}
-        info = client.publish(f"cellule/{EQUIPE}/cycle", json.dumps(message), qos=1)
-    info.wait_for_publish()
-    print(f"  1000 fins de cycle envoyées sur cellule/{EQUIPE}/cycle (pièces {piece - 999} à {piece})")
+        fin_cycle()
 
 
-def message_libre():
-    sujet = input(f"  Sujet (après cellule/{EQUIPE}/) : ").strip() or "essai"
-    texte = input("  Message : ")
-    publier(sujet, texte)
-
-
-MENU = {
-    "1": ("Cycle complet (début puis fin)", cycle_complet),
-    "2": ("Début de cycle", debut_cycle),
-    "3": ("Fin de cycle", fin_cycle),
-    "4": ("Changer l'état du robot", changer_etat),
-    "5": ("Défaut", defaut),
-    "6": ("Tâche de l'API (début puis fin)", tache),
-    "7": ("Messages mal formés", messages_invalides),
-    "8": ("Production : plusieurs cycles à la suite", production),
-    "9": ("Rafale de 1000 messages", rafale),
-    "10": ("Message libre", message_libre),
-}
-
-
-# --- Programme principal --------------------------------------------------------
+# --- Connexion au broker -----------------------------------------------------------
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=f"{EQUIPE}_simulateur")
+if MOT_DE_PASSE:                       # pas de compte sur un broker sans mot de passe
+    client.username_pw_set(EQUIPE, MOT_DE_PASSE)
 try:
     client.connect(BROKER, 1883)
 except OSError as e:
@@ -144,17 +118,34 @@ if not client.is_connected():
     print("Connexion refusée par le broker : vérifier EQUIPE et MOT_DE_PASSE")
     raise SystemExit(1)
 
+# --- Le menu ---------------------------------------------------------------------------
 while True:
-    print(f"\nSimulateur MQTT, équipe {EQUIPE}, broker {BROKER}")
-    for numero, (libelle, fonction) in MENU.items():
-        print(f"{numero:>3}. {libelle}")
-    print("  0. Quitter")
+    print(MENU)
     choix = input("Votre choix : ").strip()
-    if choix == "0":
+    if choix == "1":
+        debut_cycle()
+        fin_cycle()
+    elif choix == "2":
+        debut_cycle()
+    elif choix == "3":
+        fin_cycle()
+    elif choix == "4":
+        etat(input("  État (en_cycle, attente, arrete) : ").strip() or "en_cycle")
+    elif choix == "5":
+        defaut()
+    elif choix == "6":
+        tache()
+    elif choix == "7":
+        messages_mal_formes()
+    elif choix == "8":
+        production(int(input("  Nombre de cycles : ") or "10"))
+    elif choix == "9":
+        rafale()
+    elif choix == "10":
+        sujet = input(f"  Sujet (après cellule/{EQUIPE}/) : ").strip() or "essai"
+        publier(sujet, input("  Message : "))
+    elif choix == "0":
         break
-    if choix in MENU:
-        libelle, fonction = MENU[choix]
-        fonction()
     else:
         print("  choix inconnu")
 

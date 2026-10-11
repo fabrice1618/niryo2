@@ -111,5 +111,5 @@ Les endpoints, les réponses et les messages MQTT sont **ceux de l'API du robot*
 
 Avec un broker Mosquitto configuré comme celui du serveur du module (un compte par équipe) :
 
-- simulateur MQTT : chaque choix du menu ; le collecteur du support *Collecteur de messages MQTT* a enregistré les 1023 messages envoyés et en a tiré les 1005 cycles attendus ; mauvais mot de passe et broker absent signalés ;
+- simulateur MQTT : chaque choix du menu ; le collecteur fourni (`collecteur/`) a enregistré les 1023 messages envoyés et en a tiré les 1005 cycles attendus ; mauvais mot de passe et broker absent signalés ;
 - simulateur d'API : les quatre endpoints, la couleur inconnue (`400`), les messages MQTT de début et de fin, le refus `409` pendant une tâche (une seule demande acceptée sur cinq envoyées en même temps), `tache_en_cours` lu pendant une calibration avec une réponse immédiate.
