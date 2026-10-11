@@ -494,6 +494,8 @@ Les valeurs des poses sont des exemples : chaque équipe reprend celles de son p
 | Signal lumineux | LED ring flashing | `n.led_ring.flashing([0, 255, 0, 0], period=0.5, iterations=3, wait=False)` |
 | Signal sonore | Play sound | `n.sound.play('ready.wav', wait_end=True)` |
 
+Toutes les fonctions de `n`, avec leurs paramètres : [référence du Python ROS Wrapper](https://niryorobotics.github.io/ned_ros/packages/python_ros_wrapper/ros_wrapper_api.html) (index complet de la documentation dans la partie 9).
+
 ### 4.4 Faire : préparer le programme pour la suite du projet
 
 Le programme exporté est une longue suite d'instructions. Pour pouvoir plus tard y ajouter la publication MQTT des événements (fonction F4), on le **découpe en fonctions**, une par étape du cycle. Chaque fonction porte un nom qui dit ce qu'elle fait ; le cycle devient lisible comme une phrase.
@@ -719,6 +721,8 @@ flowchart LR
   rospy.init_node("essai_script1")     # pas 'niryo_blockly_interpreted_code', utilisé par Niryo Studio
   n = NiryoRosWrapper()                # n représente le robot
   ```
+
+- **Documentation** : [référence du Python ROS Wrapper](https://niryorobotics.github.io/ned_ros/packages/python_ros_wrapper/ros_wrapper_api.html) pour les fonctions de `n`, [Before running your programs](https://niryorobotics.github.io/ned_ros/packages/python_ros_wrapper/before_running.html) pour ces lignes de départ ; index complet dans la partie 9.
 
 - **Sécurité** : les énoncés 1 et 3 font bouger le bras, l'énoncé 2 le convoyeur. Zone dégagée, arrêt d'urgence à portée de main, un seul programme à la fois (rien ne tourne depuis Niryo Studio).
 - **Travail sans robot** : les scripts ne s'exécutent que sur le robot. Avant d'y accéder, écrivez-les et relisez-les ; pour MQTT et Flask, la partie réseau peut s'essayer sur votre poste en remplaçant les appels au robot par des `print`.
@@ -1028,3 +1032,23 @@ Documentation Niryo, dans le dossier `documentation_Niryo_Ned2/` :
 - `01_Robot_NED2/08_Safety.pdf` et `01_Robot_NED2/02_Operating_mode.pdf` : sécurité et modes du robot
 
 Référence de la bibliothèque `pyniryo` : <https://niryorobotics.github.io/pyniryo/>
+
+**Documentation du logiciel du robot** (pile ROS du Ned2, Python ROS Wrapper, en anglais) : <https://niryorobotics.github.io/ned_ros/>
+
+Son index principal :
+
+| Partie | Contenu | Pour le projet |
+|---|---|---|
+| [Introduction](https://niryorobotics.github.io/ned_ros/introduction/overview.html) | Présentation du logiciel du robot, utilisation, simulation, démarrage rapide | [Quick start](https://niryorobotics.github.io/ned_ros/introduction/quick_start.html) : se connecter, articulaire ou cartésien, outil, types de mouvements |
+| [Installation](https://niryorobotics.github.io/ned_ros/installation/getting_started.html) | Installer le logiciel du robot sur Ubuntu 20.04 ou avec Docker | Rien à faire : le logiciel est déjà installé sur le robot |
+| [Packages](https://niryorobotics.github.io/ned_ros/packages/overview.html) | Les modules du logiciel (bras, outils, convoyeur, anneau de LED, son, état du matériel) et le **Python ROS Wrapper** | La référence des fonctions de `n` et les exemples (liste ci-dessous) |
+| [To go further...](https://niryorobotics.github.io/ned_ros/to_go_further/tcp_server.html) | Serveur TCP du robot, `pyniryo`, Modbus, Niryo Studio | `pyniryo`, pour piloter le robot depuis un poste (extension vision) |
+| [Changelog](https://niryorobotics.github.io/ned_ros/changelog_link.html) | Historique des versions du logiciel | Comparer avec la version affichée par Niryo Studio |
+
+Les pages les plus utiles pour le projet :
+
+- [Control with Python ROS Wrapper](https://niryorobotics.github.io/ned_ros/packages/ros_wrapper.html) et la [référence de toutes ses fonctions](https://niryorobotics.github.io/ned_ros/packages/python_ros_wrapper/ros_wrapper_api.html) (la classe `NiryoRosWrapper`, l'objet `n` de l'export) ;
+- [Before running your programs](https://niryorobotics.github.io/ned_ros/packages/python_ros_wrapper/before_running.html) : les lignes obligatoires en tête de programme et le `PYTHONPATH`, ce que fait `~/cellule/lancer.sh` ;
+- les exemples : [bases](https://niryorobotics.github.io/ned_ros/packages/python_ros_wrapper/examples_basics.html) (premier mouvement, premier pick and place), [mouvements](https://niryorobotics.github.io/ned_ros/packages/python_ros_wrapper/examples_motions.html), [pince](https://niryorobotics.github.io/ned_ros/packages/python_ros_wrapper/examples_tool_action.html), [convoyeur](https://niryorobotics.github.io/ned_ros/packages/python_ros_wrapper/examples_conveyor.html) ;
+- [anneau de LED](https://niryorobotics.github.io/ned_ros/packages/high_level/niryo_robot_led_ring.html), [état du matériel](https://niryorobotics.github.io/ned_ros/packages/low_level/niryo_robot_hardware_interface.html) (températures, tensions, calibration : énoncé 8), [convoyeur](https://niryorobotics.github.io/ned_ros/packages/low_level/conveyor_interface.html) ;
+- [simulation](https://niryorobotics.github.io/ned_ros/introduction/simulation.html) du robot sur un PC Linux avec ROS (RViz, Gazebo) : hors du projet, pour aller plus loin.

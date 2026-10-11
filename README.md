@@ -292,4 +292,6 @@ Chaque progression précise le calendrier, les séances, les supports utilisés,
 
 **Scripts d'essai sur le robot** (`essai_robot/`) : neuf scripts courts qui testent chacun une brique sur le robot (calibration, convoyeur, cycle, MQTT, API, lecture de l'état et endpoint `GET /robot/etat`), avec leurs énoncés dans la partie 7 de `cours/01_prise_en_main_robot.md`.
 
+**Documentation Niryo** : PDF du constructeur dans `documentation_Niryo_Ned2/`, et documentation en ligne du logiciel du robot et du Python ROS Wrapper : <https://niryorobotics.github.io/ned_ros/> (index principal et pages utiles dans la partie 9 de `cours/01_prise_en_main_robot.md`).
+
 **Schémas** (racine) : `robot_niryo.drawio` (pages principe et architecture, exportées en PNG), modifiable avec draw.io.

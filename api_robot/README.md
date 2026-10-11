@@ -54,6 +54,12 @@ Chaque appel s'affiche dans la console de l'API, avec ses paramètres et les mes
 
 Copier le modèle en fin de fichier (une fonction et son endpoint, du même nom) et enlever les `#`. La fonction contient les appels au robot, repris de l'export Python de Niryo Studio. Ajouter la même tâche au simulateur permet de développer le site web sans robot.
 
+## Documentation
+
+- [Référence du Python ROS Wrapper](https://niryorobotics.github.io/ned_ros/packages/python_ros_wrapper/ros_wrapper_api.html) : toutes les fonctions de `n`, pour écrire de nouvelles tâches ;
+- [anneau de LED](https://niryorobotics.github.io/ned_ros/packages/high_level/niryo_robot_led_ring.html) (`ledring`), [état du matériel](https://niryorobotics.github.io/ned_ros/packages/low_level/niryo_robot_hardware_interface.html) (`etat`), [exemples de mouvements](https://niryorobotics.github.io/ned_ros/packages/python_ros_wrapper/examples_motions.html) (`home`) ;
+- index principal de la documentation : <https://niryorobotics.github.io/ned_ros/> (repris dans la partie 9 de `cours/01_prise_en_main_robot.md`).
+
 ## Essais réalisés et points à vérifier
 
 L'API a été essayée sous Python 3.8, avec les versions de Flask et de paho-mqtt de `install_robot/`, un broker Mosquitto et un **faux** Python ROS Wrapper. Restent à vérifier sur un vrai robot : la position home (`JOINTS_HOME`, celle de Niryo Studio), le comportement de `calibrate_auto()` sur un robot déjà calibré, et les champs de l'état matériel.

@@ -52,9 +52,13 @@ Les bibliothèques Flask et paho-mqtt doivent être installées sur le robot (do
 
 Les scripts 1 à 3 font bouger le bras ou le convoyeur : appliquer les consignes de sécurité de la prise en main (zone dégagée, arrêt d'urgence à portée de main).
 
+## Documentation
+
+Toutes les fonctions de `n` utilisées par les scripts sont décrites dans la [référence du Python ROS Wrapper](https://niryorobotics.github.io/ned_ros/packages/python_ros_wrapper/ros_wrapper_api.html), avec des exemples (mouvements, pince, convoyeur). Index principal de la documentation : <https://niryorobotics.github.io/ned_ros/> (repris dans la partie 9 de `cours/01_prise_en_main_robot.md`).
+
 ## Essais réalisés
 
 Les scripts ont été essayés sous Python 3.8, avec les bibliothèques de `install_robot/`, un broker Mosquitto et un **faux** robot (modules `rospy` et Python ROS Wrapper simulés). Ils restent à valider sur un vrai robot, en particulier :
 
-- les noms des champs de l'état matériel (`get_hardware_status`) et le topic du convoyeur (`/niryo_robot/conveyor/feedback`) lus par le script 8, pris dans la documentation ROS de Niryo ;
+- les noms des champs de l'état matériel (`get_hardware_status`) et le topic du convoyeur (`/niryo_robot/conveyor/feedback`) lus par le script 8, pris dans la documentation ROS de Niryo ([état du matériel](https://niryorobotics.github.io/ned_ros/packages/low_level/niryo_robot_hardware_interface.html), [convoyeur](https://niryorobotics.github.io/ned_ros/packages/low_level/conveyor_interface.html)) ;
 - le sens du convoyeur (`BACKWARD` dans l'export de l'an dernier) et la polarité du capteur DI5.

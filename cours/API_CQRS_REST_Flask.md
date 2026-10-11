@@ -164,7 +164,7 @@ Tout tient dans un fichier `app.py` d'environ 230 lignes ; les cinq blocs ci-des
 
 **Bloc 1 : l'adaptateur robot**
 
-L'API ne parle jamais directement au Python ROS Wrapper : elle passe par un adaptateur. Le robot simulé permet de tester sans matériel, sur n'importe quel poste ; pour le vrai robot, il suffit de changer une ligne. L'adaptateur `RobotNiryo` n'importe le Python ROS Wrapper qu'à sa création : le fichier s'exécute donc aussi sur un poste où ROS n'est pas installé.
+L'API ne parle jamais directement au Python ROS Wrapper : elle passe par un adaptateur. Le robot simulé permet de tester sans matériel, sur n'importe quel poste ; pour le vrai robot, il suffit de changer une ligne. L'adaptateur `RobotNiryo` n'importe le Python ROS Wrapper qu'à sa création : le fichier s'exécute donc aussi sur un poste où ROS n'est pas installé. Les fonctions qu'il appelle (`move_joints`, `pick_from_pose`, `digital_read`…) sont décrites dans la [référence du Python ROS Wrapper](https://niryorobotics.github.io/ned_ros/packages/python_ros_wrapper/ros_wrapper_api.html) (documentation du robot : <https://niryorobotics.github.io/ned_ros/>).
 
 ```python
 # app.py

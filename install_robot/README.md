@@ -37,7 +37,7 @@ flowchart LR
 ```
 
 - Les bibliothèques sont installées dans `~/cellule/libs`, un dossier à part. Le logiciel système du robot, qui contient lui-même un serveur Flask (port 5000), ne les voit pas : l'installation ne peut pas le perturber.
-- Un programme du projet se lance avec `~/cellule/lancer.sh`, qui ajoute `~/cellule/libs` aux bibliothèques de Python et charge l'environnement ROS du robot.
+- Un programme du projet se lance avec `~/cellule/lancer.sh`, qui ajoute `~/cellule/libs` aux bibliothèques de Python et charge l'environnement ROS du robot (voir [Before running your programs](https://niryorobotics.github.io/ned_ros/packages/python_ros_wrapper/before_running.html) dans la documentation du robot, dont l'index principal est <https://niryorobotics.github.io/ned_ros/>).
 - Pour tout désinstaller : `rm -rf ~/cellule/libs`.
 
 ## Prérequis
