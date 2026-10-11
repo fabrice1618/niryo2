@@ -2,7 +2,7 @@
 
 - **Promotion :** B3 RNSPP 2026-0 (groupe ProN), effectif à renseigner
 - **Année :** 2026-2027
-- **Version :** v1.2 (brouillon), 11/10/2026
+- **Version :** v1.3 (brouillon), 11/10/2026
 - **Prérequis :** Python (cours de programmation informatique), à confirmer (voir la section 7)
 - **Sources :** `seances_B3RNSPP26.xlsx` (planning : dates et horaires) et supports 2025-2026 (dossier de l'année précédente)
 - **Présentation du projet :** `README.md` à la racine (contexte, besoins, objectifs, fonctions, synoptique, données échangées), commun aux trois classes
@@ -28,7 +28,7 @@ Par rapport à l'an dernier :
 
 - on part d'un **process défini par les étudiants** et non plus d'exercices techniques isolés ;
 - une **phase d'analyse** (dossier, présentation, tests de recette) est ajoutée avant la partie technique ;
-- la pile technique est **allégée** : SQLite au lieu de MySQL, pas de Docker, pas de Node-RED, le tableau de bord de pilotage est le site web Flask ; Grafana n'est conservé que pour l'analyse de la production (séance 11), avec une base MySQL sur le NUC que le collecteur alimente en plus de SQLite ;
+- la pile technique est **allégée** : SQLite au lieu de MySQL, pas de Docker, pas de Node-RED, le tableau de bord de pilotage est le site web Flask ; Grafana n'est conservé que pour l'analyse de la production (séance 11), et lit directement la base SQLite de chaque équipe sur le NUC (ni MySQL, ni double écriture) ;
 - l'évaluation repose sur l'**exécution du cahier de recette** rédigé par l'équipe elle-même.
 
 Par rapport à la classe BACHINGE24 :
@@ -84,7 +84,7 @@ L'architecture, les fonctions F1 à F7, le cycle instrumenté et le scénario co
 | Séance 2 | Infrastructure client serveur (TD) | Analyse, dossier, présentation, tests de recette | jeu. 15/10/2026, 13:30-17:00 | Salle de cours | 3h30 | Dossier d'analyse v1, cahier de recette v1 |
 | Séance 3 | Programmation informatique, pratique (TP) | MQTT, rappel SQL, collecte des données dans SQLite | mar. 10/11/2026, 08:30-12:00 | Fab lab, serveur | 3h30 | Collecteur MQTT → SQLite sur le serveur, alimenté par des données simulées |
 | Séance 4 | Programmation informatique (CM) | HTTP / REST, HTML et CSS, premier serveur Flask | lun. 15/02/2027, 13:30-17:00 | Salle de cours | 3h30 | Page statique du tableau de bord, premier serveur Flask |
-| Séance 5 | Programmation informatique (CM) | Flask (templates, base SQLite), principe de l'API CQRS | mar. 16/02/2027, 13:30-17:00 | Salle de cours | 3h30 | Squelette du site et de l'API lu et réparti dans l'équipe |
+| Séance 5 | Programmation informatique (CM) | Flask (templates, base SQLite), principe de l'API CQRS | mar. 16/02/2027, 13:30-17:00 | Salle de cours | 3h30 | Bases du site et de l'API lues, travail réparti dans l'équipe |
 | Séance 6 | Programmation informatique, pratique (TP) | Site web : tableau de bord | mer. 17/02/2027, 08:30-12:00 | Fab lab, serveur | 3h30 | Tableau de bord lisant la base SQLite sur le serveur |
 | Séance 7 | Programmation informatique, pratique (TP) | API de commande en mode simulé | jeu. 18/02/2027, 08:30-12:00 | Fab lab, serveur | 3h30 | API CQRS simulée sur le serveur |
 | Séance 8 | Programmation informatique, pratique (TP) | Site et API ensemble, essai de bout en bout en mode simulé, dossier v2 | jeu. 18/02/2027, 13:30-17:00 | Fab lab, serveur | 3h30 | Site web et API (mode simulé) sur le serveur, dossier v2 |
@@ -252,7 +252,7 @@ La partie technique (topics MQTT, table SQL, routes de l'API) reste au niveau fo
 | 40 min | **Cours MQTT** : broker, clients, topics, payload JSON, QoS, authentification. Démonstration avec `mosquitto_pub` / `mosquitto_sub` sur le broker du serveur |
 | 50 min | **TP connexion et MQTT** : connexion au serveur (SSH, VS Code Remote SSH) avec le compte de l'équipe, puis publier et s'abonner sur le broker du serveur (MQTT Explorer puis `paho-mqtt`) |
 | 30 min | **Rappel SQL** : table, types, clé primaire, `CREATE`, `INSERT`, `SELECT`, `WHERE`, `GROUP BY`. SQLite (module `sqlite3`, DB Browser for SQLite) |
-| 1h30 | **TP collecte** : un simulateur publie les événements du process de l'équipe ; le collecteur tourne sur le serveur, reçoit les messages, les valide et les insère dans SQLite. Requêtes de contrôle (nombre de cycles, durée moyenne) |
+| 1h30 | **TP collecte** : le simulateur fourni (`simulateurs/simulateur_mqtt.py`) publie les événements du process de l'équipe ; le collecteur fourni (`collecteur/`), lu puis adapté, tourne sur le serveur, reçoit les messages, les valide et les insère dans SQLite. Requêtes de contrôle (nombre de cycles, durée moyenne) |
 
 **Flux de collecte**
 
@@ -274,13 +274,13 @@ sequenceDiagram
 
 Conventions reprises des supports `cours/collecteur_MQTT.md` et `cours/SQL.md` (détail et exemples de messages dans le `README.md`, section 6) :
 
-- Topics : `cellule/<equipe>/cycle`, `cellule/<equipe>/etat` (message retenu), `cellule/<equipe>/defaut`, avec `<equipe>` de la forme `r1e1` dans cette classe (voir la section 6)
+- Topics : `cellule/<equipe>/cycle`, `cellule/<equipe>/etat` (message retenu), `cellule/<equipe>/defaut`, `cellule/<equipe>/tache` (tâches de l'API du robot), avec `<equipe>` de la forme `r1e1` dans cette classe (voir la section 6)
 - Message : `{"evenement": "fin_cycle", "piece": 12, "duree": 18.2, "zone": "A", "horodatage": "2026-11-10T09:30:18"}`
 - Tables : `messages(id, recu_le, sujet, charge, qos, retain)` (journal brut), `robots(id, nom, equipe, adresse_ip)` et `cycles(id, robot_id, debut, duree, zone, statut)` (lue par le site web)
 
 **Livrables**
 
-- `collecteur.py` déployé sur le serveur et fonctionnel sur données simulées, script de création de la base
+- `collecteur.py` et script de création de la base (`creer_bdd.py`) déployés sur le serveur, dans `~/supervision/`, et fonctionnels sur données simulées
 
 **Supports de cours**
 
@@ -290,7 +290,7 @@ Conventions reprises des supports `cours/collecteur_MQTT.md` et `cours/SQL.md` (
 
 **Ressources reprises de l'an dernier**
 
-- `code/mqtt_message/` : `sender.py` (à transformer en simulateur de process) et `subscriber.py` (à passer de MySQL à SQLite)
+- `code/mqtt_message/` : `sender.py` et `subscriber.py`, remplacés par le simulateur `simulateurs/simulateur_mqtt.py` et le collecteur `collecteur/` de ce dépôt (SQLite)
 - `essai_robot/script4_mqtt_send.py`, `script5_mqtt_receive.py` : repris dans le dossier `essai_robot/` de ce dépôt (`script4_mqtt_envoi.py`, `script5_mqtt_reception.py`, énoncés 4 et 5 de `cours/01_prise_en_main_robot.md`, partie 7)
 - `tp/fiche_configuration.md` (à adapter : comptes, topics, ports par équipe)
 
@@ -354,11 +354,11 @@ Conventions reprises des supports `cours/collecteur_MQTT.md` et `cours/SQL.md` (
 |-------|----------|
 | 1h30 | **Cours Flask** : routes, templates Jinja2, formulaires, lecture de la base SQLite, appel d'une API avec `requests` |
 | 1h | **Cours API CQRS** : ordres (commandes) et lecture de l'état (requêtes), comparaison avec REST, codes de retour (`202 Accepted` + id de commande), classe `RobotSimule` |
-| 1h | **Lecture guidée du squelette** fourni (site et API) et répartition du travail dans l'équipe : qui fait le site, qui fait l'API |
+| 1h | **Lecture guidée des bases fournies** (site : `site_web/` ; API : `api_robot/` et son simulateur `simulateurs/simulateur_api.py`) et répartition du travail dans l'équipe : qui fait le site, qui fait l'API |
 
 **Livrables**
 
-- Squelette du site et de l'API lu, tâches réparties dans l'équipe
+- Bases du site et de l'API lues, tâches réparties dans l'équipe
 
 **Supports de cours**
 
@@ -383,7 +383,7 @@ Conventions reprises des supports `cours/collecteur_MQTT.md` et `cours/SQL.md` (
 
 | Durée | Activité |
 |-------|----------|
-| 20 min | **Mise en route** : environnement virtuel, squelette, base de l'équipe, port attribué (8003 à 8006, voir la section 6) |
+| 20 min | **Mise en route** : environnement virtuel, base du tableau de bord (`site_web/`), base de données de l'équipe, port attribué (8003 à 8006, voir la section 6) |
 | 1h40 | **Tableau de bord** : dernier état, liste des cycles, compteurs, lus dans la base SQLite |
 | 1h | **Mise en forme et page de détail** : CSS, route paramétrée pour un cycle |
 | 30 min | **Vérification** : confrontation des écrans au cahier de recette v1, écarts à corriger |
@@ -430,7 +430,7 @@ Conventions reprises des supports `cours/collecteur_MQTT.md` et `cours/SQL.md` (
 
 **Ressources reprises de l'an dernier**
 
-- `code/api_robot_test/` (API simulée du robot de l'an dernier, port 3000 : remplacée par l'API CQRS du cours, ports 5001 à 5008)
+- `code/api_robot_test/` (API simulée du robot de l'an dernier, port 3000) : remplacée par l'API fournie (`api_robot/`, sur le robot) et son simulateur (`simulateurs/simulateur_api.py`, ports 5001 à 5008), puis par l'API CQRS du cours
 - `essai_robot/script6_api.py`, `script7_API_mqtt.py` : repris dans le dossier `essai_robot/` de ce dépôt, avec un script 8 (lecture de l'état du robot) et un script 9 (`GET /robot/etat`) ; énoncés 6 à 9 de `cours/01_prise_en_main_robot.md`, partie 7
 
 

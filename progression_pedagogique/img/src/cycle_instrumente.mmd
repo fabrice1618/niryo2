@@ -1,0 +1,13 @@
+flowchart LR
+    A["Pièce posée<br/>sur le convoyeur"] --> B["MQTT :<br/>début de cycle"]
+    B --> C["Convoyeur<br/>en marche"]
+    C --> D{"DI5 :<br/>pièce ?"}
+    D -- non --> C
+    D -- oui --> E["Arrêt du<br/>convoyeur"]
+    E --> F["Prise de<br/>la pièce"]
+    F --> G["Dépose dans<br/>la zone"]
+    G --> H["Retour en<br/>attente"]
+    H --> I["MQTT : fin de<br/>cycle, durée"]
+    I --> A
+    classDef ajout fill:#fde2c4,stroke:#d9822b,color:#000
+    class B,I ajout

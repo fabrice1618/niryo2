@@ -2,7 +2,7 @@
 
 - **Promotion :** BACH INGE 2024-0 (3e année), 22 étudiants alternants, groupes G1 et G2
 - **Année :** 2026-2027
-- **Version :** v1.7 (brouillon), 11/10/2026
+- **Version :** v1.8 (brouillon), 11/10/2026
 - **Prérequis :** Python (cours de 1re année)
 - **Sources :** `seances_BACHINGE24.xlsx` (planning : dates, horaires, salles et matériel) et supports 2025-2026 (dossier de l'année précédente)
 - **Présentation du projet :** `README.md` à la racine (contexte, besoins, objectifs, fonctions, synoptique, données échangées), commun aux trois classes
@@ -191,7 +191,8 @@ La séance ne contient qu'un seul cours en présentiel (l'architecture). Les cou
 | Exemple de cahier de recette | Tableau de 3 tests entièrement rédigés (identifiant, exigence, préconditions, procédure, résultat attendu), et la liste des 8 exigences à couvrir | Les 8 tests au moins, propres au process de l'équipe |
 | Exemple de présentation flash | Une page ou 3 diapositives : process, architecture, données, un test de recette | Le contenu |
 | Howto du poste de développement | Pas à pas (Linux, Windows, macOS) : Python 3 et environnement virtuel, `pip install`, Mosquitto local ou broker public de test, SQLite et DB Browser, VS Code, et un script `verifier_poste.py` qui publie un message, le reçoit et écrit dans SQLite | Rien : il sert à valider le poste |
-| Simulateurs de process et de robot (`simulateurs/`) | `simulateur_mqtt.py` envoie au choix, dans un menu, les événements `cycle`, `etat`, `defaut` et `tache` sur `cellule/<equipe>/…`, ainsi que des messages mal formés et des rafales pour éprouver le collecteur ; `simulateur_api.py` a les endpoints de l'API fournie (`api_robot/`) sans robot ; classe `RobotSimule` pour l'API CQRS | L'équipe et le mot de passe MQTT (en tête de chaque fichier), les messages propres au process |
+| Simulateurs de process et de robot (`simulateurs/`) | `simulateur_mqtt.py` envoie au choix, dans un menu, les événements `cycle`, `etat`, `defaut` et `tache` sur `cellule/<equipe>/…`, ainsi que des messages mal formés et des rafales pour éprouver le collecteur ; `simulateur_api.py` a les endpoints de l'API fournie (`api_robot/`) sans robot ; classe `RobotSimule` pour l'API CQRS (support `API_CQRS_REST_Flask.md`) | L'équipe et le mot de passe MQTT (en tête de chaque fichier), les messages propres au process |
+| API du robot (`api_robot/`) | API de départ à lancer sur le robot (port 3000) : état du robot, position home, calibration, anneau de LED ; une tâche à la fois, début et fin de chaque tâche publiés sur `cellule/<equipe>/tache` | Les tâches propres au process (modèle à copier en fin de fichier), dans l'API et dans son simulateur |
 | Collecteur MQTT configurable (`collecteur/`) | Script de création de la base (`creer_bdd.py`) et collecteur Python simple (abonnement, validation du JSON, insertion dans `messages` et `cycles`), paramètres en tête de fichier | L'équipe et le mot de passe MQTT, l'adresse du broker, les champs du message, les tables propres au process |
 | Site web Flask de base (`site_web/`) | Tableau de bord minimal d'une page : boutons de commande qui appellent l'API du robot ou son simulateur, état du robot et derniers messages MQTT (lus dans `cellule.db`) mis à jour toutes les 2 secondes | Les pages, les compteurs, la mise en forme, les commandes |
 
@@ -243,7 +244,7 @@ Mosquitto, SQLite et Flask s'exécutent sans serveur. Chaque équipe travaille s
 | Semaine 3 | Site web adapté (dernier état, cycles, compteurs) | `cours/site_web_HTML_CSS.md`, `cours/intro_flask.md` |
 | Semaine 4 | API de commande en mode simulé reliée au site, dossier complété | `cours/API_CQRS_REST_Flask.md` |
 
-**Broker public de test.** Sans serveur, les équipes peuvent utiliser un broker MQTT public (par exemple `test.mosquitto.org` ou `broker.hivemq.com`, sans compte) pour tester d'un poste à l'autre. À respecter : ces brokers sont ouverts à tous, donc préfixer les topics par un identifiant propre à l'équipe (`cellule/g1e1-<mot aléatoire>/…`), n'y envoyer aucune donnée sensible, et ne pas compter sur leur disponibilité. Le broker local reste la référence ; à la séance 3, on passe au broker authentifié du serveur en changeant le fichier de configuration.
+**Broker public de test.** Sans serveur, les équipes peuvent utiliser un broker MQTT public (par exemple `test.mosquitto.org` ou `broker.hivemq.com`, sans compte) pour tester d'un poste à l'autre. À respecter : ces brokers sont ouverts à tous, donc préfixer les topics par un identifiant propre à l'équipe (`cellule/g1e1-<mot aléatoire>/…`), n'y envoyer aucune donnée sensible, et ne pas compter sur leur disponibilité. Le broker local reste la référence ; à la séance 3, on passe au broker authentifié du serveur en changeant les paramètres en tête de chaque programme (`BROKER`, `EQUIPE`, `MOT_DE_PASSE`).
 
 
 ### Séance 3 : intégration sur le serveur (MQTT, collecte dans SQLite, site web et API)
@@ -267,7 +268,7 @@ Les équipes ont avancé sur leur laptop pendant quatre semaines, à partir des 
 |-------|----------|
 | 40 min | **Démonstration par équipe** (5 min chacune, sur laptop, en local) : le simulateur, le collecteur, la base SQLite, le site web et l'API fonctionnent ensemble. Une équipe dont un sous-ensemble ne fonctionne pas le signale et repart des fournitures de la séance 2 |
 | 20 min | **Accès au serveur** : l'enseignant remet à chaque équipe ses codes d'accès (compte Linux, utilisateur MQTT) une fois les démonstrations faites. Connexion (SSH, avec VS Code Remote SSH si la salle a accès à Internet) ; mêmes identifiant et mot de passe sur le serveur et sur les postes Linux de la salle |
-| 30 min | **MQTT sur le serveur** : publier et s'abonner sur le broker du serveur avec l'authentification et les topics de l'équipe (MQTT Explorer puis `paho-mqtt`), passage du broker local au broker du serveur par le fichier de configuration |
+| 30 min | **MQTT sur le serveur** : publier et s'abonner sur le broker du serveur avec l'authentification et les topics de l'équipe (MQTT Explorer puis `paho-mqtt`), passage du broker local au broker du serveur par les paramètres en tête de chaque programme (`BROKER`, `EQUIPE`, `MOT_DE_PASSE`) |
 | 40 min | **Collecte** : le simulateur publie les événements du process de l'équipe ; le collecteur tourne sur le serveur, reçoit les messages, les valide et les insère dans SQLite. Requêtes de contrôle (nombre de cycles, durée moyenne) |
 | 40 min | **API** : API de commande du robot selon le principe CQRS (`GET /requetes/etat`, `POST /commandes/demarrer`, `/commandes/arreter`, `/commandes/calibrer`) en mode simulé (`RobotSimule`), sans appel au robot. Exécution sur le serveur, sur le port attribué à l'équipe (5001 à 5008) |
 | 40 min | **Site web** : tableau de bord exécuté sur le serveur (port 8001 à 8008), lisant la base SQLite (dernier état, liste des cycles, compteurs), avec des boutons de commande appelant l'API |
@@ -312,13 +313,13 @@ Le scénario complet, de la commande jusqu'à l'affichage des cycles, est dans l
 
 Conventions reprises des supports `cours/collecteur_MQTT.md` et `cours/SQL.md` (détail et exemples de messages dans le `README.md`, section 6) :
 
-- Topics : `cellule/<equipe>/cycle`, `cellule/<equipe>/etat` (message retenu), `cellule/<equipe>/defaut`, avec `<equipe>` de la forme `g1e1`
+- Topics : `cellule/<equipe>/cycle`, `cellule/<equipe>/etat` (message retenu), `cellule/<equipe>/defaut`, `cellule/<equipe>/tache` (tâches de l'API du robot), avec `<equipe>` de la forme `g1e1`
 - Message : `{"evenement": "fin_cycle", "piece": 12, "duree": 18.2, "zone": "A", "horodatage": "2026-11-17T08:30:18"}`
 - Tables : `messages(id, recu_le, sujet, charge, qos, retain)` (journal brut), `robots(id, nom, equipe, adresse_ip)` et `cycles(id, robot_id, debut, duree, zone, statut)` (lue par le site web)
 
 **Livrables**
 
-- `collecteur.py` et script de création de la base déployés sur le serveur et fonctionnels sur données simulées
+- `collecteur.py` et script de création de la base (`creer_bdd.py`) déployés sur le serveur, dans `~/supervision/`, et fonctionnels sur données simulées
 - Site web et API (mode simulé) déployés sur le serveur, alimentés par les données simulées
 
 **Supports de cours**
@@ -332,9 +333,9 @@ Conventions reprises des supports `cours/collecteur_MQTT.md` et `cours/SQL.md` (
 
 **Ressources reprises de l'an dernier**
 
-- `code/mqtt_message/` : `sender.py` (à transformer en simulateur de process) et `subscriber.py` (à passer de MySQL à SQLite)
-- `code/api_robot_test/` (API simulée du robot de l'an dernier, port 3000 : remplacée par l'API CQRS du cours, ports 5001 à 5008)
-- `code/website_commande/specification.md`
+- `code/mqtt_message/` : `sender.py` et `subscriber.py`, remplacés par le simulateur `simulateurs/simulateur_mqtt.py` et le collecteur `collecteur/` de ce dépôt (SQLite)
+- `code/api_robot_test/` (API simulée du robot de l'an dernier, port 3000) : remplacée par l'API fournie (`api_robot/`, sur le robot) et son simulateur (`simulateurs/simulateur_api.py`, ports 5001 à 5008), puis par l'API CQRS du cours
+- `code/website_commande/specification.md` (la base du tableau de bord est fournie dans `site_web/`)
 - `essai_robot/script4_mqtt_send.py` à `script7_API_mqtt.py` : repris dans le dossier `essai_robot/` de ce dépôt, avec un script 8 (lecture de l'état du robot) et un script 9 (`GET /robot/etat`) ; énoncés 4 à 9 de `cours/01_prise_en_main_robot.md`, partie 7, à préparer avant la séance 4 et à exécuter sur le robot pendant la séance 4
 - `tp/fiche_configuration.md` (à adapter : comptes, topics, ports par équipe)
 
@@ -477,7 +478,7 @@ flowchart TB
 
 Points arbitrés le 10/10/2026.
 
-1. **Alléger la séance 2.** Un dossier de départ est remis à chaque équipe : documents à remplir (gabarits et exemples de dossier, de recette et de présentation) et briques fournies (howto du poste, simulateur, collecteur configurable, site web de base). Son contenu est détaillé à la séance 2 (section 5). À écrire avant le 14/10.
+1. **Alléger la séance 2.** Un dossier de départ est remis à chaque équipe : documents à remplir (gabarits et exemples de dossier, de recette et de présentation) et briques fournies (howto du poste, simulateurs, collecteur, site web de base, API du robot). Son contenu est détaillé à la séance 2 (section 5). Les briques logicielles sont écrites et essayées (`simulateurs/`, `collecteur/`, `site_web/`, `api_robot/`) ; restent à écrire avant le 14/10 : les gabarits et exemples (dossier, recette, présentation), le howto du poste et `verifier_poste.py`.
    - Les laptops doivent porter Python 3, Mosquitto, SQLite, `paho-mqtt`, `flask` et `requests` : le howto couvre Linux, Windows et macOS, et `verifier_poste.py` valide le poste.
    - Sans serveur, les tests entre postes passent par un broker public (`test.mosquitto.org`, `broker.hivemq.com`) : topics préfixés par un identifiant propre à l'équipe, aucune donnée sensible. À vérifier : filtrage éventuel du port 1883 sur le réseau de l'établissement.
    - Le dossier v1 peut être terminé dans la semaine si l'atelier de 70 min ne suffit pas.

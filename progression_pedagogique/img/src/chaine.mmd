@@ -1,0 +1,7 @@
+flowchart LR
+    R["Robot + convoyeur<br/>(ou simulateur)"] -- "MQTT" --> B["Broker<br/>Mosquitto"]
+    B --> C["Collecteur<br/>Python"]
+    C -- "INSERT" --> DB[("Base SQLite<br/>cellule.db")]
+    DB -- "SELECT" --> W["Site web Flask<br/>tableau de bord"]
+    W -- "HTTP" --> A["API de commande<br/>(robot)"]
+    A --> R

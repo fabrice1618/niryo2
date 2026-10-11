@@ -218,9 +218,10 @@ Le contenu exact des messages est fixé par chaque équipe dans son dossier d'an
 
 | Élément | Convention |
 |---------|------------|
-| Topics MQTT | `cellule/<equipe>/cycle`, `cellule/<equipe>/etat` (message retenu), `cellule/<equipe>/defaut`, avec `<equipe>` de la forme `g1e1` |
+| Topics MQTT | `cellule/<equipe>/cycle`, `cellule/<equipe>/etat` (message retenu), `cellule/<equipe>/defaut`, `cellule/<equipe>/tache` (début et fin des tâches de l'API du robot), avec `<equipe>` de la forme `g1e1` |
 | Tables | `messages(id, recu_le, sujet, charge, qos, retain)` (journal brut), `robots(id, nom, equipe, adresse_ip)`, `cycles(id, robot_id, debut, duree, zone, statut)` (lue par le site web) |
-| API CQRS | `GET /requetes/etat`, `POST /commandes/demarrer`, `POST /commandes/arreter`, `POST /commandes/calibrer` |
+| API CQRS (cible) | `GET /requetes/etat`, `POST /commandes/demarrer`, `POST /commandes/arreter`, `POST /commandes/calibrer` (réponse `202 Accepted` et identifiant de commande) |
+| API fournie (point de départ) | `GET /robot/etat`, `POST /robot/home`, `POST /robot/autocalibrate`, `POST /robot/ledring/<couleur>` (réponse à la fin de la tâche, `409` si le robot est occupé) |
 | Ports | API simulée 5001 à 5008, site web 8001 à 8008 (un par équipe), API sur le robot 3000 (le port 5000 du robot est pris par le logiciel système de Niryo) |
 
 Exemples de messages (JSON) :
@@ -230,6 +231,7 @@ Exemples de messages (JSON) :
 {"evenement": "fin_cycle", "piece": 12, "duree": 18.2, "zone": "A", "horodatage": "2026-11-17T08:30:18"}
 {"etat": "en_cycle", "horodatage": "2026-11-17T08:30:00"}
 {"defaut": "piece_non_detectee", "message": "DI5 inactif après 30 s", "horodatage": "2026-11-17T08:42:03"}
+{"evenement": "fin_tache", "tache": "home", "statut": "terminee", "horodatage": "2026-11-17T08:45:12"}
 ```
 
 
@@ -241,6 +243,8 @@ Le robot n'est disponible qu'au fab lab : la partie serveur est développée en 
 |--------------|----------------------------------|
 | Programme process du robot | Un **simulateur de process** (`simulateurs/simulateur_mqtt.py`) qui publie les mêmes messages sur les mêmes topics : le collecteur ne voit pas la différence |
 | API sur le robot | La même API en **mode simulé** (`RobotSimule`), exécutée sur le serveur du module, ou le **simulateur d'API** (`simulateurs/simulateur_api.py`), qui a les endpoints de l'API fournie (`api_robot/`) |
+
+Pour ne pas partir de zéro, chaque brique a un **point de départ fourni** (section 8), volontairement simple, que chaque équipe adapte à son process : les simulateurs, le collecteur et le script de création de la base, la base du tableau de bord, l'API du robot. L'API CQRS du support `API_CQRS_REST_Flask.md` en est la version cible, avec des commandes qui répondent tout de suite (`202 Accepted`) au lieu d'attendre la fin de la tâche.
 
 ```mermaid
 flowchart LR
@@ -279,6 +283,8 @@ L'évaluation repose sur l'exécution, devant l'enseignant, du cahier de recette
 | BACHTECH24 | `BACHTECH24.md` |
 
 La séance 1 (prise en main du robot) est la même pour toutes les classes : son support est `cours/01_prise_en_main_robot.md`.
+
+Pour BACHINGE24, une présentation du module (`presentation_BACHINGE24.md`, Marp, exportée en PDF) reprend la démarche de ce document puis le déroulé des séances.
 
 Chaque progression précise le calendrier, les séances, les supports utilisés, les livrables, la configuration du serveur et la grille d'évaluation de la classe.
 

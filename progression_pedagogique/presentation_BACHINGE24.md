@@ -32,23 +32,74 @@ BACH INGE 2024-0 (3e année) · groupes G1 et G2
 
 # Le projet fil rouge
 
-Chaque équipe réalise une **cellule robotisée supervisée** et la fait recetter.
+Chaque équipe conçoit, réalise et fait recetter une **cellule robotisée supervisée**.
 
-**Le point de départ** : un poste de pick & place du fab lab (robot Niryo Ned2, convoyeur, capteur de présence sur l'entrée DI5) qui fonctionne seul.
+Dans l'industrie, un poste de production n'est plus isolé : les machines remontent leurs données vers des serveurs, qui les stockent, les affichent aux opérateurs et renvoient des ordres aux machines. Cette chaîne repose sur des architectures **client / serveur** et des protocoles standards (TCP/IP, MQTT, HTTP, SQL).
 
-**Ce qui manque** : piloter à distance, informer, observer la production.
+**La démarche de la présentation**, celle du `README.md` :
 
-**Ce que vous construisez**
-
-Robot + convoyeur → **MQTT** → broker Mosquitto → **collecteur Python** → base **SQLite** → **site web Flask** (tableau de bord) → **API de commande** → robot
-
-Vous définissez **votre propre process** : une pièce arrive, le robot la prend, la dépose dans une zone, le cycle est compté et horodaté.
+1. **Contexte** : la cellule telle qu'elle existe
+2. **Besoins** : ce qui lui manque
+3. **Objectifs** : le résultat attendu
+4. **Fonctions** : ce qu'il faut réaliser
+5. **Synoptique** : comment tout s'assemble et communique
 
 ---
 
-# Architecture cible
+# 1. Contexte : la cellule robotisée existante
 
-![h:480 center](../robot_niryo-architecture.drawio.png)
+Un poste de pick & place du fab lab, qui fonctionne déjà de façon autonome :
+
+- un **robot Niryo Ned2** (bras six axes avec pince) ;
+- un **convoyeur** piloté par le robot, avec un **capteur de présence** de pièce câblé sur l'entrée **DI5** du robot ;
+- un **PC avec Niryo Studio**, pour programmer le robot en Blockly et lancer le programme. Le programme s'exporte en Python (Python ROS Wrapper) et s'exécute sur le robot.
+
+![w:820 center](img/cellule_existante.svg)
+
+Quatre postes identiques : un robot par équipe dans chaque groupe.
+
+---
+
+# Ce que fait la cellule aujourd'hui
+
+![w:1150 center](img/cycle_existant.svg)
+
+**Ses limites** : la cellule fonctionne en îlot.
+
+- Pour savoir ce que fait le robot, il faut être devant lui ou devant le PC qui le programme.
+- Rien n'est conservé : nombre de pièces, durées de cycle et défauts sont perdus à la fin du programme.
+- Le programme se lance depuis Niryo Studio : aucun autre poste ne peut démarrer, arrêter ou calibrer la cellule.
+- Chaque robot est isolé : aucune vue d'ensemble des cellules de l'atelier.
+
+---
+
+# 2. Besoins : piloter, informer, observer
+
+![h:245 center](../robot_niryo-principe.drawio.png)
+
+| Besoin | Question | Exemple |
+|--------|----------|---------|
+| **Piloter** | « Que doit faire le robot ? » | Démarrer une série de 10 pièces, arrêter, calibrer, à distance |
+| **Informer** | « Que fait le robot maintenant ? » | En cycle, au repos, arrêté, hors ligne |
+| **Observer** | « Qu'a fait le robot ? » | Cycles, durées, pièces, défauts, conservés dans le temps |
+
+**Contraintes** : tout se consulte depuis un **navigateur** ; plusieurs cellules partagent le même serveur et **chaque équipe ne voit et ne commande que la sienne** ; le fonctionnement est **prouvé** par un cahier de recette.
+
+---
+
+# 3. Objectifs : le résultat attendu
+
+À la fin du projet, chaque équipe démontre sa cellule supervisée :
+
+1. depuis un navigateur, l'opérateur ouvre le tableau de bord de sa cellule et voit l'état du robot ;
+2. il clique sur « Démarrer » : le robot enchaîne les cycles sans passer par Niryo Studio ;
+3. chaque cycle apparaît dans le tableau de bord peu après sa fin, avec sa durée ;
+4. l'historique et les compteurs (pièces produites, durée moyenne, défauts) restent disponibles après l'arrêt du robot ;
+5. chaque test du cahier de recette, rédigé par l'équipe, est déroulé et déclaré conforme.
+
+**Livrables** : dossier d'analyse (process, architecture, dictionnaire des données), cahier de recette, code (programme process, collecteur, site web, API).
+
+Vous définissez **votre propre process** : une pièce arrive, le robot la prend, la dépose dans une zone, le cycle est compté et horodaté.
 
 ---
 
@@ -62,6 +113,115 @@ Vous définissez **votre propre process** : une pièce arrive, le robot la prend
 | C4 | Collecter et stocker des données de production (SQL / SQLite) |
 | C5 | Développer une interface web et une API en Python (Flask) |
 | C6 | Intégrer, tester et valider un système (recette) |
+
+Prérequis : bases de Python, notions de réseau (révisées dans le support `reseau_TCP_IP`).
+
+---
+
+# 4. Fonctions : ce qu'il faut réaliser
+
+<div class="petit">
+
+| Fonction | Rôle | Besoin | Brique |
+|----------|------|--------|--------|
+| F1 Exécuter le cycle | Convoyeur, détection DI5, prise, dépose : le cycle existant, repris en Python | (existant) | Programme process |
+| F2 Recevoir les commandes | Accepter « démarrer », « arrêter », « calibrer » et les exécuter sur le robot | Piloter | API de commande |
+| F3 Exposer l'état | Répondre à tout moment à « que fait le robot ? », sans gêner un mouvement | Informer | API de commande |
+| F4 Publier les événements | Signaler début et fin de cycle, changements d'état, défauts | Observer | Client MQTT du robot |
+| F5 Transmettre les messages | Recevoir les messages des robots, les distribuer, isoler les équipes | Observer | Broker Mosquitto |
+| F6 Collecter et stocker | S'abonner, valider les messages, enregistrer le journal et les cycles | Observer | Collecteur + base SQLite |
+| F7 Présenter | Tableau de bord (état, cycles, compteurs) et boutons de commande | Les trois | Site web Flask |
+
+</div>
+
+Pile volontairement légère : Python, Mosquitto, SQLite, Flask. Pas de Docker, pas de serveur de base de données : le tableau de bord est le site Flask.
+
+---
+
+# 5. Synoptique : la chaîne complète
+
+![w:1150 center](img/chaine.svg)
+
+| Canal | Modèle | Qui parle à qui | Besoins |
+|-------|--------|-----------------|---------|
+| HTTP | Requête / réponse : le client attend une réponse | Navigateur → site web, site web → API du robot | Piloter, informer |
+| MQTT | Publication / abonnement : l'émetteur ne sait pas qui écoute | Robot → broker → collecteur | Observer |
+| SQL | Écriture puis lecture d'une base commune | Collecteur → base → site web | Observer |
+
+L'historique ne passe pas par l'API : l'API répond à « que fait le robot maintenant ? », la base à « qu'a-t-il fait ? ».
+
+---
+
+# Architecture : le robot et le serveur du module
+
+![w:1150 center](../robot_niryo-architecture.drawio.png)
+
+- **Robot** : programme process (F1), client MQTT (F4), API de commande (F2, F3), port 3000
+- **Serveur du module** : broker (F5), collecteur et base (F6), site web (F7)
+- L'opérateur n'utilise qu'un **navigateur**
+
+---
+
+# Le cycle instrumenté
+
+Par rapport au cycle existant, seules les **publications MQTT** sont ajoutées (en couleur) : le mouvement du robot ne change pas.
+
+![w:1150 center](img/cycle_instrumente.svg)
+
+Exemples de messages (JSON), sur `cellule/<equipe>/cycle` :
+
+```json
+{"evenement": "debut_cycle", "piece": 12, "horodatage": "2026-11-17T08:30:00"}
+{"evenement": "fin_cycle", "piece": 12, "duree": 18.2, "zone": "A", "horodatage": "2026-11-17T08:30:18"}
+```
+
+---
+
+# Données échangées et réseau
+
+<div class="petit">
+
+| Élément | Convention (proposition de départ, fixée par chaque équipe dans son dossier) |
+|---------|------------|
+| Topics MQTT | `cellule/<equipe>/cycle`, `…/etat` (message retenu), `…/defaut`, `…/tache` (tâches de l'API) ; `<equipe>` de la forme `g1e1` |
+| Tables SQLite | `messages` (journal brut), `robots`, `cycles` (lue par le site web), dans `cellule.db` |
+| API du robot | Fournie : `GET /robot/etat`, `POST /robot/home`, `/robot/autocalibrate`, `/robot/ledring/<couleur>` ; cible CQRS : `GET /requetes/etat`, `POST /commandes/demarrer`, `/arreter`, `/calibrer` |
+| Ports | API simulées 5001 à 5008, sites web 8001 à 8008 (un par équipe), API sur le robot 3000, MQTT 1883 |
+
+</div>
+
+---
+
+# Le réseau du fab lab
+
+Pour le projet, les robots quittent leur Wi-Fi propre et rejoignent le réseau du fab lab, où ils peuvent joindre le serveur du module.
+
+![h:300 center](img/reseau.svg)
+
+Chaque équipe a son compte sur le serveur et sur le broker : elle ne voit et ne commande que sa cellule.
+
+---
+
+# Démarche : le serveur d'abord, le robot ensuite
+
+![w:1150 center](img/demarche.svg)
+
+Le robot n'est disponible qu'au fab lab : la partie serveur est développée en premier, avec des éléments **simulés**, puis le robot réel prend leur place lors de l'intégration.
+
+| Élément réel | Remplacé avant l'intégration par |
+|--------------|----------------------------------|
+| Programme process du robot | Le **simulateur de process** (`simulateur_mqtt.py`) : mêmes messages, mêmes topics |
+| API sur le robot | Le **simulateur d'API** (`simulateur_api.py`), ou l'API CQRS en mode simulé (`RobotSimule`) |
+
+Chaque brique a un **point de départ fourni**, volontairement simple, que vous adaptez à votre process.
+
+---
+
+<!-- _class: lead -->
+
+# Le module pour BACH INGE 2024-0
+
+## Séances, livrables, fournitures
 
 ---
 
@@ -83,12 +243,9 @@ Vous définissez **votre propre process** : une pièce arrive, le robot la prend
 
 # Le rythme du module
 
-```text
-12/10        14/10                    09/11      16/11   17/11   19/11
-  S1           S2     <-- 4 semaines -->  S3      dossier   S4      S5
-robot       analyse    travail sur      serveur    v2     robots  évaluation
-            + poste    votre laptop
-```
+| 12/10 | 14/10 | 4 semaines | 09/11 | 16/11 | 17/11 | 19/11 |
+|-------|-------|------------|-------|-------|-------|-------|
+| Séance 1 : robot | Séance 2 : analyse et poste | Travail sur votre laptop | Séance 3 : serveur | Dossier v2 | Séance 4 : robots | Séance 5 : évaluation |
 
 - **Entre les séances 2 et 3** : 4 semaines de travail **autonome** sur laptop, sans serveur
 - **Entre les séances 3 et 4** : 8 jours, pour tester le process et l'API en mode simulé
@@ -116,12 +273,13 @@ Le robot n'est disponible qu'aux séances 1, 4 et 5 : **préparez tout le reste 
 
 **Dossier de départ remis à la séance 2**
 
-| Documents à remplir | Briques logicielles |
+| Documents à remplir | Briques logicielles (à adapter à votre process) |
 |---------------------|---------------------|
 | Gabarit et exemple de **dossier d'analyse** | **Howto** du poste de développement + `verifier_poste.py` |
-| Exemple de **cahier de recette** (3 tests rédigés) | **Simulateur** de process et de robot (`RobotSimule`) |
-| Exemple de **présentation flash** | **Collecteur MQTT** à configurer |
-| | **Site web Flask** de base |
+| Exemple de **cahier de recette** (3 tests rédigés) | **Simulateurs** du robot : messages MQTT et API (`simulateurs/`) |
+| Exemple de **présentation flash** | **Collecteur MQTT** et création de la base (`collecteur/`) |
+| | **Site web Flask** de base : commandes, état, messages (`site_web/`) |
+| | **API du robot** à compléter avec vos tâches (`api_robot/`) |
 
 **Aussi fournis**
 
@@ -209,7 +367,7 @@ Le robot n'est disponible qu'aux séances 1, 4 et 5 : **préparez tout le reste 
 |-------|------------------|
 | 40 min | **Démonstration** de votre chaîne en local (5 min par équipe) |
 | 20 min | Recevoir vos codes d'accès, se connecter au serveur (SSH) |
-| 30 min | Passer du broker local au **broker du serveur** (fichier de configuration) |
+| 30 min | Passer du broker local au **broker du serveur** (paramètres en tête de chaque programme) |
 | 40 min | Déployer le **collecteur** et la base SQLite, vérifier par des requêtes (nombre de cycles, durée moyenne) |
 | 40 min | Déployer l'**API** simulée (port 5001 à 5008) |
 | 40 min | Déployer le **site web** (port 8001 à 8008) avec ses boutons de commande |
@@ -225,7 +383,7 @@ Le robot n'est disponible qu'aux séances 1, 4 et 5 : **préparez tout le reste 
 - Tester le programme process et l'API **en mode simulé** : seul le passage au robot réel doit rester à faire
 - Relire l'export Python de la séance 1 et les poses relevées
 
-> Les étudiants n'ont le robot que 3h30 à la séance 4. Tout ce qui n'est pas prêt avant ne sera pas terminé.
+> Vous n'avez le robot que 3h30 à la séance 4 : tout ce qui n'est pas prêt avant ne sera pas terminé.
 
 ---
 
@@ -283,4 +441,5 @@ Pendant qu'une équipe passe, la suivante prépare sa cellule sur un autre robot
 # Questions ?
 
 Supports : `README.md` et dossier `cours/`
+Briques fournies : `simulateurs/`, `collecteur/`, `site_web/`, `api_robot/` (mode d'emploi dans le `README.md` de chaque dossier)
 Progression détaillée : `progression_pedagogique/BACHINGE24.md`

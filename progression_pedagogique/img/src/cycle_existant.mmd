@@ -1,0 +1,9 @@
+flowchart LR
+    A["Pièce posée<br/>sur le convoyeur"] --> C["Convoyeur<br/>en marche"]
+    C --> D{"DI5 :<br/>pièce ?"}
+    D -- non --> C
+    D -- oui --> E["Arrêt du<br/>convoyeur"]
+    E --> F["Prise de<br/>la pièce"]
+    F --> G["Dépose dans<br/>la zone"]
+    G --> H["Retour en<br/>attente"]
+    H --> A

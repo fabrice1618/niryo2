@@ -1,0 +1,4 @@
+flowchart LR
+    PE["Postes étudiants"] --- SW["Réseau du fab lab<br/>192.168.10.0/24"]
+    SW --- SV["Serveur du module<br/>SSH :22 · MQTT :1883<br/>API simulées :5001-5008<br/>sites :8001-8008"]
+    SW --- ROB["Robots Ned2<br/>192.168.10.21 à .24<br/>API :3000"]

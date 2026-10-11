@@ -171,15 +171,16 @@ Une équipe qui veut une bibliothèque de plus l'installe pour elle seule : `pip
 
 ## 7. Briques fournies aux équipes
 
-Les briques remises à la séance 2 (simulateur de process, collecteur MQTT à configurer, site web Flask de base, squelette de l'API CQRS en mode simulé) sont aussi déposées sur le serveur, en lecture pour tous :
+Les briques remises à la séance 2 sont aussi déposées sur le serveur, en lecture pour tous : les simulateurs (`simulateurs/`), le collecteur et le script de création de la base (`collecteur/`), la base du tableau de bord (`site_web/`) et l'API du robot (`api_robot/`), copiés depuis ce dépôt (cloné dans `~/niryo2`), ainsi que les autres fournitures de la séance (squelette de l'API CQRS en mode simulé, gabarits) :
 
 ```bash
 sudo mkdir -p /opt/cellule/fournitures
-sudo cp -r ~/fournitures/* /opt/cellule/fournitures/
+sudo cp -r ~/niryo2/{simulateurs,collecteur,site_web,api_robot} /opt/cellule/fournitures/
+sudo cp -r ~/fournitures/* /opt/cellule/fournitures/      # autres fournitures, s'il y en a
 sudo chmod -R a+rX /opt/cellule/fournitures
 ```
 
-Chaque équipe copie ce dont elle a besoin dans son dossier (`cp -r /opt/cellule/fournitures/site_web/* ~/supervision/`, voir le `README.md` de chaque brique), avec ses ports : API simulée `5000 + n`, site `8000 + n`, où `n` est le numéro de l'équipe (1 à 8).
+Chaque équipe copie ce dont elle a besoin dans son dossier, en suivant le `README.md` de chaque brique : collecteur et site dans `~/supervision/` (`cp /opt/cellule/fournitures/collecteur/*.py ~/supervision/`, `cp -r /opt/cellule/fournitures/site_web/* ~/supervision/`), simulateurs dans le dossier personnel, avec ses ports : API simulée `5000 + n`, site `8000 + n`, où `n` est le numéro de l'équipe (1 à 8).
 
 
 ## 8. Pare-feu (facultatif)
