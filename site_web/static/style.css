@@ -1,0 +1,8 @@
+body { font-family: sans-serif; max-width: 60rem; margin: 1rem auto; padding: 0 1rem; }
+form { display: inline-block; margin: 0 0.5rem 0.5rem 0; }
+button, select { padding: 0.3rem 0.6rem; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid #ccc; padding: 0.2rem 0.5rem; text-align: left; vertical-align: top; }
+td:last-child { overflow-wrap: anywhere; }
+.message { background: #eef; padding: 0.5rem; }
+.erreur { color: #b00; }

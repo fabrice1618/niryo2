@@ -644,6 +644,8 @@ def commande(nom):
 - Le `timeout` est indispensable : sans lui, une API muette bloquerait la page indéfiniment.
 - Changer l'adresse `URL_API` suffit pour passer de l'API simulée au vrai robot : c'est tout l'intérêt de séparer le site et l'API.
 
+Une base de tableau de bord est fournie (`site_web/`, mode d'emploi dans `site_web/README.md`) : une page qui appelle l'API fournie du robot (routes `/robot/…`) ou son simulateur, avec des boutons de commande, l'état du robot et les derniers messages MQTT mis à jour toutes les 2 secondes. Elle sert de point de départ au tableau de bord de chaque équipe.
+
 ## Réalisation guidée : le tableau de bord de la cellule
 
 On assemble tout ce qui précède dans un site de quatre pages qui lit la base de la cellule. Le style vient du cours *HTML et CSS* (fichier `static/css/style.css` de la maquette).

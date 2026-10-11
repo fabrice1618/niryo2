@@ -1,0 +1,23 @@
+<h2>État du robot <small>(mis à jour à {{ heure }})</small></h2>
+
+{% if etat is none %}
+  <p class="erreur">API du robot injoignable</p>
+{% else %}
+  <p>Tâche en cours : <strong>{{ etat.tache_en_cours or "aucune" }}</strong></p>
+  <table>
+    {% for nom, valeur in etat.items() %}
+      <tr><th>{{ nom }}</th><td>{{ valeur }}</td></tr>
+    {% endfor %}
+  </table>
+{% endif %}
+
+<h2>Derniers messages MQTT</h2>
+
+<table>
+  <tr><th>Reçu à</th><th>Sujet</th><th>Message</th></tr>
+  {% for m in messages %}
+    <tr><td>{{ m.heure }}</td><td>{{ m.sujet }}</td><td>{{ m.charge }}</td></tr>
+  {% else %}
+    <tr><td colspan="3">Aucun message : le collecteur tourne-t-il ?</td></tr>
+  {% endfor %}
+</table>

@@ -179,7 +179,7 @@ sudo cp -r ~/fournitures/* /opt/cellule/fournitures/
 sudo chmod -R a+rX /opt/cellule/fournitures
 ```
 
-Chaque équipe copie ce dont elle a besoin dans son dossier (`cp -r /opt/cellule/fournitures/site ~/`), avec ses ports : API simulée `5000 + n`, site `8000 + n`, où `n` est le numéro de l'équipe (1 à 8).
+Chaque équipe copie ce dont elle a besoin dans son dossier (`cp -r /opt/cellule/fournitures/site_web/* ~/supervision/`, voir le `README.md` de chaque brique), avec ses ports : API simulée `5000 + n`, site `8000 + n`, où `n` est le numéro de l'équipe (1 à 8).
 
 
 ## 8. Pare-feu (facultatif)

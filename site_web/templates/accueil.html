@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cellule {{ equipe }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h1>Cellule {{ equipe }}</h1>
+
+  {% for message in get_flashed_messages() %}
+    <p class="message">{{ message }}</p>
+  {% endfor %}
+
+  <h2>Commandes</h2>
+
+  <form method="post" action="{{ url_for('home') }}">
+    <button>Position home</button>
+  </form>
+
+  <form method="post" action="{{ url_for('autocalibrate') }}">
+    <button>Calibration</button>
+  </form>
+
+  <form method="post" action="{{ url_for('ledring') }}">
+    <select name="couleur">
+      {% for couleur in couleurs %}
+        <option>{{ couleur }}</option>
+      {% endfor %}
+    </select>
+    <button>Anneau de LED</button>
+  </form>
+
+  {# Ajouter une commande : copier un formulaire et remplacer « cycle »
+  <form method="post" action="{{ url_for('cycle') }}">
+    <button>Cycle</button>
+  </form>
+  #}
+
+  <div id="etat">Chargement…</div>
+
+  <script>
+    // Recharge la partie « état et messages » (route /etat) toutes les 2 secondes,
+    // sans recharger toute la page
+    function rafraichir() {
+      fetch("{{ url_for('etat') }}")
+        .then(reponse => reponse.text())
+        .then(html => document.getElementById("etat").innerHTML = html);
+    }
+    rafraichir();
+    setInterval(rafraichir, 2000);
+  </script>
+</body>
+</html>
