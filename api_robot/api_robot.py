@@ -13,7 +13,6 @@ Lancement, sur le robot : ~/cellule/lancer.sh api_robot.py
 Essai, depuis un poste :  curl -X POST http://192.168.10.21:3000/robot/ledring/vert
 """
 import json
-import threading
 from datetime import datetime
 
 import paho.mqtt.client as mqtt
@@ -40,46 +39,56 @@ n = NiryoRosWrapper()
 app = Flask(__name__)
 app.json.ensure_ascii = False          # accents lisibles dans les réponses JSON
 
-
-# --- MQTT : un message au début et à la fin de chaque tâche -----------------
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=f"{EQUIPE}_api_robot")
 client.username_pw_set(EQUIPE, MOT_DE_PASSE)
 client.connect_async(BROKER, 1883)     # l'API démarre même si le broker est absent
 client.loop_start()
 
+tache_en_cours = None                  # nom de la tâche en cours, None quand le robot est libre
 
-def publier(evenement, tache, **parametres):
-    message = {"evenement": evenement, "tache": tache, **parametres,
-               "horodatage": datetime.now().isoformat(timespec="seconds")}
+
+# --- Début et fin des tâches ------------------------------------------------------
+def publier(message):
+    """Envoie le message sur cellule/<equipe>/tache, avec l'heure."""
+    message["horodatage"] = datetime.now().isoformat(timespec="seconds")
     client.publish(f"cellule/{EQUIPE}/tache", json.dumps(message), qos=1)
     print("  MQTT :", message)
 
 
-# --- Une tâche à la fois -------------------------------------------------------
-tache_en_cours = None                  # nom de la tâche en cours, None quand le robot est libre
-verrou = threading.Lock()              # deux demandes simultanées ne peuvent pas réserver le robot
-
-
-def commencer(tache, **parametres):
-    """Réserve le robot pour la tâche et publie son début. Renvoie False si le robot est occupé."""
+def commencer(tache, couleur=None):
+    """Note la tâche en cours et publie son début."""
     global tache_en_cours
-    with verrou:
-        if tache_en_cours is not None:
-            return False
-        tache_en_cours = tache
-    publier("debut_tache", tache, **parametres)
-    return True
+    tache_en_cours = tache
+    message = {"evenement": "debut_tache", "tache": tache}
+    if couleur:
+        message["couleur"] = couleur
+    publier(message)
 
 
-def terminer(tache, erreur=None, **parametres):
-    """Libère le robot, publie la fin de la tâche (réussie ou en erreur) et renvoie la réponse."""
+def terminer(tache, couleur=None):
+    """Tâche réussie : libère le robot, publie la fin de la tâche et renvoie la réponse."""
     global tache_en_cours
     tache_en_cours = None
-    if erreur is not None:
-        publier("fin_tache", tache, statut="erreur", erreur=str(erreur), **parametres)
-        return {"tache": tache, **parametres, "statut": "erreur", "erreur": str(erreur)}, 500
-    publier("fin_tache", tache, statut="terminee", **parametres)
-    return {"tache": tache, **parametres, "statut": "terminee"}
+    message = {"evenement": "fin_tache", "tache": tache, "statut": "terminee"}
+    reponse = {"tache": tache, "statut": "terminee"}
+    if couleur:
+        message["couleur"] = couleur
+        reponse["couleur"] = couleur
+    publier(message)
+    return reponse
+
+
+def echec(tache, erreur, couleur=None):
+    """Erreur du robot : libère le robot, publie la fin de la tâche en erreur et renvoie la réponse (500)."""
+    global tache_en_cours
+    tache_en_cours = None
+    message = {"evenement": "fin_tache", "tache": tache, "statut": "erreur", "erreur": str(erreur)}
+    reponse = {"tache": tache, "statut": "erreur", "erreur": str(erreur)}
+    if couleur:
+        message["couleur"] = couleur
+        reponse["couleur"] = couleur
+    publier(message)
+    return reponse, 500
 
 
 def occupe():
@@ -89,11 +98,12 @@ def occupe():
 
 @app.before_request
 def afficher_appel():
-    """Affiche chaque appel reçu : endpoint et paramètres."""
-    print(f"{request.method} {request.path}  paramètres : {request.view_args}")
+    """Affiche chaque appel reçu, avant de le traiter."""
+    print(request.method, request.path)
 
 
-# --- Les tâches : une fonction par tâche, du même nom que l'endpoint -----------
+# --- Les endpoints : une tâche chacun -------------------------------------------------
+@app.get("/robot/etat")
 def etat():
     """Lit l'état du robot, sans rien faire bouger (script 8)."""
     materiel = n.get_hardware_status()
@@ -104,79 +114,62 @@ def etat():
         "calibration_necessaire": materiel.calibration_needed,
         "temperature_raspberry": materiel.rpi_temperature,
         "temperatures_moteurs": list(materiel.temperatures),
+        "tache_en_cours": tache_en_cours,
     }
 
 
-def home():
-    n.move_joints(*JOINTS_HOME)
-
-
-def autocalibrate():
-    n.calibrate_auto()
-
-
-def ledring(couleur):
-    # wait=True : la fonction attend la fin du clignotement (10 fois 0,2 s)
-    n.led_ring.flashing(COULEURS[couleur], period=0.2, iterations=10, wait=True)
-
-
-# --- Les endpoints : chacun appelle la fonction du même nom ----------------------
-@app.get("/robot/etat")
-def route_etat():
-    return {**etat(), "tache_en_cours": tache_en_cours}
-
-
 @app.post("/robot/home")
-def route_home():
-    if not commencer("home"):
+def home():
+    if tache_en_cours is not None:     # une tâche à la fois
         return occupe()
+    commencer("home")
     try:
-        home()
-    except Exception as e:
-        return terminer("home", erreur=e)
+        n.move_joints(*JOINTS_HOME)
+    except Exception as e:             # par exemple un mouvement demandé avant la calibration
+        return echec("home", e)
     return terminer("home")
 
 
 @app.post("/robot/autocalibrate")
-def route_autocalibrate():
-    if not commencer("autocalibrate"):
+def autocalibrate():
+    if tache_en_cours is not None:
         return occupe()
+    commencer("autocalibrate")
     try:
-        autocalibrate()
+        n.calibrate_auto()
     except Exception as e:
-        return terminer("autocalibrate", erreur=e)
+        return echec("autocalibrate", e)
     return terminer("autocalibrate")
 
 
 @app.post("/robot/ledring/<couleur>")
-def route_ledring(couleur):
+def ledring(couleur):
     if couleur not in COULEURS:
         return {"erreur": f"couleur inconnue : {couleur}", "couleurs": list(COULEURS)}, 400
-    if not commencer("ledring", couleur=couleur):
+    if tache_en_cours is not None:
         return occupe()
+    commencer("ledring", couleur)
     try:
-        ledring(couleur)
+        # wait=True : attend la fin du clignotement (10 fois 0,2 s)
+        n.led_ring.flashing(COULEURS[couleur], period=0.2, iterations=10, wait=True)
     except Exception as e:
-        return terminer("ledring", erreur=e, couleur=couleur)
-    return terminer("ledring", couleur=couleur)
+        return echec("ledring", e, couleur)
+    return terminer("ledring", couleur)
 
 
 # --- Ajouter une tâche : copier ce modèle et remplacer « cycle » ----------------
 #
-# def cycle():
-#     n.move_pose(...)                 # les appels au robot, repris de l'export de Niryo Studio
-#
 # @app.post("/robot/cycle")
-# def route_cycle():
-#     if not commencer("cycle"):
+# def cycle():
+#     if tache_en_cours is not None:
 #         return occupe()
+#     commencer("cycle")
 #     try:
-#         cycle()
+#         n.move_pose(...)             # les appels au robot, repris de l'export de Niryo Studio
 #     except Exception as e:
-#         return terminer("cycle", erreur=e)
+#         return echec("cycle", e)
 #     return terminer("cycle")
 
 
-# threaded=True : les requêtes sont traitées en parallèle, pour que GET /robot/etat
-# réponde pendant une tâche ; commencer() refuse une seconde tâche
-app.run(host="0.0.0.0", port=PORT_API, threaded=True)
+# Flask traite les requêtes en parallèle : GET /robot/etat répond même pendant une tâche
+app.run(host="0.0.0.0", port=PORT_API)

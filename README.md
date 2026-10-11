@@ -290,7 +290,7 @@ Chaque progression précise le calendrier, les séances, les supports utilisés,
 
 **Collecteur fourni** (`collecteur/`) : version simplifiée du collecteur du support `collecteur_MQTT.md`, prête à lancer sur le serveur. `creer_bdd.py` crée la base `cellule.db` ; `collecteur.py` y enregistre tous les messages de l'équipe (table `messages`) et en tire les cycles (table `cycles`). Chaque équipe l'adapte à son process (format des messages, nouvelles tables). Mode d'emploi dans `collecteur/README.md`.
 
-**API fournie du robot** (`api_robot/`) : API de départ à lancer sur le robot (port 3000), qui reprend les scripts d'essai 7 à 9 : état du robot, retour en position home, calibration, anneau de LED. Un endpoint par tâche, qui appelle la fonction du même nom ; chaque tâche est annoncée sur MQTT au début et à la fin.
+**API fournie du robot** (`api_robot/`) : API de départ à lancer sur le robot (port 3000), qui reprend les scripts d'essai 7 à 9 : état du robot, retour en position home, calibration, anneau de LED. Un endpoint par tâche, qui contient les appels au robot ; chaque tâche est annoncée sur MQTT au début et à la fin.
 
 **Scripts d'essai sur le robot** (`essai_robot/`) : neuf scripts courts qui testent chacun une brique sur le robot (calibration, convoyeur, cycle, MQTT, API, lecture de l'état et endpoint `GET /robot/etat`), avec leurs énoncés dans la partie 7 de `cours/01_prise_en_main_robot.md`.
 

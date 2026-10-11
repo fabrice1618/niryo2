@@ -87,9 +87,9 @@ Sur le broker du module, une équipe ne peut publier que sous `cellule/<son iden
 python3 simulateur_api.py
 ```
 
-Il ne fait rien bouger. Pour chaque appel, il affiche l'endpoint et ses paramètres, envoie un message MQTT de début de tâche, attend le temps que mettrait le robot, envoie un message de fin de tâche, puis répond.
+Il ne fait rien bouger. Pour chaque appel, il affiche l'endpoint, envoie un message MQTT de début de tâche, attend le temps que mettrait le robot, envoie un message de fin de tâche, puis répond.
 
-| Méthode | Endpoint | Fonction appelée | Durée simulée |
+| Méthode | Endpoint | Fonction | Durée simulée |
 |---|---|---|---|
 | `GET` | `/robot/etat` | `etat()` | aucune (valeurs inventées) |
 | `POST` | `/robot/home` | `home()` | 4 s |
@@ -104,7 +104,9 @@ mosquitto_sub -h localhost -u g1e1 -P mot-de-passe-equipe -t 'cellule/g1e1/tache
 
 Les endpoints, les réponses et les messages MQTT sont **ceux de l'API du robot** : le site web passe de l'un à l'autre en changeant seulement l'adresse (`http://127.0.0.1:5001` puis `http://192.168.10.21:3000`). Comme sur le robot, une seule tâche s'exécute à la fois : une demande qui arrive pendant une tâche est refusée tout de suite (`409`, « robot occupé »), et `GET /robot/etat` répond même pendant une tâche, avec le champ `tache_en_cours` (nom de la tâche, ou `null`). Le détail est dans `api_robot/README.md`.
 
-**Ajouter une tâche** : copier le modèle en fin de fichier (une fonction et son endpoint, du même nom), enlever les `#` et remplacer `cycle` par le nom de la tâche et `18` par sa durée en secondes. L'endpoint garde la forme des autres (`commencer`, la fonction, `terminer`). Une fois la tâche validée avec le site web, l'écrire de la même façon dans l'API du robot, avec les vrais appels au robot.
+Chaque endpoint a la même forme que dans l'API du robot : il vérifie que le robot est libre (sinon `occupe()`, réponse `409`), appelle `commencer()`, attend avec `time.sleep()` à la place des appels au robot, puis renvoie le résultat de `terminer()`. Une attente ne peut pas échouer : il n'y a pas de `try` ni d'`echec()`, et le simulateur ne renvoie jamais l'erreur `500` du robot.
+
+**Ajouter une tâche** : copier le modèle en fin de fichier, enlever les `#`, remplacer `cycle` par le nom de la tâche et `18` par sa durée en secondes. Une fois la tâche validée avec le site web, l'écrire dans l'API du robot à partir du modèle de son fichier, avec les vrais appels au robot.
 
 
 ## Essais réalisés
@@ -112,4 +114,4 @@ Les endpoints, les réponses et les messages MQTT sont **ceux de l'API du robot*
 Avec un broker Mosquitto configuré comme celui du serveur du module (un compte par équipe) :
 
 - simulateur MQTT : chaque choix du menu ; le collecteur fourni (`collecteur/`) a enregistré les 1023 messages envoyés et en a tiré les 1005 cycles attendus ; mauvais mot de passe et broker absent signalés ;
-- simulateur d'API : les quatre endpoints, la couleur inconnue (`400`), les messages MQTT de début et de fin, le refus `409` pendant une tâche (une seule demande acceptée sur cinq envoyées en même temps), `tache_en_cours` lu pendant une calibration avec une réponse immédiate.
+- simulateur d'API : les quatre endpoints, la couleur inconnue (`400`), les messages MQTT de début et de fin (identiques à ceux de l'API du robot), le refus `409` pendant une tâche (une seule demande acceptée sur cinq envoyées en même temps), `tache_en_cours` lu pendant une calibration avec une réponse immédiate.
