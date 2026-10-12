@@ -25,7 +25,7 @@
 | Séance | Date | Lieu | Robots | Serveur | Remarque |
 |--------|------|------|--------|---------|----------|
 | Séance 1 | jeu. 15/10/2026, 08:30-12:00 | Fab lab | Oui | Non | Prise en main du robot |
-| Séance 2 | jeu. 15/10/2026, 13:30-17:00 | Salle de cours | Non | Non | Analyse, dossier ; vidéoprojecteur |
+| Séance 2 | jeu. 15/10/2026, 13:30-17:00 | Fab lab | Non | Non | Analyse, dossier ; vidéoprojecteur ou écran |
 | Séance 3 | mar. 10/11/2026, 08:30-12:00 | Fab lab | Non | Oui | Collecteur MQTT |
 | Séance 4 | lun. 15/02/2027, 13:30-17:00 | Salle de cours | Non | Non | Cours HTTP, HTML, Flask ; serveur Flask lancé sur le poste |
 | Séance 5 | mar. 16/02/2027, 13:30-17:00 | Salle de cours | Non | Non | Cours Flask et API ; pas de serveur |
@@ -119,7 +119,7 @@ Statuts : **Existant** (présent, à vérifier), **À fournir** (demande à l'IR
 | Qté | Désignation | Remarque | Statut |
 |-----|-------------|----------|--------|
 | 12 au plus | Laptops des étudiants, ou postes de l'IRUP | Python 3.10 ou plus, VS Code, MQTT Explorer, DB Browser for SQLite, `mosquitto-clients`, `curl`. Niryo Studio pour les séances avec robot | À vérifier |
-| 1 | Vidéoprojecteur ou écran, câble HDMI | Séances de cours en salle (séances 2, 4 et 5 de B3RNSPP26 ; séance 2 de BACHTECH24) | À vérifier |
+| 1 | Vidéoprojecteur ou écran, câble HDMI | Séances de cours (séance 2 de B3RNSPP26 au fab lab ; séances 4 et 5 de B3RNSPP26 et séance 2 de BACHTECH24 en salle) | À vérifier |
 | 1 | Poste ou laptop de l'intervenant | Démonstrations, administration du NUC | Apporté |
 
 Les séances en salle de cours n'ont pas besoin du serveur : Flask est lancé sur les postes (séances 4 et 5 de B3RNSPP26).
@@ -217,7 +217,7 @@ Préparation et tests :
 
 ### 5.4 Salle de cours et postes
 
-- [ ] Salle réservée pour la séance 2 de chaque classe et pour les séances 4 et 5 de B3RNSPP26
+- [ ] Salle réservée pour la séance 2 de BACHTECH24 et pour les séances 4 et 5 de B3RNSPP26 (la séance 2 de B3RNSPP26 a lieu au fab lab)
 - [ ] Vidéoprojecteur ou écran testé
 - [ ] Postes ou laptops : Python, `flask` et `pip` fonctionnent (séances 4 et 5 de B3RNSPP26 sans serveur) ; logiciels de la section 3.4 installés
 - [ ] Souris et câbles réseau de rechange apportés
@@ -250,12 +250,12 @@ Préparation et tests :
 
 ## 7. Points à confirmer avec l'IRUP
 
-1. **Réservations du fab lab.** Presque toutes les séances ont lieu au fab lab, car le NUC n'est pas accessible depuis la salle de classe : 12 séances de BACHTECH24 et 9 séances de B3RNSPP26 (dates en section 1). Le fab lab est-il disponible sur tous ces créneaux ? Il accueille aussi ISTP les 12/10, 17/11 et 19/11/2026 : aucun chevauchement avec les créneaux de l'IRUP.
+1. **Réservations du fab lab.** Presque toutes les séances ont lieu au fab lab, car le NUC n'est pas accessible depuis la salle de classe : 12 séances de BACHTECH24 et 10 séances de B3RNSPP26 (dates en section 1). Le fab lab est-il disponible sur tous ces créneaux ? Il accueille aussi ISTP les 12/10, 17/11 et 19/11/2026 : aucun chevauchement avec les créneaux de l'IRUP.
 2. **NUC.** Modèle, mémoire, état, accès au BIOS ou à l'UEFI, démarrage sur USB, qui peut intervenir dessus. Peut-il rester allumé en permanence ?
 3. **Réseau du fab lab.** Plan d'adressage réel, plage DHCP, nombre de ports libres sur le switch, Wi-Fi pour les laptops, accès à Internet.
 4. **Robots avec caméra.** Lesquels ? Combien ? Peut-on les réserver aux 2 équipes de BACHTECH24 ? Les robots sans caméra sont-ils tous en état de marche ?
 5. **Postes de travail.** Les étudiants viennent-ils avec leur laptop, ou y a-t-il des postes de l'IRUP ? Quel système ? Une prise Ethernet est-elle disponible ?
-6. **Salle de cours.** Quelle salle pour les séances 2 (les deux classes) et 4 et 5 de B3RNSPP26 ? Vidéoprojecteur disponible ?
+6. **Salle de cours.** Quelle salle pour la séance 2 de BACHTECH24 et les séances 4 et 5 de B3RNSPP26 ? Vidéoprojecteur disponible, en salle et au fab lab (séance 2 de B3RNSPP26) ?
 7. **Équipes.** La section 2 propose 2 équipes pour BACHTECH24 et 4 équipes pour B3RNSPP26. À corriger si l'effectif ou le découpage est différent.
 8. **Grafana.** Installation d'un service sur le NUC (port 3000) acceptée par l'IRUP ? Les étudiants peuvent-ils ouvrir le port 3000 depuis leur poste ?
 9. **Fourniture des SSD.** Qui fournit le SSD de démarrage et sa copie de secours ? Qui conserve la copie entre les séances ?

@@ -284,7 +284,7 @@ L'évaluation repose sur l'exécution, devant l'enseignant, du cahier de recette
 
 La séance 1 (prise en main du robot) est la même pour toutes les classes : son support est `cours/01_prise_en_main_robot.md`.
 
-Pour BACHINGE24, une présentation du module (`presentation_BACHINGE24.md`, Marp, exportée en PDF) reprend la démarche de ce document puis le déroulé des séances.
+Pour BACHINGE24 et B3RNSPP26, une présentation du module (`presentation_BACHINGE24.md`, `presentation_B3RNSPP26.md`, Marp, exportées en PDF) reprend la démarche de ce document puis le déroulé des séances de la classe.
 
 Chaque progression précise le calendrier, les séances, les supports utilisés, les livrables, la configuration du serveur et la grille d'évaluation de la classe.
 

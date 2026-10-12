@@ -2,7 +2,7 @@
 
 - **Promotion :** B3 RNSPP 2026-0 (groupe ProN), effectif à renseigner
 - **Année :** 2026-2027
-- **Version :** v1.3 (brouillon), 11/10/2026
+- **Version :** v1.4 (brouillon), 12/10/2026
 - **Prérequis :** Python (cours de programmation informatique), à confirmer (voir la section 7)
 - **Sources :** `seances_B3RNSPP26.xlsx` (planning : dates et horaires) et supports 2025-2026 (dossier de l'année précédente)
 - **Présentation du projet :** `README.md` à la racine (contexte, besoins, objectifs, fonctions, synoptique, données échangées), commun aux trois classes
@@ -37,7 +37,7 @@ Par rapport à la classe BACHINGE24 :
 - le robot est utilisé pendant **5 séances (17h30)**, contre 7h environ en BACHINGE24, dont trois créneaux de 3h30 consécutifs ou presque (séances 10 à 12) pour l'intégration et l'évaluation ;
 - les séances de programmation sont plus longues que dans BACHINGE24 (5 séances pour le site web et l'API, au lieu d'une) : on prend le temps de tester et de corriger ;
 - un **dashboard Grafana** d'analyse de la production est ajouté (séance 11) ;
-- le serveur est le **NUC du fab lab**, inaccessible depuis la salle de cours : les séances qui l'utilisent (3, 6, 7 et 8, puis 9 à 12) ont lieu au fab lab.
+- le serveur est le **NUC du fab lab**, inaccessible depuis la salle de cours : les séances qui l'utilisent (3, 6, 7 et 8, puis 9 à 12) ont lieu au fab lab, comme les séances 1 et 2.
 
 
 ## 2. Compétences visées
@@ -81,7 +81,7 @@ L'architecture, les fonctions F1 à F7, le cycle instrumenté et le scénario co
 | Séance | Cours (planning) | Thème | Date | Lieu | Durée | Livrable en fin de séance |
 |--------|------------------|-------|------|------|-------|---------------------------|
 | Séance 1 | Infrastructure client serveur (TD) | Prise en main du robot, export Python, définition du process | jeu. 15/10/2026, 08:30-12:00 | Fab lab | 3h30 | Programme Blockly et export `.py`, fiche process v0 |
-| Séance 2 | Infrastructure client serveur (TD) | Analyse, dossier, présentation, tests de recette | jeu. 15/10/2026, 13:30-17:00 | Salle de cours | 3h30 | Dossier d'analyse v1, cahier de recette v1 |
+| Séance 2 | Infrastructure client serveur (TD) | Analyse, dossier, présentation, tests de recette | jeu. 15/10/2026, 13:30-17:00 | Fab lab | 3h30 | Dossier d'analyse v1, cahier de recette v1 |
 | Séance 3 | Programmation informatique, pratique (TP) | MQTT, rappel SQL, collecte des données dans SQLite | mar. 10/11/2026, 08:30-12:00 | Fab lab, serveur | 3h30 | Collecteur MQTT → SQLite sur le serveur, alimenté par des données simulées |
 | Séance 4 | Programmation informatique (CM) | HTTP / REST, HTML et CSS, premier serveur Flask | lun. 15/02/2027, 13:30-17:00 | Salle de cours | 3h30 | Page statique du tableau de bord, premier serveur Flask |
 | Séance 5 | Programmation informatique (CM) | Flask (templates, base SQLite), principe de l'API CQRS | mar. 16/02/2027, 13:30-17:00 | Salle de cours | 3h30 | Bases du site et de l'API lues, travail réparti dans l'équipe |
@@ -187,7 +187,7 @@ gantt
 
 | Lieu | Groupes | Durée | Matériel |
 |------|---------|-------|----------|
-| Salle de cours | Classe entière (groupe ProN) | 3h30 | Pas de robot |
+| Fab lab | Classe entière (groupe ProN) | 3h30 | Vidéoprojecteur ou écran. Pas de robot ni de serveur : séance d'analyse, à la suite de la séance 1 dans le même lieu |
 
 **Objectifs**
 
@@ -202,7 +202,7 @@ gantt
 |-------|----------|
 | 45 min | **Cours** : architecture client / serveur en contexte industriel (niveaux terrain, supervision, gestion) ; du besoin (piloter, informer, observer) aux fonctions F1 à F7 et au rôle de chaque brique du fil rouge ; cahier des charges et recette |
 | 2h | **Atelier par équipe** : rédaction du dossier d'analyse à partir d'un gabarit fourni |
-| 45 min | **Présentations flash** : 5 min par équipe (8 équipes au plus), puis retours |
+| 45 min | **Présentations flash** : 5 min par équipe (4 équipes), puis retours |
 
 **Contenu attendu du dossier d'analyse**
 
@@ -655,6 +655,6 @@ Le serveur est le **NUC du fab lab**, partagé avec la classe BACHTECH24 (l'autr
 2. **Prérequis Python avant la séance 3.** Le TP de collecte du 10/11 précède les cours de programmation de février. Soit les bases (fonctions, modules, `pip`) sont déjà vues, soit prévoir un rappel de 30 min en début de séance 3.
 3. **Effectif.** Effectif inférieur à 12 : 4 équipes, une par robot. Aucun partage de robot : les séances 9 à 12 se déroulent avec les 4 équipes en parallèle. L'évaluation (séance 12) passe équipe par équipe, environ 45 min chacune.
 4. **Longs intervalles entre séances.** 4 semaines entre les séances 2 et 3, 3 mois entre les séances 3 et 4, 10 semaines entre les séances 9 et 10. Proposition de jalons : dossier v2 à la séance 9, code testé en mode simulé à la séance 10. La séance 9 commence par une reprise en main du robot (pas utilisé depuis octobre).
-5. **Réservations à confirmer.** Le NUC n'est pas accessible depuis la salle de cours : 9 séances sur 12 ont lieu au fab lab (séances 1, 3 et 6 à 12). Seules les séances 2, 4 et 5 sont en salle de cours. Le planning ne donne pas les salles : réservations du fab lab à obtenir (voir `materiel_IRUP.md`).
+5. **Réservations à confirmer.** Le NUC n'est pas accessible depuis la salle de cours : 10 séances sur 12 ont lieu au fab lab (séances 1 à 3 et 6 à 12). Seules les séances 4 et 5 sont en salle de cours. Le planning ne donne pas les salles : réservations du fab lab à obtenir (voir `materiel_IRUP.md`).
 6. **Identifiants d'équipe** sur le NUC partagé avec BACHTECH24 : préfixes et plages de ports proposés en section 6, à valider.
 7. **Grafana en 1h10 (séance 11).** Le dashboard est découvert dans une séance déjà chargée (dashboard, recette à blanc, corrections). Si c'est trop court, le limiter à un dashboard guidé de 3 panneaux, avec un pas-à-pas fourni dans le support `dashboard_Grafana.md` (à écrire).
