@@ -177,7 +177,7 @@ flowchart LR
         PC --> CV["Convoyeur"]
         DI["Capteur infrarouge<br/>sur l'entrée DI5"] --> PC
     end
-    NS -- "réseau du fab lab<br/>192.168.10.21 à .24" --> PC
+    NS -- "réseau du fab lab<br/>192.168.1.21 à .24" --> PC
 ```
 
 Niryo Studio trouve les robots tout seul : chaque robot annonce sa présence sur le réseau. Si le vôtre n'apparaît pas, on se connecte en tapant son adresse IP.
@@ -185,7 +185,7 @@ Niryo Studio trouve les robots tout seul : chaque robot annonce sa présence sur
 ### 2.3 Faire : se connecter
 
 1. Allumer le robot et attendre la fin du démarrage (anneau de LED fixe).
-2. Ouvrir Niryo Studio : la fenêtre de connexion liste les robots détectés sur le réseau. Si le robot n'apparaît pas, utiliser l'option **adresse IP manuelle** avec l'adresse notée sur le robot (réseau du fab lab : `192.168.10.21` à `192.168.10.24`).
+2. Ouvrir Niryo Studio : la fenêtre de connexion liste les robots détectés sur le réseau. Si le robot n'apparaît pas, utiliser l'option **adresse IP manuelle** avec l'adresse notée sur le robot (réseau du fab lab : `192.168.1.21` à `192.168.1.24`).
 3. Cliquer sur **Connect** : l'état de connexion passe au vert.
 4. Lancer la **calibration automatique** si Niryo Studio la demande.
 
@@ -408,7 +408,7 @@ Blockly est pratique pour apprendre, mais il ne sait pas envoyer de messages MQT
 | D'où vient le code | **Export de Niryo Studio** (bouton Export, fichier `.py`) | Écrit à la main |
 | Où il s'exécute | **Sur le robot** (le petit ordinateur de sa base) | Sur n'importe quel poste du réseau |
 | Comment il parle au robot | Directement, par ROS | Par le réseau, en TCP (port 40001) |
-| Début du programme | `n = NiryoRosWrapper()` | `robot = NiryoRobot("192.168.10.21")` |
+| Début du programme | `n = NiryoRosWrapper()` | `robot = NiryoRobot("192.168.1.21")` |
 | Dans le projet | **Le programme process et l'API de commande** (cours *Une API CQRS pour le robot Niryo*), qui tournent sur le robot | Pas utilisé dans le projet de base ; utile pour piloter le robot depuis un poste (par exemple pour la vision) |
 
 ```mermaid
@@ -827,7 +827,7 @@ flowchart LR
 import paho.mqtt.client as mqtt
 
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id="g1_script4")
-client.connect("192.168.10.10", 1883, keepalive=60)
+client.connect("192.168.1.10", 1883, keepalive=60)
 client.loop_start()                  # le réseau MQTT est géré en arrière-plan
 client.publish("cellule/g1/essai", json.dumps(message), qos=1)
 ```
@@ -836,7 +836,7 @@ client.publish("cellule/g1/essai", json.dumps(message), qos=1)
 
 1. Se connecter au broker avec les paramètres de `config.py`.
 2. Publier chaque seconde, sur `cellule/<equipe>/essai`, un message JSON : `evenement` (`"essai"`), `numero` (compteur), `di5` (`"HIGH"` ou `"LOW"`), `horodatage`.
-3. Sur votre poste, suivre les messages : `mosquitto_sub -h 192.168.10.10 -t 'cellule/g1/#' -v`.
+3. Sur votre poste, suivre les messages : `mosquitto_sub -h 192.168.1.10 -t 'cellule/g1/#' -v`.
 4. Fermer proprement la connexion à l'arrêt (`loop_stop`, `disconnect`).
 
 **Vérifier**
@@ -863,7 +863,7 @@ client.publish("cellule/g1/essai", json.dumps(message), qos=1)
 1. S'abonner à `cellule/<equipe>/led` **dans** la fonction `on_connect` (appelée à chaque connexion).
 2. Dans `on_message`, lire la couleur reçue (`rouge`, `vert`, `bleu`) et faire clignoter l'anneau 2 secondes ; afficher « couleur inconnue » sinon.
 3. Le programme principal ne fait qu'attendre : tout se passe dans `on_message`.
-4. Depuis un poste : `mosquitto_pub -h 192.168.10.10 -t cellule/g1/led -m rouge`.
+4. Depuis un poste : `mosquitto_pub -h 192.168.1.10 -t cellule/g1/led -m rouge`.
 
 **Vérifier**
 
@@ -888,7 +888,7 @@ client.publish("cellule/g1/essai", json.dumps(message), qos=1)
 4. Tester depuis un poste :
 
    ```bash
-   curl -X POST http://192.168.10.21:3000/led -H "Content-Type: application/json" -d '{"couleur": "bleu"}'
+   curl -X POST http://192.168.1.21:3000/led -H "Content-Type: application/json" -d '{"couleur": "bleu"}'
    ```
 
 **Vérifier**
@@ -994,7 +994,7 @@ client.publish("cellule/g1/essai", json.dumps(message), qos=1)
 
 **Vérifier**
 
-- [ ] `curl http://192.168.10.21:3000/robot/etat` renvoie le JSON (code 200), en mode simulé comme sur le robot
+- [ ] `curl http://192.168.1.21:3000/robot/etat` renvoie le JSON (code 200), en mode simulé comme sur le robot
 - [ ] La route répond aussi **pendant un cycle** lancé par `POST /commandes/demarrer`
 - [ ] L'encadré du site web se met à jour quand une pièce passe devant le capteur
 

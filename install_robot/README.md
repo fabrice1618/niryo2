@@ -44,7 +44,7 @@ flowchart LR
 
 - Robot Ned2 avec un logiciel en version 5.3 ou plus (Ubuntu 20.04, ROS Noetic, Python 3.8) : c'est aussi la version minimale demandée par Niryo Studio.
 - Un poste relié au même réseau que le robot, avec `ssh` et `scp` (Linux, macOS, ou Windows 10 et plus).
-- L'adresse IP du robot (`192.168.10.21` à `.24` au fab lab) et le compte `niryo` (mot de passe par défaut `robotics`).
+- L'adresse IP du robot (`192.168.1.21` à `.24` au fab lab) et le compte `niryo` (mot de passe par défaut `robotics`).
 
 ## Mode d'emploi
 
@@ -53,13 +53,13 @@ flowchart LR
 Depuis le poste, dans le dossier qui contient `install_robot/` (remplacer `.21` par l'adresse de votre robot) :
 
 ```bash
-scp -r install_robot niryo@192.168.10.21:~/install_cellule
+scp -r install_robot niryo@192.168.1.21:~/install_cellule
 ```
 
 ### 2. Lancer l'installation sur le robot
 
 ```bash
-ssh niryo@192.168.10.21
+ssh niryo@192.168.1.21
 cd ~/install_cellule
 ./install.sh
 ```
@@ -80,7 +80,7 @@ Le test peut être relancé à tout moment, avec des options :
 
 ```bash
 ~/cellule/lancer.sh ~/cellule/test.py                          # bibliothèques, ROS, port de l'API
-~/cellule/lancer.sh ~/cellule/test.py --broker 192.168.10.10   # + connexion au broker MQTT du serveur
+~/cellule/lancer.sh ~/cellule/test.py --broker 192.168.1.10   # + connexion au broker MQTT du serveur
 ~/cellule/lancer.sh ~/cellule/test.py --robot                  # + lecture des axes et du capteur DI5
 ```
 
@@ -102,8 +102,8 @@ Le script se termine par un bilan ; il renvoie le code 1 si un test échoue.
 Copier le programme depuis le poste, puis le lancer sur le robot :
 
 ```bash
-scp app.py niryo@192.168.10.21:~/cellule/        # sur le poste
-ssh niryo@192.168.10.21                          # puis, sur le robot :
+scp app.py niryo@192.168.1.21:~/cellule/        # sur le poste
+ssh niryo@192.168.1.21                          # puis, sur le robot :
 cd ~/cellule
 ./lancer.sh app.py
 ```
@@ -150,4 +150,4 @@ Le script vide `paquets/`, puis télécharge les paquets de `requirements.txt` p
 
 Les versions sont fixées dans `requirements.txt` pour rester compatibles avec Python 3.8 (Flask 3.0, Werkzeug 3.0, click 8.1) : ne pas les monter sans vérifier la version de Python des robots.
 
-L'installation a été essayée hors ligne sous Python 3.8 (avec le `pip` 20.0.2 d'Ubuntu 20.04) et 3.12, sur PC : à valider sur un robot avant la séance d'intégration (`./install.sh --broker 192.168.10.10`, puis `test.py --robot`).
+L'installation a été essayée hors ligne sous Python 3.8 (avec le `pip` 20.0.2 d'Ubuntu 20.04) et 3.12, sur PC : à valider sur un robot avant la séance d'intégration (`./install.sh --broker 192.168.1.10`, puis `test.py --robot`).

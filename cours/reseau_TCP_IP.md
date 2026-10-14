@@ -33,12 +33,12 @@ Ce cours de révision reprend les bases d'un réseau IP : comment les machines s
 
 Une communication réseau est découpée en couches : chacune rend un service à celle du dessus et s'appuie sur celle du dessous, ce qui permet de modifier l'une sans toucher aux autres.
 
-Exemple : le robot (192.168.10.21) publie une fin de cycle en MQTT vers le serveur (192.168.10.10).
+Exemple : le robot (192.168.1.21) publie une fin de cycle en MQTT vers le serveur (192.168.1.10).
 
 ```text
 Application  :                                         [ PUBLISH cellule/g1/cycle {"duree": 18.2} ]
 Transport    :                          [ TCP 52344 → 1883 | données MQTT ]
-Internet     :       [ IP 192.168.10.21 → 192.168.10.10 | segment TCP ]
+Internet     :       [ IP 192.168.1.21 → 192.168.1.10 | segment TCP ]
 Accès réseau : [ Ethernet MAC robot → MAC serveur | paquet IP | FCS ]
 ```
 
@@ -164,15 +164,15 @@ Dans chaque réseau, deux adresses sont réservées : la première (tous les bit
 L'adresse du réseau s'obtient en faisant un ET bit à bit entre l'adresse IP et le masque.
 
 ```text
-192.168.10.77/26   (masque 255.255.255.192)
+192.168.1.77/26   (masque 255.255.255.192)
 
 dernier octet :   77 = 01001101
                  192 = 11000000
                  ET  = 01000000 = 64
 
-Réseau       : 192.168.10.64
-Diffusion    : 192.168.10.127   (bits hôtes tous à 1 : 01111111 = 127)
-Hôtes        : 192.168.10.65 à 192.168.10.126   (62 hôtes)
+Réseau       : 192.168.1.64
+Diffusion    : 192.168.1.127   (bits hôtes tous à 1 : 01111111 = 127)
+Hôtes        : 192.168.1.65 à 192.168.1.126   (62 hôtes)
 ```
 
 **Deux machines sont-elles dans le même réseau ?**
@@ -410,10 +410,10 @@ Configurer une machine en statique, c'est saisir soi-même ses paramètres rése
 
 | Paramètre | Rôle | Exemple |
 | --- | --- | --- |
-| Adresse IP | Identifie la machine dans son réseau | 192.168.10.10 (serveur du module) |
+| Adresse IP | Identifie la machine dans son réseau | 192.168.1.10 (serveur du module) |
 | Masque de sous-réseau | Délimite le réseau local | 255.255.255.0 (/24) |
-| Passerelle par défaut | Routeur utilisé pour sortir du réseau | 192.168.10.1 |
-| Serveur DNS | Traduit les noms en adresses IP | 192.168.10.1 ou 8.8.8.8 |
+| Passerelle par défaut | Routeur utilisé pour sortir du réseau | 192.168.1.1 |
+| Serveur DNS | Traduit les noms en adresses IP | 192.168.1.1 ou 8.8.8.8 |
 
 **Règles de cohérence**
 
@@ -426,31 +426,31 @@ Configurer une machine en statique, c'est saisir soi-même ses paramètres rése
 
 Pour les équipements dont l'adresse doit rester prévisible : serveurs, broker MQTT, robots, automates, imprimantes, caméras, routeurs, points d'accès. Un robot dont l'adresse change après un redémarrage n'est plus joignable par le serveur qui le pilote. Pour les postes de travail, on préfère DHCP.
 
-**Un plan d'adressage type : le réseau du fab lab `192.168.10.0/24`**
+**Un plan d'adressage type : le réseau du fab lab `192.168.1.0/24`**
 
 | Plage | Usage |
 | --- | --- |
-| 192.168.10.1 | Passerelle (routeur) |
-| 192.168.10.2 à .19 | Serveurs et équipements d'infrastructure, en statique (serveur du module : 192.168.10.10) |
-| 192.168.10.20 à .99 | Équipements de production : robots Ned2 (.21 à .24), automates, caméras, en statique ou réservés |
-| 192.168.10.100 à .199 | Plage distribuée par DHCP (postes étudiants) |
-| 192.168.10.200 à .254 | Réserve |
+| 192.168.1.1 | Passerelle (routeur) |
+| 192.168.1.2 à .19 | Serveurs et équipements d'infrastructure, en statique (serveur du module : 192.168.1.10) |
+| 192.168.1.20 à .99 | Équipements de production : robots Ned2 (.21 à .24), automates, caméras, en statique ou réservés |
+| 192.168.1.100 à .199 | Plage distribuée par DHCP (postes étudiants) |
+| 192.168.1.200 à .254 | Réserve |
 
 **Windows**
 
 En ligne de commande (invite exécutée en administrateur) :
 
 ```text
-netsh interface ip set address name="Ethernet" static 192.168.10.50 255.255.255.0 192.168.10.1
-netsh interface ip set dns name="Ethernet" static 192.168.10.1
+netsh interface ip set address name="Ethernet" static 192.168.1.50 255.255.255.0 192.168.1.1
+netsh interface ip set dns name="Ethernet" static 192.168.1.1
 ipconfig /all
 ```
 
 En PowerShell :
 
 ```powershell
-New-NetIPAddress -InterfaceAlias "Ethernet" -IPAddress 192.168.10.50 -PrefixLength 24 -DefaultGateway 192.168.10.1
-Set-DnsClientServerAddress -InterfaceAlias "Ethernet" -ServerAddresses 192.168.10.1
+New-NetIPAddress -InterfaceAlias "Ethernet" -IPAddress 192.168.1.50 -PrefixLength 24 -DefaultGateway 192.168.1.1
+Set-DnsClientServerAddress -InterfaceAlias "Ethernet" -ServerAddresses 192.168.1.1
 ```
 
 Ou par l'interface graphique : Paramètres réseau, propriétés de la carte, Protocole Internet version 4 (TCP/IPv4), « Utiliser l'adresse IP suivante ».
@@ -458,9 +458,9 @@ Ou par l'interface graphique : Paramètres réseau, propriétés de la carte, Pr
 **Linux : configuration immédiate (perdue au redémarrage)**
 
 ```bash
-sudo ip addr add 192.168.10.10/24 dev eth0
+sudo ip addr add 192.168.1.10/24 dev eth0
 sudo ip link set eth0 up
-sudo ip route add default via 192.168.10.1
+sudo ip route add default via 192.168.1.1
 ip addr show eth0
 ip route
 ```
@@ -474,12 +474,12 @@ network:
   ethernets:
     eth0:
       dhcp4: false
-      addresses: [192.168.10.10/24]
+      addresses: [192.168.1.10/24]
       routes:
         - to: default
-          via: 192.168.10.1
+          via: 192.168.1.1
       nameservers:
-        addresses: [192.168.10.1, 8.8.8.8]
+        addresses: [192.168.1.1, 8.8.8.8]
 ```
 
 ```bash
@@ -533,7 +533,7 @@ L'adresse est prêtée pour une durée limitée, par exemple 24 heures.
 | --- | --- | --- |
 | Étendue (scope, pool) | Plage d'adresses à distribuer | 192.168.1.100 à 192.168.1.199 |
 | Exclusions | Adresses de la plage à ne jamais distribuer | 192.168.1.150 à .159 |
-| Réservation | Une même adresse toujours donnée à la même carte (selon l'adresse MAC) | Robot Ned2 de l'équipe g1 : toujours 192.168.10.21 |
+| Réservation | Une même adresse toujours donnée à la même carte (selon l'adresse MAC) | Robot Ned2 de l'équipe g1 : toujours 192.168.1.21 |
 | Durée du bail | Validité de l'adresse | 8 heures ou 24 heures |
 | Options | Paramètres complémentaires envoyés au client | Masque (option 1), routeur ou passerelle (3), serveurs DNS (6), nom de domaine (15) |
 
@@ -637,12 +637,12 @@ Le projet fil rouge fait communiquer plusieurs types de machines : les robots Ne
 
 ```mermaid
 flowchart LR
-    subgraph LAN["Réseau du fab lab 192.168.10.0/24"]
-        R1["Robot Ned2 g1<br/>192.168.10.21<br/>API Flask :3000"]
+    subgraph LAN["Réseau du fab lab 192.168.1.0/24"]
+        R1["Robot Ned2 g1<br/>192.168.1.21<br/>API Flask :3000"]
         R2["Robots g2 à g4<br/>.22 à .24"]
-        SRV["Serveur du module<br/>192.168.10.10 (statique)<br/>SSH :22 · MQTT :1883 · sites :8001-8008"]
+        SRV["Serveur du module<br/>192.168.1.10 (statique)<br/>SSH :22 · MQTT :1883 · sites :8001-8008"]
         PC["Postes étudiants<br/>.100 à .199 (DHCP)"]
-        GW["Routeur<br/>192.168.10.1"]
+        GW["Routeur<br/>192.168.1.1"]
     end
     R1 -- "MQTT, TCP 1883" --> SRV
     R2 -- "MQTT, TCP 1883" --> SRV
@@ -679,11 +679,11 @@ Un programme serveur doit écouter sur la bonne interface : Flask lancé sans op
 **Diagnostic de proche en proche, appliqué au projet**
 
 ```bash
-ping 192.168.10.10                       # 1. le robot joint-il le serveur ? (couches 1 à 3)
-nc -zv 192.168.10.10 1883                # 2. le port MQTT est-il ouvert ? (couche 4)
+ping 192.168.1.10                       # 1. le robot joint-il le serveur ? (couches 1 à 3)
+nc -zv 192.168.1.10 1883                # 2. le port MQTT est-il ouvert ? (couche 4)
 ss -tlnp | grep -E ':1883|:500|:800'     # 3. sur le serveur : qui écoute, et sur quelle adresse ?
-mosquitto_sub -h 192.168.10.10 -t 'cellule/g1/#' -v   # 4. application
-curl http://192.168.10.21:3000/requetes/etat                                           # 5. API du robot
+mosquitto_sub -h 192.168.1.10 -t 'cellule/g1/#' -v   # 4. application
+curl http://192.168.1.21:3000/requetes/etat                                           # 5. API du robot
 ```
 
 | Symptôme | Cause probable |
@@ -789,21 +789,21 @@ Le poste n'a reçu aucune réponse DHCP (il n'y a pas de serveur DHCP sur le câ
 
 Sans `--host 0.0.0.0`, Flask n'écoute que sur la boucle locale `127.0.0.1` : seules les connexions venant du serveur lui-même sont acceptées. `ss -tlnp` le montre : `127.0.0.1:8001` au lieu de `0.0.0.0:8001`.
 
-**Exercice 12 (cellule).** Le robot g1 est en `192.168.10.21/24`, passerelle `192.168.10.1`. Le serveur est en `192.168.10.10/24`. Le robot publie en MQTT vers le serveur : quelles adresses IP et MAC portent la trame émise par le robot ? Même question si le broker était sur Internet, en `203.0.113.50`.
+**Exercice 12 (cellule).** Le robot g1 est en `192.168.1.21/24`, passerelle `192.168.1.1`. Le serveur est en `192.168.1.10/24`. Le robot publie en MQTT vers le serveur : quelles adresses IP et MAC portent la trame émise par le robot ? Même question si le broker était sur Internet, en `203.0.113.50`.
 
 | Destination | Même réseau ? | MAC de destination de la trame | IP de destination du paquet |
 | --- | --- | --- | --- |
-| Serveur 192.168.10.10 | Oui | MAC du serveur | 192.168.10.10 |
-| Broker 203.0.113.50 | Non | MAC de la passerelle 192.168.10.1 | 203.0.113.50 |
+| Serveur 192.168.1.10 | Oui | MAC du serveur | 192.168.1.10 |
+| Broker 203.0.113.50 | Non | MAC de la passerelle 192.168.1.1 | 203.0.113.50 |
 
 Dans les deux cas : port de destination TCP 1883, port source choisi au hasard dans la plage dynamique.
 
-**Exercice 13 (cellule).** On veut séparer, dans `192.168.10.0/24`, un sous-réseau pour les postes (100 postes) et un sous-réseau pour les équipements de production (4 cellules de 7 équipements : robot, convoyeur, automate, caméra… soit 28 équipements). Proposez un découpage VLSM.
+**Exercice 13 (cellule).** On veut séparer, dans `192.168.1.0/24`, un sous-réseau pour les postes (100 postes) et un sous-réseau pour les équipements de production (4 cellules de 7 équipements : robot, convoyeur, automate, caméra… soit 28 équipements). Proposez un découpage VLSM.
 
 | Besoin | Bits d'hôtes | Préfixe | Adresse réseau | Plage utilisable |
 | --- | --- | --- | --- | --- |
-| Postes (100) | 7 (126) | /25 | 192.168.10.0/25 | .1 à .126 |
-| Production (28) | 5 (30) | /27 | 192.168.10.128/27 | .129 à .158 |
+| Postes (100) | 7 (126) | /25 | 192.168.1.0/25 | .1 à .126 |
+| Production (28) | 5 (30) | /27 | 192.168.1.128/27 | .129 à .158 |
 
 Il faut alors un routeur entre les deux sous-réseaux, et le serveur doit être joignable des deux côtés (une interface dans chaque sous-réseau, ou des routes et des règles de pare-feu sur le routeur). Séparer ainsi le réseau de production des postes est une pratique courante en milieu industriel : un poste compromis n'atteint pas directement les robots.
 

@@ -2,7 +2,7 @@
 
 Infrastructure client / serveur dans un contexte industriel
 
-Ce document décrit, pas à pas, la préparation du serveur Raspberry Pi d'ISTP : il héberge le broker MQTT et, pour chacune des 8 équipes (`g1` à `g8`), le collecteur, la base SQLite `cellule.db`, le site web et l'API simulée. Le Pi sert d'abord en salle D3.10 sur un réseau séparé, puis au fab lab, en `192.168.10.11` (le NUC de l'IRUP occupe `.10`). Le matériel et le calendrier sont dans `progression_pedagogique/materiel_ISTP.md`.
+Ce document décrit, pas à pas, la préparation du serveur Raspberry Pi d'ISTP : il héberge le broker MQTT et, pour chacune des 8 équipes (`g1` à `g8`), le collecteur, la base SQLite `cellule.db`, le site web et l'API simulée. Le Pi sert d'abord en salle D3.10 sur un réseau séparé, puis au fab lab, en `192.168.1.11` (le NUC de l'IRUP occupe `.10`). Le matériel et le calendrier sont dans `progression_pedagogique/materiel_ISTP.md`.
 
 | Composant | Rôle | Port |
 |---|---|---|
@@ -64,12 +64,12 @@ network:
   ethernets:
     eth0:
       dhcp4: false
-      addresses: [192.168.10.11/24]
+      addresses: [192.168.1.11/24]
       routes:
         - to: default
-          via: 192.168.10.1
+          via: 192.168.1.1
       nameservers:
-        addresses: [192.168.10.1]
+        addresses: [192.168.1.1]
 EOF
 
 # Salle D3.10 : adresse à fixer avec ISTP. Par défaut, la même adresse si le réseau séparé l'accepte.
@@ -197,7 +197,7 @@ mosquitto_pub -h localhost -t cellule/g1/etat -m '{"etat": "essai"}'      # s'af
 - [ ] Le site Flask d'une équipe de test s'ouvre depuis un laptop (`flask run --host 0.0.0.0 --port 8001`)
 - [ ] **Essai de charge** : 8 simulateurs, 8 collecteurs et 16 serveurs Flask lancés ensemble, plusieurs connexions VS Code Remote SSH ; surveiller la mémoire et la température avec `htop` et `vcgencmd measure_temp`
 - [ ] Redémarrage complet : Mosquitto et SSH repartent seuls, l'heure est juste
-- [ ] Le robot publie sur le broker du Pi (au fab lab) : `~/cellule/lancer.sh ~/cellule/test.py --broker 192.168.10.11` sur le robot
+- [ ] Le robot publie sur le broker du Pi (au fab lab) : `~/cellule/lancer.sh ~/cellule/test.py --broker 192.168.1.11` sur le robot
 
 
 ## 10. Sauvegarde et restauration

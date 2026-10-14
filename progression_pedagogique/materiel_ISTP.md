@@ -36,14 +36,14 @@ La séance 3 a lieu quatre semaines après la séance 2 : le Pi et le réseau de
 
 | Identifiant | Groupe | Robot (IP) | Port API simulée | Port site web |
 |-------------|--------|------------|------------------|---------------|
-| `g1` | G1 | 1 (`192.168.10.21`) | 5001 | 8001 |
-| `g2` | G1 | 2 (`192.168.10.22`) | 5002 | 8002 |
-| `g3` | G1 | 3 (`192.168.10.23`) | 5003 | 8003 |
-| `g4` | G1 | 4 (`192.168.10.24`) | 5004 | 8004 |
-| `g5` | G2 | 1 (`192.168.10.21`) | 5005 | 8005 |
-| `g6` | G2 | 2 (`192.168.10.22`) | 5006 | 8006 |
-| `g7` | G2 | 3 (`192.168.10.23`) | 5007 | 8007 |
-| `g8` | G2 | 4 (`192.168.10.24`) | 5008 | 8008 |
+| `g1` | G1 | 1 (`192.168.1.21`) | 5001 | 8001 |
+| `g2` | G1 | 2 (`192.168.1.22`) | 5002 | 8002 |
+| `g3` | G1 | 3 (`192.168.1.23`) | 5003 | 8003 |
+| `g4` | G1 | 4 (`192.168.1.24`) | 5004 | 8004 |
+| `g5` | G2 | 1 (`192.168.1.21`) | 5005 | 8005 |
+| `g6` | G2 | 2 (`192.168.1.22`) | 5006 | 8006 |
+| `g7` | G2 | 3 (`192.168.1.23`) | 5007 | 8007 |
+| `g8` | G2 | 4 (`192.168.1.24`) | 5008 | 8008 |
 
 Aux séances 4 et 5, chaque groupe passe à son tour : l'équipe `gN` (`g1` à `g4`), puis l'équipe `g(N+4)` (`g5` à `g8`), utilisent le robot N, chacune seule sur son créneau. Un compte Linux est créé par identifiant sur le Raspberry Pi. Les mêmes comptes Linux, avec les mêmes identifiants, sont créés sur les postes Linux de la salle D3.10 (section 3.3).
 
@@ -79,7 +79,7 @@ La salle D3.10 dispose d'un réseau séparé qui permet d'utiliser le serveur. L
 | 2 | Switch 5 ports, avec câbles | Raccordés au réseau séparé : laptops, Raspberry Pi. Les câbles RJ45 sont fournis avec chaque switch | À fournir |
 | 12 | Câbles RJ45 cat. 5e ou 6, 2 m | 8 laptops (un par équipe), le Pi, la liaison au réseau et 2 de réserve, en complément des câbles fournis avec les switches. Des câbles peuvent manquer : compter sur place | À fournir |
 | 4 | Adaptateurs USB vers RJ45 Gigabit | Pour les laptops sans prise Ethernet | Option |
-| 1 | Routeur Wi-Fi avec DHCP | Secours : si le réseau séparé ne distribue pas d'adresses ou n'a pas assez de prises. Configuré en `192.168.10.0/24` | Apporté |
+| 1 | Routeur Wi-Fi avec DHCP | Fourni par ISTP pour la salle D3.10. Distribue les adresses du réseau `192.168.1.0/24` ; sert aussi de secours si le réseau séparé ne distribue pas d'adresses ou n'a pas assez de prises | À fournir (ISTP) |
 | 5 | Multiprises 6 prises | Chargeurs des laptops, switches, Pi | À fournir |
 
 ### 3.3 Postes de travail de la salle D3.10
@@ -108,22 +108,11 @@ Logiciels attendus sur chaque poste Linux : Python 3.12 avec `python3-venv` et `
 | 24 environ | Pièces à convoyer (cubes ou cylindres) | Quelques pièces par robot, plus des pièces de rechange | Existant, à vérifier |
 | 4 | Câbles RJ45 2 à 3 m | Robots vers le switch du fab lab | Existant, à vérifier |
 | 1 | Switch Gigabit du fab lab | Robots (4), serveur (1) et postes. Nombre de ports libres à vérifier | Existant, à vérifier |
-| 1 | Routeur du fab lab, passerelle `192.168.10.1` avec DHCP | Plan d'adressage à relever sur place (section 4.2) | Existant, à vérifier |
+| 1 | Routeur Wi-Fi avec DHCP du fab lab, passerelle `192.168.1.1` | Fourni par l'IRUP. Plan d'adressage `192.168.1.0/24` (section 4.2) | À fournir (IRUP) |
 | 4 | Postes avec Niryo Studio (ou laptops des étudiants) | Une version de Niryo Studio compatible avec le firmware des robots | Existant, à vérifier |
 | 4 | Multiprises | Une par poste de travail | Existant, à vérifier |
 
 Aux séances 1, 4 et 5, un seul groupe (environ 11 étudiants) est au fab lab à la fois : vérifier la capacité du réseau (Wi-Fi ou câble) pour les laptops.
-
-### 3.5 Petit matériel de rechange (à apporter à chaque séance)
-
-| Qté | Désignation | Remarque | Statut |
-|-----|-------------|----------|--------|
-| 6 | Souris USB | Des souris manquent régulièrement sur les postes de la salle D3.10 | Apporté |
-| 2 | Claviers USB | Remplacement en cas de panne | Apporté |
-| 10 | Câbles RJ45 2 m | Réserve, en plus des 26 de la section 3.2 | Apporté |
-| 1 | Clé USB 32 Go | Copies de fichiers, paquets Python hors ligne, image de secours | Apporté |
-| 1 | Rallonge 5 m avec multiprise | Branchement du switch et du Pi près d'une prise éloignée | Apporté |
-| 1 | Lot d'étiquettes | Identifiants des équipes sur les postes et les robots | Apporté |
 
 
 ## 4. Réseau
@@ -137,17 +126,17 @@ Aux séances 1, 4 et 5, un seul groupe (environ 11 étudiants) est au fab lab à
 
 ### 4.2 Fab lab
 
-Plan d'adressage proposé, à comparer avec la configuration réelle du fab lab :
+Plan d'adressage du fab lab (réseau `192.168.1.0/24`), à configurer sur le routeur Wi-Fi fourni par l'IRUP :
 
 | Élément | Adresse |
 |---------|---------|
-| Routeur (passerelle) | `192.168.10.1` |
-| Serveur de l'IRUP (NUC, résident au fab lab) | `192.168.10.10` |
-| Raspberry Pi d'ISTP (visiteur) | `192.168.10.11` |
-| Robots Ned2 | `192.168.10.21` à `192.168.10.24` |
-| Postes des étudiants (DHCP) | `192.168.10.100` à `192.168.10.199` |
+| Routeur (passerelle) | `192.168.1.1` |
+| Serveur de l'IRUP (NUC, résident au fab lab) | `192.168.1.10` |
+| Raspberry Pi d'ISTP (visiteur) | `192.168.1.11` |
+| Robots Ned2 | `192.168.1.21` à `192.168.1.24` |
+| Postes des étudiants (DHCP) | `192.168.1.100` à `192.168.1.199` |
 
-Le Raspberry Pi garde la même adresse (`192.168.10.11`) en salle D3.10 et au fab lab si le réseau de la salle le permet. Sinon, deux profils réseau sont préparés sur le Pi (un par lieu) et on change de profil à l'installation. Le NUC de l'IRUP et le Pi ne doivent jamais avoir la même adresse : le NUC reste branché en permanence au fab lab, où le Pi vient les 17/11 et 19/11/2026.
+Le Raspberry Pi garde la même adresse (`192.168.1.11`) en salle D3.10 et au fab lab si le réseau de la salle le permet. Sinon, deux profils réseau sont préparés sur le Pi (un par lieu) et on change de profil à l'installation. Le NUC de l'IRUP et le Pi ne doivent jamais avoir la même adresse : le NUC reste branché en permanence au fab lab, où le Pi vient les 17/11 et 19/11/2026.
 
 ### 4.3 Ports
 
@@ -169,7 +158,7 @@ Le Raspberry Pi garde la même adresse (`192.168.10.11`) en salle D3.10 et au fa
 - [ ] Obtenir l'accès à la salle (clé, badge) et le droit d'intervenir sur les postes (compte administrateur)
 - [ ] Compter les postes Linux, les repérer et les numéroter (étiquettes)
 - [ ] Allumer chaque poste : alimentation, démarrage, connexion à une session
-- [ ] Pour chaque poste, vérifier l'écran, le clavier et la souris, et noter ce qui manque (remplacer par le matériel de la section 3.5)
+- [ ] Pour chaque poste, vérifier l'écran, le clavier et la souris, et noter ce qui manque
 - [ ] Vérifier l'espace disque libre et la date et l'heure
 - [ ] Mettre à jour Ubuntu 24.04 (sécurité) et vérifier que le système démarre encore
 - [ ] Installer ou compléter les logiciels de la section 3.3, puis tester chacun (VS Code, MQTT Explorer, DB Browser for SQLite, `mosquitto_pub`)
@@ -223,8 +212,8 @@ sudo ./creer_comptes_equipes.sh --supprimer inge
 - [ ] Chaque convoyeur tourne, son capteur répond sur DI5 (test avec une pièce)
 - [ ] Logiciel des robots en version 5.3 ou plus (Python 3.8), accès SSH avec le compte `niryo` ; bibliothèques du projet installées sur chaque robot avec le dossier `install_robot/` du dépôt (`./install.sh`, puis `~/cellule/lancer.sh ~/cellule/test.py --robot`). Les robots sont communs aux trois classes : une seule installation suffit
 - [ ] Pièces en nombre suffisant et en bon état
-- [ ] Les 4 robots sont connectés au réseau du fab lab (câble) avec les adresses `192.168.10.21` à `.24`
-- [ ] Adressage réel du fab lab relevé : routeur, plage DHCP, adresses déjà utilisées (voir la section 4.2)
+- [ ] Les 4 robots sont connectés au réseau du fab lab (câble) avec les adresses `192.168.1.21` à `.24`
+- [ ] Routeur Wi-Fi du fab lab (fourni par l'IRUP) configuré selon la section 4.2 : réseau `192.168.1.0/24`, plage DHCP, adresses fixes du NUC, du Pi et des robots
 - [ ] Capacité du réseau pour une douzaine de laptops (un groupe à la fois, séances 1, 4 et 5)
 - [ ] Prises électriques, multiprises, zones de sécurité et arrêt d'urgence repérés
 
@@ -232,7 +221,7 @@ sudo ./creer_comptes_equipes.sh --supprimer inge
 
 - [ ] **Avant la séance 3 (au plus tard le ven. 06/11)** : installation complète en salle D3.10 (2 switches, câbles, Pi, 2 postes Linux et 2 laptops), connexion SSH, publication et réception MQTT, ouverture d'un site Flask depuis un laptop
 - [ ] **Jour de la séance 3 (lun. 09/11)** : arriver 1 heure avant, installer les switches et le Pi, tester une connexion depuis un poste Linux et depuis un laptop
-- [ ] **Avant la séance 4 (mar. 17/11, avant 08:30)** : transporter le Pi au fab lab, le brancher, vérifier l'accès du robot au broker (`~/cellule/lancer.sh ~/cellule/test.py --broker 192.168.10.11` sur chaque robot) et l'accès du serveur à l'API du robot (port 3000)
+- [ ] **Avant la séance 4 (mar. 17/11, avant 08:30)** : transporter le Pi au fab lab, le brancher, vérifier l'accès du robot au broker (`~/cellule/lancer.sh ~/cellule/test.py --broker 192.168.1.11` sur chaque robot) et l'accès du serveur à l'API du robot (port 3000)
 - [ ] **Après chaque séance** : sauvegarde du SSD, relevé du matériel manquant, remise en état de la salle
 
 
@@ -260,7 +249,7 @@ Les salles sont déjà réservées (planning `seances_BACHINGE24.xlsx`) : séanc
 
 1. **Salles.** Réservées : rien à confirmer, sauf l'accès à la salle D3.10 avant la séance 3 (point 4).
 2. **Réseau séparé de la salle D3.10.** Distribution d'adresses (DHCP) et taille de la plage, nombre de prises murales, ports autorisés (22, 1883, 5001 à 5008, 8001 à 8008), isolation des clients, accès à Internet.
-3. **Postes Linux.** Combien de postes ? Qui administre ? L'intervenant peut-il avoir les droits (`sudo`) pour installer des logiciels et créer des comptes ? Les postes sont déjà reliés au réseau séparé (confirmé).
+3. **Postes Linux.** Combien de postes ? Qui administre ? L'intervenant peut-il avoir les droits (`sudo`) pour installer des logiciels et créer des comptes ? (Les postes sont déjà reliés au réseau séparé.)
 4. **Accès à la salle D3.10.** Possibilité d'y entrer avant la séance 3 (au plus tard le ven. 06/11) pour l'installation, et une heure avant la séance du lun. 09/11.
 5. **Équipement des salles.** À vérifier sur place : vidéoprojecteur ou écran dans les salles C1.07 et D3.10, et prises électriques pour 22 laptops en salle C1.07.
 6. **Fourniture du Raspberry Pi et de ses accessoires** (section 3.1), délai de livraison (le Pi doit être prêt le 06/11), qui conserve le matériel entre les séances.

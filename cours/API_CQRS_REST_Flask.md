@@ -491,7 +491,7 @@ L'API suit le projet en deux temps, sans changer de code : seul l'adaptateur et 
 | Étape | Où tourne l'API | Adaptateur | Adresse appelée par le site web |
 | --- | --- | --- | --- |
 | Développement, sans robot | Serveur du module | `RobotSimule()` | `http://127.0.0.1:5001` (un port par équipe, 5001 à 5008) |
-| Intégration et recette (fab lab) | Robot Ned2 | `RobotNiryo()` | `http://192.168.10.21:3000` (adresse du robot de l'équipe) |
+| Intégration et recette (fab lab) | Robot Ned2 | `RobotNiryo()` | `http://192.168.1.21:3000` (adresse du robot de l'équipe) |
 
 ```mermaid
 sequenceDiagram

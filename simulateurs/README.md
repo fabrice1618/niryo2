@@ -45,7 +45,7 @@ Précautions, car un broker public est partagé avec le monde entier :
 - **Les messages retenus restent** sur le broker (état du robot) : ne pas s'étonner d'en recevoir d'anciens.
 - **Aucune garantie** : le broker peut être lent, saturé ou arrêté, et le réseau de l'établissement peut bloquer le port 1883. Les mesures de charge (rafale) n'y ont pas de sens.
 
-Pour les séances, revenir au broker du module : `EQUIPE` sans suffixe, `BROKER = "192.168.10.10"` (ou `"localhost"` sur le serveur).
+Pour les séances, revenir au broker du module : `EQUIPE` sans suffixe, `BROKER = "192.168.1.10"` (ou `"localhost"` sur le serveur).
 
 
 ## Simulateur MQTT
@@ -101,7 +101,7 @@ curl -X POST http://127.0.0.1:5001/robot/ledring/vert       # {"couleur": "vert"
 mosquitto_sub -h localhost -t 'cellule/g1/tache' -v
 ```
 
-Les endpoints, les réponses et les messages MQTT sont **ceux de l'API du robot** : le site web passe de l'un à l'autre en changeant seulement l'adresse (`http://127.0.0.1:5001` puis `http://192.168.10.21:3000`). Comme sur le robot, une seule tâche s'exécute à la fois : une demande qui arrive pendant une tâche est refusée tout de suite (`409`, « robot occupé »), et `GET /robot/etat` répond même pendant une tâche, avec le champ `tache_en_cours` (nom de la tâche, ou `null`). Le détail est dans `api_robot/README.md`.
+Les endpoints, les réponses et les messages MQTT sont **ceux de l'API du robot** : le site web passe de l'un à l'autre en changeant seulement l'adresse (`http://127.0.0.1:5001` puis `http://192.168.1.21:3000`). Comme sur le robot, une seule tâche s'exécute à la fois : une demande qui arrive pendant une tâche est refusée tout de suite (`409`, « robot occupé »), et `GET /robot/etat` répond même pendant une tâche, avec le champ `tache_en_cours` (nom de la tâche, ou `null`). Le détail est dans `api_robot/README.md`.
 
 Chaque endpoint a la même forme que dans l'API du robot : il vérifie que le robot est libre (sinon `occupe()`, réponse `409`), appelle `commencer()`, attend avec `time.sleep()` à la place des appels au robot, puis renvoie le résultat de `terminer()`. Une attente ne peut pas échouer : il n'y a pas de `try` ni d'`echec()`, et le simulateur ne renvoie jamais l'erreur `500` du robot.
 

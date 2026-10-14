@@ -105,10 +105,10 @@ Ce schéma est celui du projet : l'opérateur n'utilise qu'un navigateur ; le si
 
 | Élément | Valeur fournie | Valeur de l'équipe |
 |---|---|---|
-| Réseau du fab lab | `192.168.10.0/24` | sans objet (donné) |
-| Serveur du fab lab (NUC de l'IRUP) | `192.168.10.10` | À COMPLÉTER : le serveur de votre classe |
-| Serveur d'ISTP (Raspberry Pi) | `192.168.10.11` au fab lab ; adresse de la salle de cours remise par l'enseignant | À COMPLÉTER |
-| Robots du fab lab | `192.168.10.21` à `192.168.10.24` | À COMPLÉTER : adresse du robot de l'équipe |
+| Réseau du fab lab | `192.168.1.0/24` | sans objet (donné) |
+| Serveur du fab lab (NUC de l'IRUP) | `192.168.1.10` | À COMPLÉTER : le serveur de votre classe |
+| Serveur d'ISTP (Raspberry Pi) | `192.168.1.11` au fab lab ; adresse de la salle de cours remise par l'enseignant | À COMPLÉTER |
+| Robots du fab lab | `192.168.1.21` à `192.168.1.24` | À COMPLÉTER : adresse du robot de l'équipe |
 | Adresse de votre poste sur le réseau | donnée par le réseau (DHCP) | À COMPLÉTER (utile pour les essais) |
 
 ### 3.3 Connexion au serveur
@@ -145,7 +145,7 @@ Deux clients de même identifiant se déconnectent l'un l'autre : **deux équipe
 
 | Élément | Valeur fournie | Valeur de l'équipe |
 |---|---|---|
-| Adresse IP du robot | `192.168.10.21` à `.24` | À COMPLÉTER |
+| Adresse IP du robot | `192.168.1.21` à `.24` | À COMPLÉTER |
 | Compte du robot | `niryo` | sans objet (donné) |
 | Mot de passe du robot | voir `install_robot/README.md` | **ne pas écrire ici** |
 | Dossier du projet sur le robot | `~/cellule` | sans objet (donné) |
@@ -177,7 +177,7 @@ Rappel : `EQUIPE`, `BROKER` et les ports doivent être **cohérents entre tous l
 | Fichier | Paramètre | Rôle | Valeur par défaut fournie | Valeur de l'équipe |
 |---|---|---|---|---|
 | `collecteur/creer_bdd.py` | `EQUIPE` | Identifiant de l'équipe | `"g1"` | À COMPLÉTER |
-| `collecteur/creer_bdd.py` | `ADRESSE_ROBOT` | Adresse du robot, enregistrée dans la table `robots` | `"192.168.10.21"` | À COMPLÉTER |
+| `collecteur/creer_bdd.py` | `ADRESSE_ROBOT` | Adresse du robot, enregistrée dans la table `robots` | `"192.168.1.21"` | À COMPLÉTER |
 | `collecteur/creer_bdd.py` | `BASE` | Fichier de la base | `"cellule.db"` | À COMPLÉTER |
 | `collecteur/collecteur.py` | `EQUIPE` | Identifiant ; le collecteur s'abonne à `cellule/<EQUIPE>/#` | `"g1"` | À COMPLÉTER |
 | `collecteur/collecteur.py` | `BROKER` | Adresse du broker | `"localhost"` | À COMPLÉTER |
@@ -195,12 +195,12 @@ Rappel : `EQUIPE`, `BROKER` et les ports doivent être **cohérents entre tous l
 | `site_web/supervision.py` | `COULEURS` | Couleurs proposées dans le formulaire, **les mêmes que dans l'API** | `["rouge", "vert", "bleu", "jaune", "blanc"]` | À COMPLÉTER |
 | `site_web/supervision.py` | `app.secret_key` | Clé des messages `flash` du site | `"dev-seulement"` | À COMPLÉTER |
 | `api_robot/api_robot.py` | `EQUIPE` | Identifiant de l'équipe | `"g1"` | À COMPLÉTER |
-| `api_robot/api_robot.py` | `BROKER` | Adresse du serveur, depuis le robot | `"192.168.10.10"` | À COMPLÉTER |
+| `api_robot/api_robot.py` | `BROKER` | Adresse du serveur, depuis le robot | `"192.168.1.10"` | À COMPLÉTER |
 | `api_robot/api_robot.py` | `PORT_API` | Port de l'API sur le robot | `3000` | À COMPLÉTER |
 | `api_robot/api_robot.py` | `JOINTS_HOME` | Position home (6 angles, radians) | `[0.0, 0.3, -1.3, 0.0, 0.0, 0.0]` | À COMPLÉTER |
 | `api_robot/api_robot.py` | `COULEURS` | Couleurs de l'anneau (`[rouge, vert, bleu, 0]`) | rouge, vert, bleu, jaune, blanc | À COMPLÉTER |
 | `essai_robot/config.py` | `EQUIPE` | Identifiant de l'équipe | `"g1"` | À COMPLÉTER |
-| `essai_robot/config.py` | `BROKER` | Adresse du serveur, depuis le robot | `"192.168.10.10"` | À COMPLÉTER |
+| `essai_robot/config.py` | `BROKER` | Adresse du serveur, depuis le robot | `"192.168.1.10"` | À COMPLÉTER |
 | `essai_robot/config.py` | `PORT_MQTT` | Port MQTT | `1883` | À COMPLÉTER |
 | `essai_robot/config.py` | `TOPIC_ESSAI`, `TOPIC_LED` | Topics des scripts d'essai (distincts des topics du projet) | `cellule/<EQUIPE>/essai`, `cellule/<EQUIPE>/led` | À COMPLÉTER |
 | `essai_robot/config.py` | `PORT_API` | Port de l'API d'essai sur le robot | `3000` | À COMPLÉTER |

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Installe hors ligne les bibliothèques Python du projet sur le robot Ned2.
 # Usage, sur le robot, dans le dossier copié : ./install.sh [options de test.py]
-# Exemple : ./install.sh --broker 192.168.10.10
+# Exemple : ./install.sh --broker 192.168.1.10
 set -e
 
 DOSSIER="$(cd "$(dirname "$0")" && pwd)"

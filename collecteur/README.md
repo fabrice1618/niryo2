@@ -50,7 +50,7 @@ Un message mal formé (pas du JSON, `duree` absente ou qui n'est pas un nombre) 
    cp /opt/cellule/fournitures/collecteur/*.py ~/supervision/
    ```
 
-   Depuis un poste : avec VS Code Remote SSH, ou `scp creer_bdd.py collecteur.py g1@192.168.10.10:~/supervision/`.
+   Depuis un poste : avec VS Code Remote SSH, ou `scp creer_bdd.py collecteur.py g1@192.168.1.10:~/supervision/`.
 
 2. **Adapter les paramètres** en haut de chaque fichier : l'identifiant de l'équipe et l'adresse de son robot dans `creer_bdd.py` ; l'identifiant et le broker dans `collecteur.py` :
 
@@ -137,7 +137,7 @@ Le simulateur sert aussi après chaque modification du collecteur : une nouvelle
 | Message | Cause | Que faire |
 |---|---|---|
 | `Base cellule.db absente` | Base pas encore créée, ou collecteur lancé depuis un autre dossier | `cd ~/supervision`, puis `python3 creer_bdd.py` |
-| `Broker localhost injoignable` | Pas de broker à cette adresse, ou broker arrêté | Vérifier `BROKER` (`localhost` sur le serveur, `192.168.10.10` depuis un poste du fab lab) |
+| `Broker localhost injoignable` | Pas de broker à cette adresse, ou broker arrêté | Vérifier `BROKER` (`localhost` sur le serveur, `192.168.1.10` depuis un poste du fab lab) |
 | `Connexion refusée par le broker` | Le broker refuse la connexion (autre service sur le port 1883, broker mal configuré) | Vérifier `BROKER` ; lire le code de refus affiché |
 | `message mal formé, pas de cycle enregistré` | Fin de cycle qui n'est pas du JSON, ou sans `duree`, `horodatage` ou `evenement` | Rien côté collecteur : le message est gardé dans `messages`. Corriger l'émetteur |
 | `erreur d'écriture dans la base` | Table absente (`no such table`), base verrouillée, disque plein | Relancer `creer_bdd.py` ; lire le message d'erreur |

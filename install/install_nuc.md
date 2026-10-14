@@ -68,12 +68,12 @@ network:
   ethernets:
     enp86s0:
       dhcp4: false
-      addresses: [192.168.10.10/24]
+      addresses: [192.168.1.10/24]
       routes:
         - to: default
-          via: 192.168.10.1
+          via: 192.168.1.1
       nameservers:
-        addresses: [192.168.10.1]
+        addresses: [192.168.1.1]
 EOF
 sudo chmod 600 /etc/netplan/50-cellule.yaml
 sudo netplan apply
@@ -247,7 +247,7 @@ CREATE TABLE IF NOT EXISTS robots (
 CREATE TABLE IF NOT EXISTS cycles (
     id INTEGER PRIMARY KEY, robot_id INTEGER NOT NULL REFERENCES robots(id),
     debut TEXT NOT NULL, duree REAL NOT NULL, zone TEXT, statut TEXT NOT NULL DEFAULT 'ok');
-INSERT INTO robots (nom, equipe, adresse_ip) VALUES ('robot1', 'g1', '192.168.10.21');
+INSERT INTO robots (nom, equipe, adresse_ip) VALUES ('robot1', 'g1', '192.168.1.21');
 WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < 500)
 INSERT INTO cycles (robot_id, debut, duree, zone, statut)
 SELECT 1, strftime('%Y-%m-%dT%H:%M:%S', 'now', 'localtime', -i || ' minutes'),
@@ -262,7 +262,7 @@ Comme dans le collecteur, `debut` est l'heure locale posée par le robot, sans f
 
 ### 7.7 Panneau d'essai
 
-Se connecter à `http://192.168.10.10:3000` avec le compte `g1`, créer un dashboard dans le dossier « Équipe g1 », un panneau « Time series » sur la source `SQLite g1`, avec la requête :
+Se connecter à `http://192.168.1.10:3000` avec le compte `g1`, créer un dashboard dans le dossier « Équipe g1 », un panneau « Time series » sur la source `SQLite g1`, avec la requête :
 
 ```sql
 SELECT unixepoch(debut, 'utc') AS time, duree AS "durée (s)"
@@ -294,7 +294,7 @@ sudo -u g2 ls /home/g1                                   # refusé : dossier d'u
 - [ ] Collecteur d'une équipe de test en marche : ses nouveaux cycles apparaissent dans Grafana (rafraîchissement toutes les 5 s), sans erreur « database is locked » ni côté collecteur ni côté Grafana
 - [ ] Redémarrage complet : les trois services repartent seuls
 - [ ] Mémoire disponible avec Grafana et 6 équipes actives (`htop`)
-- [ ] Le robot publie sur le broker du NUC : `~/cellule/lancer.sh ~/cellule/test.py --broker 192.168.10.10` sur le robot
+- [ ] Le robot publie sur le broker du NUC : `~/cellule/lancer.sh ~/cellule/test.py --broker 192.168.1.10` sur le robot
 
 
 ## 9. Sauvegarde et restauration

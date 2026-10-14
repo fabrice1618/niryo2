@@ -5,7 +5,7 @@ Il réutilise la fonction lire_etat du script 8 : l'état est lu directement sur
 à chaque requête, sans rien faire bouger.
 
 Sur le robot : ~/cellule/lancer.sh script9_api_etat.py
-Sur un poste : curl http://192.168.10.21:3000/robot/etat
+Sur un poste : curl http://192.168.1.21:3000/robot/etat
 """
 import rospy
 from flask import Flask, jsonify

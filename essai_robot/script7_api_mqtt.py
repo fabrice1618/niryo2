@@ -3,8 +3,8 @@
 
 Sur le robot : ~/cellule/lancer.sh script7_api_mqtt.py
 Sur un poste :
-    mosquitto_sub -h 192.168.10.10 -t 'cellule/g1/#' -v
-    curl -X POST http://192.168.10.21:3000/led -H "Content-Type: application/json" -d '{"couleur": "vert"}'
+    mosquitto_sub -h 192.168.1.10 -t 'cellule/g1/#' -v
+    curl -X POST http://192.168.1.21:3000/led -H "Content-Type: application/json" -d '{"couleur": "vert"}'
 """
 import json
 from datetime import datetime

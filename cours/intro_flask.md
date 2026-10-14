@@ -176,7 +176,7 @@ url_for("cycles", zone="A", limite=20)     # → "/cycles?zone=A&limite=20"
 - Le paramètre `_external` peut être mis à `True` pour générer une URL absolue :
 
 ```python
-url_for("accueil", _external=True)     # → "http://192.168.10.10:8001/"
+url_for("accueil", _external=True)     # → "http://192.168.1.10:8001/"
 ```
 
 `url_for` ne fonctionne que pendant le traitement d'une requête (dans une vue ou un template) ; pour l'essayer dans la console Python, utilisez `with app.test_request_context(): print(url_for("accueil"))`.
@@ -232,7 +232,7 @@ Les dossiers `templates` et `static` portent ces noms exacts : Flask les cherche
 | `request.form` | Champs d'un formulaire envoyé en `POST` | `request.form.get("description")` |
 | `request.get_json()` | Corps JSON (appels d'API) | `{"vitesse": 50}` |
 | `request.headers` | Les en-têtes, dans un objet de type dictionnaire | `request.headers.get("User-Agent")` |
-| `request.remote_addr` | Adresse IP du client | `"192.168.10.105"` |
+| `request.remote_addr` | Adresse IP du client | `"192.168.1.105"` |
 | `request.environ` | L'environnement WSGI sous-jacent (pour les nostalgiques) | |
 
 ```python
@@ -679,7 +679,7 @@ CREATE TABLE cycles (id INTEGER PRIMARY KEY,
                      robot_id INTEGER NOT NULL REFERENCES robots(id),
                      debut TEXT NOT NULL, duree REAL, zone TEXT,
                      statut TEXT NOT NULL DEFAULT 'ok');
-INSERT INTO robots (nom, equipe, adresse_ip) VALUES ('ned2-g1', 'g1', '192.168.10.21');
+INSERT INTO robots (nom, equipe, adresse_ip) VALUES ('ned2-g1', 'g1', '192.168.1.21');
 """)
 t = datetime.now() - timedelta(hours=1)
 for _ in range(60):

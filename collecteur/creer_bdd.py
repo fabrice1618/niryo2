@@ -9,7 +9,7 @@ import sqlite3
 
 # --- Paramètres à adapter -------------------------------------------------
 EQUIPE = "g1"                        # identifiant de l'équipe
-ADRESSE_ROBOT = "192.168.10.21"        # adresse du robot de l'équipe
+ADRESSE_ROBOT = "192.168.1.21"        # adresse du robot de l'équipe
 BASE = "cellule.db"
 
 conn = sqlite3.connect(BASE)

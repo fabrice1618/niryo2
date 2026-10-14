@@ -66,10 +66,10 @@ Chaque équipe a un **identifiant technique** (minuscules, sans accent, utilisé
 |-------------|--------|-------|------------------|---------------|
 | `tech1` | BACHTECH24 | Robot avec caméra, numéro à renseigner | 5001 | 8001 |
 | `tech2` | BACHTECH24 | Robot avec caméra, numéro à renseigner | 5002 | 8002 |
-| `g1` | B3RNSPP26 | Robot 1 (`192.168.10.21`) | 5003 | 8003 |
-| `g2` | B3RNSPP26 | Robot 2 (`192.168.10.22`) | 5004 | 8004 |
-| `g3` | B3RNSPP26 | Robot 3 (`192.168.10.23`) | 5005 | 8005 |
-| `g4` | B3RNSPP26 | Robot 4 (`192.168.10.24`) | 5006 | 8006 |
+| `g1` | B3RNSPP26 | Robot 1 (`192.168.1.21`) | 5003 | 8003 |
+| `g2` | B3RNSPP26 | Robot 2 (`192.168.1.22`) | 5004 | 8004 |
+| `g3` | B3RNSPP26 | Robot 3 (`192.168.1.23`) | 5005 | 8005 |
+| `g4` | B3RNSPP26 | Robot 4 (`192.168.1.24`) | 5006 | 8006 |
 
 Les robots de B3RNSPP26 sont les robots restants une fois les robots avec caméra affectés à BACHTECH24 (les numéros sont à ajuster en conséquence). Chaque équipe garde le même robot pendant toute la durée du projet : les poses et la calibration sont propres à un robot.
 
@@ -100,7 +100,7 @@ Statuts : **Existant** (présent, à vérifier), **À fournir** (demande à l'IR
 | 24 environ | Pièces à convoyer (cubes ou cylindres) | Quelques pièces par robot, plus des pièces de rechange | Existant, à vérifier |
 | 4 | Câbles RJ45 2 à 3 m | Robots vers le switch du fab lab | Existant, à vérifier |
 | 1 | Switch Gigabit du fab lab | Robots (4), NUC (1) et postes. Nombre de ports libres à vérifier | Existant, à vérifier |
-| 1 | Routeur du fab lab, passerelle `192.168.10.1` avec DHCP | Plan d'adressage à relever sur place (section 4) | Existant, à vérifier |
+| 1 | Routeur Wi-Fi avec DHCP du fab lab, passerelle `192.168.1.1` | Fourni par l'IRUP. Plan d'adressage `192.168.1.0/24` (section 4) | À fournir (IRUP) |
 | 6 | Postes avec Niryo Studio (ou laptops des étudiants) | Version compatible avec le firmware des robots. Un poste par équipe | Existant, à vérifier |
 | 6 | Multiprises | Une par poste de travail | Existant, à vérifier |
 
@@ -139,15 +139,15 @@ Les séances en salle de cours n'ont pas besoin du serveur : Flask est lancé su
 
 ## 4. Réseau du fab lab
 
-Plan d'adressage proposé, à comparer avec la configuration réelle du fab lab :
+Plan d'adressage du fab lab (réseau `192.168.1.0/24`), à configurer sur le routeur Wi-Fi fourni par l'IRUP :
 
 | Élément | Adresse |
 |---------|---------|
-| Routeur (passerelle) | `192.168.10.1` |
-| NUC de l'IRUP (serveur résident) | `192.168.10.10` |
-| Raspberry Pi d'ISTP (visiteur, quelques séances) | `192.168.10.11` |
-| Robots Ned2 | `192.168.10.21` à `192.168.10.24` |
-| Postes des étudiants (DHCP) | `192.168.10.100` à `192.168.10.199` |
+| Routeur (passerelle) | `192.168.1.1` |
+| NUC de l'IRUP (serveur résident) | `192.168.1.10` |
+| Raspberry Pi d'ISTP (visiteur, quelques séances) | `192.168.1.11` |
+| Robots Ned2 | `192.168.1.21` à `192.168.1.24` |
+| Postes des étudiants (DHCP) | `192.168.1.100` à `192.168.1.199` |
 
 Le NUC et le Raspberry Pi d'ISTP ne doivent jamais avoir la même adresse : le NUC reste branché en permanence sur le réseau du fab lab, où le Pi vient les 17/11 et 19/11/2026 (la séance 1 du 12/10 se fait sans serveur).
 
@@ -169,7 +169,7 @@ L'heure du NUC doit être correcte (horodatage des cycles). Elle est réglée pa
 
 Contenu du disque :
 
-- Ubuntu Server 24.04 LTS avec SSH, adresse IP fixe `192.168.10.10` (procédure complète dans `install/install_nuc.md`)
+- Ubuntu Server 24.04 LTS avec SSH, adresse IP fixe `192.168.1.10` (procédure complète dans `install/install_nuc.md`)
 - Mosquitto ouvert (sans compte) : chaque équipe publie sous `cellule/<equipe>/`
 - Python 3, paquets du projet (`paho-mqtt`, `flask`, `requests`) installés à l'avance, ainsi qu'un dépôt local de paquets pour une installation hors ligne (`package_nuc/` de l'an dernier)
 - SQLite (bibliothèque et outil en ligne de commande) : base `~/supervision/cellule.db` de chaque équipe, lue par son site web et par Grafana
@@ -196,7 +196,7 @@ Préparation et tests :
 - [ ] Mémoire, port USB 3 libre pour le SSD, port Ethernet
 - [ ] Le disque interne contient peut-être des données de l'an dernier (MySQL, Docker, Grafana) : ne pas y toucher
 - [ ] Le NUC est relié au switch du fab lab par un câble, sur une prise stable
-- [ ] Adressage réel du fab lab relevé (routeur, plage DHCP, adresses déjà prises) et comparé à la section 4
+- [ ] Routeur Wi-Fi du fab lab configuré selon la section 4 : réseau `192.168.1.0/24`, plage DHCP, adresses fixes du NUC et des robots
 - [ ] Internet : le NUC a-t-il accès à Internet ? Sans accès, VS Code Remote SSH ne peut pas installer son composant serveur : le développement se fait alors sur les laptops, avec déploiement par `scp` ou `git`
 - [ ] Capacité du réseau pour 12 laptops au plus (Wi-Fi ou câble)
 - [ ] Réservation du fab lab confirmée pour toutes les dates de la section 1
@@ -210,7 +210,7 @@ Préparation et tests :
 - [ ] Chaque convoyeur tourne, son capteur répond sur DI5 (test avec une pièce)
 - [ ] Logiciel des robots en version 5.3 ou plus (Python 3.8), accès SSH avec le compte `niryo` ; bibliothèques du projet installées sur chaque robot avec le dossier `install_robot/` du dépôt (`./install.sh`, puis `~/cellule/lancer.sh ~/cellule/test.py --robot`). Les robots sont communs aux trois classes : une seule installation suffit
 - [ ] Pièces en nombre suffisant et en bon état
-- [ ] Les 4 robots sont connectés au réseau du fab lab (câble) avec les adresses `192.168.10.21` à `.24`
+- [ ] Les 4 robots sont connectés au réseau du fab lab (câble) avec les adresses `192.168.1.21` à `.24`
 - [ ] **Caméras** : repérer les robots équipés, afficher l'image dans Niryo Studio, vérifier la netteté et le champ de vue, lire une image depuis Python avec `pyniryo`
 - [ ] Espace de travail calibré dans Niryo Studio pour les 2 robots affectés à BACHTECH24 ; éclairage installé
 - [ ] Prises électriques, multiprises, zones de sécurité et arrêt d'urgence repérés
@@ -225,7 +225,7 @@ Préparation et tests :
 ### 5.5 Répétition
 
 - [ ] **Avant la séance 3 de BACHTECH24 (ven. 06/11/2026)** : répétition complète au fab lab avec un laptop : connexion SSH, publication MQTT, collecteur, site web
-- [ ] **Avant la séance 9 de B3RNSPP26 et la séance 8 de BACHTECH24** : essai du robot réel publiant sur le broker du NUC (`~/cellule/lancer.sh ~/cellule/test.py --broker 192.168.10.10` sur chaque robot)
+- [ ] **Avant la séance 9 de B3RNSPP26 et la séance 8 de BACHTECH24** : essai du robot réel publiant sur le broker du NUC (`~/cellule/lancer.sh ~/cellule/test.py --broker 192.168.1.10` sur chaque robot)
 - [ ] **Avant la séance 11 de B3RNSPP26 et la séance 12 de BACHTECH24** : essai de Grafana avec l'historique simulé
 - [ ] **Après chaque séance** : sauvegarde du disque, relevé du matériel manquant
 
@@ -252,7 +252,7 @@ Préparation et tests :
 
 1. **Réservations du fab lab.** Presque toutes les séances ont lieu au fab lab, car le NUC n'est pas accessible depuis la salle de classe : 12 séances de BACHTECH24 et 10 séances de B3RNSPP26 (dates en section 1). Le fab lab est-il disponible sur tous ces créneaux ? Il accueille aussi ISTP les 12/10, 17/11 et 19/11/2026 : aucun chevauchement avec les créneaux de l'IRUP.
 2. **NUC.** Modèle, mémoire, état, accès au BIOS ou à l'UEFI, démarrage sur USB, qui peut intervenir dessus. Peut-il rester allumé en permanence ?
-3. **Réseau du fab lab.** Plan d'adressage réel, plage DHCP, nombre de ports libres sur le switch, Wi-Fi pour les laptops, accès à Internet.
+3. **Réseau du fab lab.** Routeur Wi-Fi à fournir par l'IRUP (plan `192.168.1.0/24`), plage DHCP, nombre de ports libres sur le switch, Wi-Fi pour les laptops, accès à Internet.
 4. **Robots avec caméra.** Lesquels ? Combien ? Peut-on les réserver aux 2 équipes de BACHTECH24 ? Les robots sans caméra sont-ils tous en état de marche ?
 5. **Postes de travail.** Les étudiants viennent-ils avec leur laptop, ou y a-t-il des postes de l'IRUP ? Quel système ? Une prise Ethernet est-elle disponible ?
 6. **Salle de cours.** Quelle salle pour la séance 2 de BACHTECH24 et les séances 4 et 5 de B3RNSPP26 ? Vidéoprojecteur disponible, en salle et au fab lab (séance 2 de B3RNSPP26) ?

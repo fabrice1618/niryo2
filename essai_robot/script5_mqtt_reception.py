@@ -2,7 +2,7 @@
 """Script 5 : recevoir un ordre par MQTT et faire clignoter l'anneau de LED dans la couleur reçue.
 
 Sur le robot : ~/cellule/lancer.sh script5_mqtt_reception.py
-Sur un poste : mosquitto_pub -h 192.168.10.10 -t cellule/g1/led -m rouge
+Sur un poste : mosquitto_pub -h 192.168.1.10 -t cellule/g1/led -m rouge
 """
 import time
 

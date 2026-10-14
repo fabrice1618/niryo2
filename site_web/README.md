@@ -39,7 +39,7 @@ Le site utilise Flask et `requests` (déjà installés sur le serveur ; sur un p
 
    ```python
    EQUIPE = "g1"                        # identifiant de l'équipe, affiché en titre
-   URL_API = "http://127.0.0.1:5001"      # simulateur d'API ; le robot : "http://192.168.10.21:3000"
+   URL_API = "http://127.0.0.1:5001"      # simulateur d'API ; le robot : "http://192.168.1.21:3000"
    BASE = "cellule.db"                    # base remplie par le collecteur
    PORT_SITE = 8001                       # 8000 + numéro de l'équipe (8001 à 8008)
    ```
@@ -53,7 +53,7 @@ Le site utilise Flask et `requests` (déjà installés sur le serveur ; sur un p
    python3 supervision.py
    ```
 
-4. **Ouvrir** la page dans un navigateur : `http://192.168.10.10:8001` depuis un poste du fab lab (adresse du serveur, port de l'équipe).
+4. **Ouvrir** la page dans un navigateur : `http://192.168.1.10:8001` depuis un poste du fab lab (adresse du serveur, port de l'équipe).
 
 Comme le collecteur, le site peut tourner dans une session `tmux` pour continuer après la fermeture du terminal (voir `collecteur/README.md`).
 
@@ -153,7 +153,7 @@ Vérifier :
 - un message envoyé par le simulateur MQTT apparaît dans la liste au plus 2 secondes plus tard ;
 - simulateur d'API arrêté : « API du robot injoignable » dans l'état et après chaque commande ; collecteur arrêté : la liste des messages ne bouge plus.
 
-Pour passer au vrai robot, il suffit de changer `URL_API` (`http://192.168.10.21:3000`, adresse du robot de l'équipe) et de relancer le site : les endpoints, les réponses et les messages de l'API du robot sont ceux du simulateur.
+Pour passer au vrai robot, il suffit de changer `URL_API` (`http://192.168.1.21:3000`, adresse du robot de l'équipe) et de relancer le site : les endpoints, les réponses et les messages de l'API du robot sont ceux du simulateur.
 
 
 ## Comment il fonctionne

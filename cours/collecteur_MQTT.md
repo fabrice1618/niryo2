@@ -124,7 +124,7 @@ import paho.mqtt.client as mqtt
 EQUIPE = "g1"
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=f"robot-{EQUIPE}")
 client.will_set(f"cellule/{EQUIPE}/etat", json.dumps({"etat": "hors_ligne"}), qos=1, retain=True)
-client.connect("192.168.10.10", 1883)      # adresse du serveur du module
+client.connect("192.168.1.10", 1883)      # adresse du serveur du module
 client.loop_start()                         # boucle réseau dans un fil séparé
 
 
@@ -417,10 +417,10 @@ pip install paho-mqtt
 python collecteur.py
 
 # 3. Espionner les messages de l'équipe, dans un troisième terminal
-mosquitto_sub -h 192.168.10.10 -t 'cellule/g1/#' -v
+mosquitto_sub -h 192.168.1.10 -t 'cellule/g1/#' -v
 
 # 4. Publier un message de test, dans un quatrième terminal
-mosquitto_pub -h 192.168.10.10 -t cellule/g1/cycle -q 1 \
+mosquitto_pub -h 192.168.1.10 -t cellule/g1/cycle -q 1 \
   -m '{"evenement": "fin_cycle", "piece": 1, "duree": 18.2, "zone": "A", "horodatage": "2026-11-17T08:30:18"}'
 
 # 5. Vérifier en base (après 2 secondes, le temps du lot)

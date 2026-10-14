@@ -18,7 +18,7 @@ import paho.mqtt.client as mqtt
 
 # --- Paramètres à adapter -------------------------------------------------
 EQUIPE = "g1"                        # identifiant de l'équipe, dans les topics MQTT
-BROKER = "localhost"                   # "localhost" sur le serveur du module, "192.168.10.10" depuis un poste
+BROKER = "localhost"                   # "localhost" sur le serveur du module, "192.168.1.10" depuis un poste
 BASE = "cellule.db"                    # créée par creer_bdd.py
 
 file_messages = queue.Queue()          # messages reçus, en attente d'écriture dans la base

@@ -37,13 +37,13 @@ Les bibliothèques Flask et paho-mqtt doivent être installées sur le robot (do
 2. Copier le dossier sur le robot (remplacer `.21` par l'adresse de votre robot) :
 
    ```bash
-   scp -r essai_robot niryo@192.168.10.21:~/cellule/
+   scp -r essai_robot niryo@192.168.1.21:~/cellule/
    ```
 
 3. Lancer un script sur le robot, depuis le dossier :
 
    ```bash
-   ssh niryo@192.168.10.21
+   ssh niryo@192.168.1.21
    cd ~/cellule/essai_robot
    ~/cellule/lancer.sh script8_etat_robot.py
    ```

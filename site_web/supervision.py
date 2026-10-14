@@ -6,7 +6,7 @@
     /commande/...      une route par bouton : envoie la commande à l'API du robot
 
 Lancement, dans le dossier du site : python3 supervision.py
-Puis ouvrir http://192.168.10.10:8001 depuis un poste (http://127.0.0.1:8001 sur son poste)
+Puis ouvrir http://192.168.1.10:8001 depuis un poste (http://127.0.0.1:8001 sur son poste)
 """
 import sqlite3
 from datetime import datetime
@@ -16,7 +16,7 @@ from flask import Flask, flash, redirect, render_template, request, url_for
 
 # --- Paramètres à adapter -------------------------------------------------
 EQUIPE = "g1"                        # identifiant de l'équipe, affiché en titre
-URL_API = "http://127.0.0.1:5001"      # simulateur d'API ; le robot : "http://192.168.10.21:3000"
+URL_API = "http://127.0.0.1:5001"      # simulateur d'API ; le robot : "http://192.168.1.21:3000"
 BASE = "cellule.db"                    # base remplie par le collecteur
 PORT_SITE = 8001                       # 8000 + numéro de l'équipe (8001 à 8008)
 COULEURS = ["rouge", "vert", "bleu", "jaune", "blanc"]   # couleurs de l'anneau de LED, comme dans l'API

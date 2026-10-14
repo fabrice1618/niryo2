@@ -6,8 +6,8 @@ Le serveur du module héberge, pour toutes les équipes, le broker MQTT, les col
 
 | Document | Serveur | Classes | Base de données | Grafana |
 |---|---|---|---|---|
-| [`install_raspberry.md`](install_raspberry.md) | Raspberry Pi 5 d'ISTP, `192.168.10.11` au fab lab | BACHINGE24 (8 équipes) | SQLite (`cellule.db`, une par équipe) | Non |
-| [`install_nuc.md`](install_nuc.md) | NUC du fab lab de l'IRUP, `192.168.10.10` | BACHTECH24 et B3RNSPP26 (6 équipes) | SQLite (`cellule.db`, une par équipe) | Oui, port 3000, avec l'adaptateur SQLite (lecture seule) |
+| [`install_raspberry.md`](install_raspberry.md) | Raspberry Pi 5 d'ISTP, `192.168.1.11` au fab lab | BACHINGE24 (8 équipes) | SQLite (`cellule.db`, une par équipe) | Non |
+| [`install_nuc.md`](install_nuc.md) | NUC du fab lab de l'IRUP, `192.168.1.10` | BACHTECH24 et B3RNSPP26 (6 équipes) | SQLite (`cellule.db`, une par équipe) | Oui, port 3000, avec l'adaptateur SQLite (lecture seule) |
 
 L'installation des bibliothèques sur les **robots** est à part : voir [`../install_robot/README.md`](../install_robot/README.md).
 

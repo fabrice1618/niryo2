@@ -38,7 +38,7 @@ Un site web fonctionne par échanges : le navigateur (client) envoie une requêt
 
 **Le cycle requête / réponse**
 
-1. L'utilisateur saisit une adresse (`http://192.168.10.10:8001/cycles`) ou clique sur un lien.
+1. L'utilisateur saisit une adresse (`http://192.168.1.10:8001/cycles`) ou clique sur un lien.
 2. Le navigateur envoie une requête : une méthode (`GET`, `POST`), un chemin (`/cycles`) et des en-têtes.
 3. Le serveur choisit le code à exécuter selon le chemin : c'est le rôle des routes, que l'on écrira avec Flask.
 4. Le serveur renvoie une réponse : un code d'état (`200` OK, `404` introuvable, `302` redirection) et un corps (HTML, JSON, image).

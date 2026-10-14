@@ -2,7 +2,7 @@
 """Script 4 : publier un message MQTT chaque seconde depuis le robot.
 
 Sur le robot : ~/cellule/lancer.sh script4_mqtt_envoi.py
-Sur un poste : mosquitto_sub -h 192.168.10.10 -t 'cellule/g1/#' -v
+Sur un poste : mosquitto_sub -h 192.168.1.10 -t 'cellule/g1/#' -v
 """
 import json
 import time

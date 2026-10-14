@@ -437,7 +437,7 @@ Le serveur sert à la séance 3 (salle D3.10, sur un réseau séparé), puis aux
 **Réseau**
 
 - **En salle D3.10 (séance 3)** : un réseau séparé permet d'utiliser le serveur. Les postes Linux de la salle y sont raccordés ; deux switches 5 ports (avec câbles) apportés par l'enseignant connectent les laptops des équipes (un par équipe environ) et le Pi. SSH (22), MQTT (1883) et les ports HTTP (5001 à 5008 et 8001 à 8008) doivent être autorisés entre les postes et le Pi.
-- **Au fab lab (séances 4 et 5)** : le serveur rejoint le réseau des robots avec une adresse IP fixe (plan d'adressage proposé dans `cours/reseau_TCP_IP.md` : réseau `192.168.10.0/24`, robots en `.21` à `.24`). Le NUC de l'IRUP occupe l'adresse `.10` : le Pi prend `.11` (voir `materiel_ISTP.md`). L'API tourne alors sur chaque robot (Python ROS Wrapper), port 3000 : le port 5000 du robot est pris par le logiciel système de Niryo. Les bibliothèques Python du projet sont installées à l'avance sur chaque robot avec le dossier `install_robot/`.
+- **Au fab lab (séances 4 et 5)** : le serveur rejoint le réseau des robots avec une adresse IP fixe (plan d'adressage proposé dans `cours/reseau_TCP_IP.md` : réseau `192.168.1.0/24`, robots en `.21` à `.24`). Le NUC de l'IRUP occupe l'adresse `.10` : le Pi prend `.11` (voir `materiel_ISTP.md`). L'API tourne alors sur chaque robot (Python ROS Wrapper), port 3000 : le port 5000 du robot est pris par le logiciel système de Niryo. Les bibliothèques Python du projet sont installées à l'avance sur chaque robot avec le dossier `install_robot/`.
 
 ```mermaid
 flowchart TB

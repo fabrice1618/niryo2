@@ -2,7 +2,7 @@
 """Script 6 : une API web sur le robot. POST /led fait clignoter l'anneau de LED.
 
 Sur le robot : ~/cellule/lancer.sh script6_api.py
-Sur un poste : curl -X POST http://192.168.10.21:3000/led -H "Content-Type: application/json" -d '{"couleur": "bleu"}'
+Sur un poste : curl -X POST http://192.168.1.21:3000/led -H "Content-Type: application/json" -d '{"couleur": "bleu"}'
 """
 import rospy
 from flask import Flask, jsonify, request

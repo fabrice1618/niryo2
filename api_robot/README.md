@@ -59,8 +59,8 @@ Flask et paho-mqtt doivent être installés sur le robot (dossier `install_robot
 2. Copier le dossier sur le robot (remplacer `.21` par l'adresse de votre robot) et lancer l'API :
 
    ```bash
-   scp -r api_robot niryo@192.168.10.21:~/cellule/
-   ssh niryo@192.168.10.21
+   scp -r api_robot niryo@192.168.1.21:~/cellule/
+   ssh niryo@192.168.1.21
    cd ~/cellule/api_robot
    ~/cellule/lancer.sh api_robot.py
    ```
@@ -68,9 +68,9 @@ Flask et paho-mqtt doivent être installés sur le robot (dossier `install_robot
 3. Depuis un poste :
 
    ```bash
-   curl http://192.168.10.21:3000/robot/etat
-   curl -X POST http://192.168.10.21:3000/robot/autocalibrate
-   curl -X POST http://192.168.10.21:3000/robot/ledring/vert
+   curl http://192.168.1.21:3000/robot/etat
+   curl -X POST http://192.168.1.21:3000/robot/autocalibrate
+   curl -X POST http://192.168.1.21:3000/robot/ledring/vert
    ```
 
 Chaque appel s'affiche dans la console de l'API, avec les messages MQTT envoyés. En cas d'erreur du robot (par exemple un mouvement demandé avant la calibration), la réponse est `500`, avec le message d'erreur.

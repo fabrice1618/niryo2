@@ -3,7 +3,7 @@
 
 À lancer sur le robot, avec le lanceur (qui charge les bibliothèques et ROS) :
     ~/cellule/lancer.sh ~/cellule/test.py
-    ~/cellule/lancer.sh ~/cellule/test.py --broker 192.168.10.10
+    ~/cellule/lancer.sh ~/cellule/test.py --broker 192.168.1.10
     ~/cellule/lancer.sh ~/cellule/test.py --robot
 
 Rien ne bouge : l'option --robot lit seulement les axes et le capteur DI5.

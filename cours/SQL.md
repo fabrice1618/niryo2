@@ -49,8 +49,8 @@ Une base relationnelle range les données dans des tables ; chaque table est un 
 
 | id | nom | equipe | adresse\_ip |
 | --- | --- | --- | --- |
-| 1 | ned2-g1 | g1 | 192.168.10.21 |
-| 2 | ned2-g2 | g2 | 192.168.10.22 |
+| 1 | ned2-g1 | g1 | 192.168.1.21 |
+| 2 | ned2-g2 | g2 | 192.168.1.22 |
 
 `cycles`
 
@@ -186,14 +186,14 @@ Trois instructions modifient le contenu des tables : `INSERT` ajoute, `UPDATE` c
 
 ```sql
 -- Ajouter
-INSERT INTO robots (nom, equipe, adresse_ip) VALUES ('ned2-g1', 'g1', '192.168.10.21');
-INSERT INTO robots (nom, equipe, adresse_ip) VALUES ('ned2-g2', 'g2', '192.168.10.22');
+INSERT INTO robots (nom, equipe, adresse_ip) VALUES ('ned2-g1', 'g1', '192.168.1.21');
+INSERT INTO robots (nom, equipe, adresse_ip) VALUES ('ned2-g2', 'g2', '192.168.1.22');
 
 INSERT INTO cycles (robot_id, duree, zone) VALUES (1, 18.2, 'A'), (1, 17.9, 'B');
 INSERT INTO cycles (robot_id, duree, zone, statut) VALUES (2, 22.1, 'A', 'defaut');
 
 -- Modifier
-UPDATE robots SET adresse_ip = '192.168.10.31' WHERE nom = 'ned2-g1';
+UPDATE robots SET adresse_ip = '192.168.1.31' WHERE nom = 'ned2-g1';
 
 -- Supprimer
 DELETE FROM cycles WHERE duree < 0;
@@ -366,7 +366,7 @@ conn.executescript("""
 # Écrire : le bloc 'with conn' valide (commit) à la sortie, ou annule en cas d'erreur
 with conn:
     conn.execute("INSERT INTO robots (nom, equipe, adresse_ip) VALUES (?, ?, ?)",
-                 ("ned2-g1", "g1", "192.168.10.21"))
+                 ("ned2-g1", "g1", "192.168.1.21"))
 
 # Écrire plusieurs lignes d'un coup
 lignes = [(1, 18.2, "A"), (1, 17.9, "B"), (1, 18.6, "A")]
@@ -420,9 +420,9 @@ CREATE TABLE cycles (
 );
 
 INSERT INTO robots (nom, equipe, adresse_ip) VALUES
-    ('ned2-g1', 'g1', '192.168.10.21'),
-    ('ned2-g2', 'g2', '192.168.10.22'),
-    ('ned2-g3', 'g3', '192.168.10.23');
+    ('ned2-g1', 'g1', '192.168.1.21'),
+    ('ned2-g2', 'g2', '192.168.1.22'),
+    ('ned2-g3', 'g3', '192.168.1.23');
 
 INSERT INTO cycles (robot_id, debut, duree, zone, statut) VALUES
     (1, '2026-11-17 08:30:00', 18.2, 'A', 'ok'),

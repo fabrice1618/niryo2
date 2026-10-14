@@ -10,7 +10,7 @@ Une seule tâche à la fois : une demande qui arrive pendant une tâche est refu
 GET /robot/etat répond tout de suite, même pendant une tâche.
 
 Lancement, sur le robot : ~/cellule/lancer.sh api_robot.py
-Essai, depuis un poste :  curl -X POST http://192.168.10.21:3000/robot/ledring/vert
+Essai, depuis un poste :  curl -X POST http://192.168.1.21:3000/robot/ledring/vert
 """
 import json
 from datetime import datetime
@@ -22,7 +22,7 @@ from niryo_robot_python_ros_wrapper.ros_wrapper import *
 
 # --- Paramètres à adapter -------------------------------------------------
 EQUIPE = "g1"                        # identifiant de l'équipe, dans les topics MQTT
-BROKER = "192.168.10.10"               # serveur du module (le Raspberry Pi d'ISTP est en .11)
+BROKER = "192.168.1.10"               # serveur du module (le Raspberry Pi d'ISTP est en .11)
 PORT_API = 3000                        # le port 5000 du robot est pris par le logiciel de Niryo
 JOINTS_HOME = [0.0, 0.3, -1.3, 0.0, 0.0, 0.0]       # position home : angles des 6 axes (radians)
 COULEURS = {                           # [rouge, vert, bleu, 0], comme dans l'export de Niryo Studio

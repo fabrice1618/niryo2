@@ -13,7 +13,7 @@ import paho.mqtt.client as mqtt
 
 # --- Paramètres à adapter -------------------------------------------------
 EQUIPE = "g1"                        # identifiant de l'équipe, dans les topics MQTT
-BROKER = "localhost"                   # "192.168.10.10" depuis un poste du fab lab, ou un broker public
+BROKER = "localhost"                   # "192.168.1.10" depuis un poste du fab lab, ou un broker public
 
 MENU = f"""
 Simulateur MQTT, équipe {EQUIPE}, broker {BROKER}
