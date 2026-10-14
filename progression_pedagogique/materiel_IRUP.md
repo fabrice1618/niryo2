@@ -124,18 +124,6 @@ Statuts : **Existant** (présent, à vérifier), **À fournir** (demande à l'IR
 
 Les séances en salle de cours n'ont pas besoin du serveur : Flask est lancé sur les postes (séances 4 et 5 de B3RNSPP26).
 
-### 3.5 Petit matériel de rechange (à apporter à chaque séance)
-
-| Qté | Désignation | Remarque | Statut |
-|-----|-------------|----------|--------|
-| 4 | Souris USB | Des souris peuvent manquer | Apporté |
-| 2 | Claviers USB | Remplacement en cas de panne | Apporté |
-| 8 | Câbles RJ45 2 m | Réserve. Des câbles réseau peuvent manquer | Apporté |
-| 2 | Adaptateurs USB vers RJ45 Gigabit | Pour les laptops sans prise Ethernet | Apporté |
-| 1 | Clé USB 32 Go | Copies de fichiers, paquets Python hors ligne | Apporté |
-| 1 | Rallonge 5 m avec multiprise | Postes éloignés d'une prise | Apporté |
-| 1 | Lot d'étiquettes | Identifiants des équipes sur les postes et les robots | Apporté |
-
 
 ## 4. Réseau du fab lab
 
@@ -220,7 +208,6 @@ Préparation et tests :
 - [ ] Salle réservée pour la séance 2 de BACHTECH24 et pour les séances 4 et 5 de B3RNSPP26 (la séance 2 de B3RNSPP26 a lieu au fab lab)
 - [ ] Vidéoprojecteur ou écran testé
 - [ ] Postes ou laptops : Python, `flask` et `pip` fonctionnent (séances 4 et 5 de B3RNSPP26 sans serveur) ; logiciels de la section 3.4 installés
-- [ ] Souris et câbles réseau de rechange apportés
 
 ### 5.5 Répétition
 
