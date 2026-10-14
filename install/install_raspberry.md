@@ -8,7 +8,7 @@ Ce document décrit, pas à pas, la préparation du serveur Raspberry Pi d'ISTP 
 |---|---|---|
 | Ubuntu Server 24.04 LTS (64 bits) | Système, sur SSD USB | |
 | OpenSSH | Connexion des équipes (terminal, VS Code Remote SSH, `scp`) | 22 |
-| Mosquitto | Broker MQTT, un compte par équipe | 1883 |
+| Mosquitto | Broker MQTT, ouvert (sans compte) | 1883 |
 | Python 3.12 + `/opt/cellule/venv` | Collecteurs, sites web et API des équipes | 5001 à 5008, 8001 à 8008 |
 | SQLite | Une base `cellule.db` par équipe, dans son dossier | |
 
@@ -113,42 +113,26 @@ cd ~/niryo2/scripts
 sudo ./creer_comptes_equipes.sh inge        # crée comptes_inge.txt (mode 600)
 ```
 
-Le script crée les comptes `g1e1` à `g2e4` avec des mots de passe aléatoires et des dossiers personnels privés (une équipe ne lit pas les fichiers des autres). Garder `comptes_inge.txt` : il sert pour Mosquitto (section 5) et pour les postes de la salle D3.10 (`sudo ./creer_comptes_equipes.sh --fichier comptes_inge.txt inge`).
+Le script crée les comptes `g1e1` à `g2e4` avec des mots de passe aléatoires et des dossiers personnels privés (une équipe ne lit pas les fichiers des autres). Garder `comptes_inge.txt` : il sert pour les postes de la salle D3.10 (`sudo ./creer_comptes_equipes.sh --fichier comptes_inge.txt inge`).
 
 
 ## 5. Broker Mosquitto
 
-Chaque équipe se connecte avec son identifiant et son mot de passe Linux, et n'accède qu'à ses topics. L'enseignant (`prof`) voit tout.
+Le broker est **ouvert** : pas de compte, pas de mot de passe, pas de droits par sujet. Il n'est joignable que sur le réseau local du module. Chaque équipe publie sous `cellule/<son identifiant>/` : c'est une **convention**, que le broker ne vérifie pas.
 
 ```bash
 sudo tee /etc/mosquitto/conf.d/cellule.conf >/dev/null <<'EOF'
 listener 1883 0.0.0.0
-allow_anonymous false
-password_file /etc/mosquitto/passwd
-acl_file /etc/mosquitto/acl
+allow_anonymous true
 EOF
 
-sudo tee /etc/mosquitto/acl >/dev/null <<'EOF'
-# Enseignant : tout le projet
-user prof
-topic readwrite cellule/#
-
-# Chaque équipe : uniquement cellule/<son identifiant>/...
-pattern readwrite cellule/%u/#
-EOF
-
-sudo install -m 600 /dev/null /etc/mosquitto/passwd     # créé non lisible par les autres
-grep -v '^#' ~/niryo2/scripts/comptes_inge.txt | while IFS=: read -r equipe mdp; do
-    sudo mosquitto_passwd -b /etc/mosquitto/passwd "$equipe" "$mdp"
-done
-sudo mosquitto_passwd -b /etc/mosquitto/passwd prof 'MOT_DE_PASSE_PROF'
-sudo chown mosquitto:mosquitto /etc/mosquitto/passwd /etc/mosquitto/acl
-sudo chmod 600 /etc/mosquitto/passwd /etc/mosquitto/acl
 sudo systemctl enable mosquitto
 sudo systemctl restart mosquitto
 ```
 
-Le robot d'une équipe publie avec les identifiants de l'équipe. Les simulateurs et collecteurs aussi.
+Limite connue : une équipe peut lire et écrire les topics d'une autre (identifiant mal recopié, curiosité). Deux clients MQTT de même nom, par exemple deux collecteurs lancés avec le même `EQUIPE`, se déconnectent l'un l'autre : en cas de messages qui manquent, vérifier d'abord que chaque équipe a son propre identifiant.
+
+Le robot d'une équipe, ses simulateurs et son collecteur utilisent le même identifiant d'équipe dans les topics.
 
 
 ## 6. Python : un environnement commun
@@ -203,18 +187,13 @@ systemctl is-active mosquitto ssh               # active, active
 ss -tlnp | grep -E ':22 |:1883 '                # 0.0.0.0:1883 et 0.0.0.0:22
 python3 -c "import flask, paho.mqtt, requests; print('ok')"   # depuis un compte d'équipe
 
-# MQTT : g1e1 reçoit ses messages...
-mosquitto_sub -h localhost -u g1e1 -P 'mdp-g1e1' -t 'cellule/g1e1/#' -v &
-mosquitto_pub -h localhost -u g1e1 -P 'mdp-g1e1' -t cellule/g1e1/etat -m '{"etat": "essai"}'
-# ... mais ne voit pas ceux de g1e2 (rien ne s'affiche)
-mosquitto_pub -h localhost -u g1e2 -P 'mdp-g1e2' -t cellule/g1e2/etat -m '{"etat": "secret"}'
-mosquitto_sub -h localhost -u g1e1 -P 'mdp-g1e1' -t 'cellule/g1e2/#' -v -W 3
-# Sans mot de passe : refusé
-mosquitto_pub -h localhost -t cellule/g1e1/etat -m x            # Connection Refused: not authorised
+# MQTT : sans compte, le message publié est reçu par l'abonné
+mosquitto_sub -h localhost -t 'cellule/#' -v &
+mosquitto_pub -h localhost -t cellule/g1e1/etat -m '{"etat": "essai"}'      # s'affiche
 ```
 
 - [ ] Connexion SSH avec un compte d'équipe, depuis un poste Linux de la salle et depuis un laptop
-- [ ] Une équipe ne peut ni lire le dossier d'une autre (`ls /home/g1e2` refusé), ni ses topics
+- [ ] Une équipe ne peut pas lire le dossier d'une autre (`ls /home/g1e2` refusé)
 - [ ] Le site Flask d'une équipe de test s'ouvre depuis un laptop (`flask run --host 0.0.0.0 --port 8001`)
 - [ ] **Essai de charge** : 8 simulateurs, 8 collecteurs et 16 serveurs Flask lancés ensemble, plusieurs connexions VS Code Remote SSH ; surveiller la mémoire et la température avec `htop` et `vcgencmd measure_temp`
 - [ ] Redémarrage complet : Mosquitto et SSH repartent seuls, l'heure est juste

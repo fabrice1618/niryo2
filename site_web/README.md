@@ -22,7 +22,7 @@ flowchart LR
 | `templates/etat.html` | La partie « état du robot et derniers messages », rechargée toutes les 2 secondes |
 | `static/style.css` | La mise en forme, minimale |
 
-Le site utilise Flask et `requests` (déjà installés sur le serveur ; sur un poste : `pip install flask requests`).
+Le site utilise Flask et `requests` (déjà installés sur le serveur ; sur un poste : voir *Lancement en local*).
 
 
 ## Mode d'emploi sur le serveur du module
@@ -60,9 +60,84 @@ Comme le collecteur, le site peut tourner dans une session `tmux` pour continuer
 Avec `debug=True` (dernière ligne de `supervision.py`), le site redémarre tout seul à chaque modification d'un fichier : il suffit de recharger la page dans le navigateur. En cas d'erreur dans le code, le message s'affiche dans le terminal.
 
 
+## Lancement en local
+
+Sur son propre poste, sans le serveur du module, tout le projet tourne : broker, collecteur, simulateurs et site. Il faut un environnement Python, un broker Mosquitto et un dossier de travail.
+
+**1. Un seul environnement Python pour tous les programmes.** Le collecteur, les deux simulateurs et le site n'ont besoin que de trois bibliothèques (`flask`, `paho-mqtt` version 2, `requests`), listées dans `requirements.txt` à la racine du dépôt. On crée **un** environnement virtuel, `venv`, à côté de ce fichier :
+
+```bash
+cd ~/cours/niryo2
+python3 -m venv venv                  # sur Ubuntu : sudo apt install python3-venv, si la commande échoue
+source venv/bin/activate              # à refaire dans chaque nouveau terminal
+pip install -r requirements.txt
+```
+
+Une fois activé, `python3` désigne l'environnement (le préfixe `(venv)` s'affiche dans le terminal). Sans activation, on peut appeler directement `venv/bin/python3`. Le dossier `venv` n'est pas versionné (`.gitignore`).
+
+`api_robot/` et `essai_robot/` n'en font pas partie : ils utilisent le Python ROS Wrapper et s'exécutent **sur le robot** (voir `install_robot/`). En local, le simulateur d'API les remplace.
+
+**2. Un broker MQTT**, pour le collecteur et les simulateurs. Deux solutions, au choix :
+
+- **Un Mosquitto installé sur le poste** (`BROKER = "localhost"`) :
+
+  ```bash
+  sudo apt install mosquitto             # démarre tout seul ; systemctl status mosquitto pour vérifier
+  ```
+
+  Sans fichier de configuration particulier, Mosquitto 2 n'accepte que les connexions de la machine elle-même, sans compte : c'est ce qu'il faut ici. Les messages restent sur le poste.
+
+- **Le broker public de test `test.mosquitto.org`** (`BROKER = "test.mosquitto.org"`), sans rien installer. Il est ouvert à tous sur le port 1883 : pas de compte et aucun chiffrement. Trois précautions, parce que **tout le monde** y publie et s'y abonne :
+
+  - **Choisir un `EQUIPE` unique**, le même dans les trois programmes (par exemple `g1e1-dupont`, avec votre nom). Avec `g1e1`, vous recevriez les messages de toute personne qui fait le même essai, et deux collecteurs qui portent le même nom de client se déconnectent l'un l'autre ;
+  - **n'y envoyer rien de confidentiel** : les messages sont lisibles par tous, et un message retenu (`etat`) reste sur le broker après l'arrêt du simulateur ;
+  - **ne pas en dépendre** : c'est un service de test, parfois lent ou indisponible. Il convient pour essayer le site, pas pour une séance : sur le serveur du module, le broker est le Mosquitto de l'équipe.
+
+  Pour vérifier qu'il répond : `mosquitto_sub -h test.mosquitto.org -t "cellule/g1e1-dupont/#" -v` (paquet `mosquitto-clients`), puis un message depuis le simulateur MQTT.
+
+**3. Un dossier de travail**, qui reprend l'organisation du serveur (`~/supervision/`) : le collecteur, le site et les simulateurs dans le même dossier, autour de la même base `cellule.db`. Ce dossier, `travail/`, n'est pas versionné : on y modifie les paramètres sans toucher aux fichiers fournis.
+
+```bash
+mkdir travail
+cp collecteur/*.py site_web/supervision.py simulateurs/*.py travail/
+cp -r site_web/templates site_web/static travail/
+```
+
+**4. Adapter les paramètres** dans les copies du dossier `travail/` :
+
+| Fichier | Paramètre | Valeur en local |
+|---|---|---|
+| `collecteur.py`, `simulateur_api.py`, `simulateur_mqtt.py` | `BROKER` | `"localhost"` (déjà la valeur par défaut), ou `"test.mosquitto.org"` pour le broker public |
+| `creer_bdd.py`, `collecteur.py`, `simulateur_api.py`, `simulateur_mqtt.py`, `supervision.py` | `EQUIPE` | `"g1e1"`, ou un nom unique (`"g1e1-dupont"`) avec le broker public |
+| `supervision.py` | `URL_API` | `"http://127.0.0.1:5001"` (déjà la valeur par défaut : le simulateur d'API) |
+
+`EQUIPE`, `PORT_API` (simulateur d'API) et `PORT_SITE` (site) doivent être les mêmes partout : par défaut, `g1e1`, 5001 et 8001.
+
+**5. Lancer**, chacun dans son terminal, avec l'environnement activé et depuis `travail/` (`cd ~/cours/niryo2/travail`, puis `source ../venv/bin/activate`) :
+
+| Terminal | Commande | Rôle |
+|---|---|---|
+| 1 | `python3 creer_bdd.py`, une seule fois, puis `python3 collecteur.py` | Crée la base, puis enregistre les messages MQTT dans `cellule.db` |
+| 2 | `python3 simulateur_api.py` | Remplace l'API du robot, sur le port 5001 |
+| 3 | `python3 supervision.py` | Le site, sur le port 8001 |
+| 4 | `python3 simulateur_mqtt.py` | Envoie des messages de cycle, d'état, de défaut |
+
+Ouvrir ensuite `http://127.0.0.1:8001` dans un navigateur. Chaque programme s'arrête avec `Ctrl+C`. Les vérifications de la section suivante (*Essayer sans robot*) s'appliquent telles quelles.
+
+En cas de problème :
+
+| Message | Cause |
+|---|---|
+| `Port 8001 is in use by another program` | Un autre programme du poste utilise ce port : mettre une autre valeur dans `PORT_SITE` (8002...) et ouvrir la page sur ce port |
+| `Address already in use` au lancement du simulateur d'API | Même cause, pour `PORT_API` (et changer aussi `URL_API` dans `supervision.py`) |
+| `Connexion refusée par le broker` ou `Connection refused` | Mosquitto n'est pas démarré (`sudo systemctl start mosquitto`) ; avec le broker public : pas de réseau, ou service de test indisponible |
+| `API du robot injoignable` dans la page | Le simulateur d'API n'est pas lancé, ou `URL_API` ne correspond pas à son `PORT_API` |
+| `Aucun message : le collecteur tourne-t-il ?` | Le collecteur n'est pas lancé, ou le site et le collecteur n'ont pas la même base : ils doivent être lancés depuis le même dossier |
+
+
 ## Essayer sans robot
 
-Le site a besoin de deux choses : une API qui répond (pour l'état et les commandes) et une base remplie par le collecteur (pour les messages). Sans robot, on les remplace par les simulateurs (`simulateurs/README.md`), copiés dans le dossier personnel avec les mêmes paramètres que le site et le collecteur (`EQUIPE`, `MOT_DE_PASSE`, `BROKER`, et `PORT_API` pour le simulateur d'API) :
+Le site a besoin de deux choses : une API qui répond (pour l'état et les commandes) et une base remplie par le collecteur (pour les messages). Sans robot, on les remplace par les simulateurs (`simulateurs/README.md`), copiés dans le dossier personnel avec les mêmes paramètres que le site et le collecteur (`EQUIPE`, `BROKER`, et `PORT_API` pour le simulateur d'API) :
 
 ```bash
 cp /opt/cellule/fournitures/simulateurs/*.py ~/

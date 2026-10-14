@@ -33,7 +33,7 @@ Ces scripts reprennent, en les adaptant aux conventions du projet, les essais r�
 
 Les bibliothèques Flask et paho-mqtt doivent être installées sur le robot (dossier `install_robot/`, voir son `README.md`).
 
-1. Adapter `config.py` : identifiant de l'équipe, adresse du broker, identifiant et mot de passe MQTT, poses relevées sur votre robot.
+1. Adapter `config.py` : identifiant de l'équipe, adresse du broker, poses relevées sur votre robot.
 2. Copier le dossier sur le robot (remplacer `.21` par l'adresse de votre robot) :
 
    ```bash

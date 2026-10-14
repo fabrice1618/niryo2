@@ -18,8 +18,7 @@ import paho.mqtt.client as mqtt
 from flask import Flask, request
 
 # --- Paramètres à adapter -------------------------------------------------
-EQUIPE = "g1e1"                        # identifiant de l'équipe, aussi compte MQTT
-MOT_DE_PASSE = "mot-de-passe-equipe"   # mot de passe MQTT de l'équipe ; "" pour un broker sans mot de passe
+EQUIPE = "g1e1"                        # identifiant de l'équipe, dans les topics MQTT
 BROKER = "localhost"                   # "192.168.10.10" depuis un poste du fab lab, ou un broker public
 PORT_API = 5001                        # 5000 + numéro de l'équipe (5001 à 5008)
 COULEURS = ["rouge", "vert", "bleu", "jaune", "blanc"]
@@ -28,8 +27,6 @@ app = Flask(__name__)
 app.json.ensure_ascii = False          # accents lisibles dans les réponses JSON
 
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=f"{EQUIPE}_simulateur_api")
-if MOT_DE_PASSE:                       # pas de compte sur un broker sans mot de passe
-    client.username_pw_set(EQUIPE, MOT_DE_PASSE)
 client.connect_async(BROKER, 1883)     # l'API démarre même si le broker est absent
 client.loop_start()
 

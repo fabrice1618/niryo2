@@ -45,7 +45,7 @@ La séance 3 a lieu quatre semaines après la séance 2 : le Pi et le réseau de
 | `g2e3` | Cobalt | G2 | 3 (`192.168.10.23`) | 5007 | 8007 |
 | `g2e4` | Titane | G2 | 4 (`192.168.10.24`) | 5008 | 8008 |
 
-Aux séances 4 et 5, chaque groupe passe à son tour : l'équipe `g1eN`, puis l'équipe `g2eN`, utilisent le robot N, chacune seule sur son créneau. Un compte Linux et un utilisateur MQTT sont créés par identifiant sur le Raspberry Pi. Les mêmes comptes Linux, avec les mêmes identifiants, sont créés sur les postes Linux de la salle D3.10 (section 3.3).
+Aux séances 4 et 5, chaque groupe passe à son tour : l'équipe `g1eN`, puis l'équipe `g2eN`, utilisent le robot N, chacune seule sur son créneau. Un compte Linux est créé par identifiant sur le Raspberry Pi. Les mêmes comptes Linux, avec les mêmes identifiants, sont créés sur les postes Linux de la salle D3.10 (section 3.3).
 
 
 ## 3. Matériel
@@ -205,7 +205,7 @@ sudo ./creer_comptes_equipes.sh --supprimer inge
 ### 5.2 Serveur Raspberry Pi
 
 - [ ] Réception du matériel de la section 3.1 et contrôle de ce qui a été livré
-- [ ] Préparation du SSD : système, Mosquitto avec un utilisateur par équipe (8 comptes, accès limité aux topics de l'équipe), Python et paquets, SQLite, 8 comptes Linux créés par `scripts/creer_comptes_equipes.sh inge` (le fichier des mots de passe sert ensuite aux postes de la salle D3.10), ports attribués : procédure complète dans `install/install_raspberry.md`
+- [ ] Préparation du SSD : système, Mosquitto ouvert (sans compte), Python et paquets, SQLite, 8 comptes Linux créés par `scripts/creer_comptes_equipes.sh inge` (le fichier des mots de passe sert ensuite aux postes de la salle D3.10), ports attribués : procédure complète dans `install/install_raspberry.md`
 - [ ] Démarrage sur le SSD sans carte microSD, redémarrage automatique des services
 - [ ] Pile RTC installée et heure vérifiée après un arrêt complet
 - [ ] Adresse fixe et profils réseau (salle D3.10 et fab lab)

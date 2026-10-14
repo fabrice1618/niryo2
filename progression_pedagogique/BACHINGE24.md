@@ -193,7 +193,7 @@ La séance ne contient qu'un seul cours en présentiel (l'architecture). Les cou
 | Howto du poste de développement | Pas à pas (Linux, Windows, macOS) : Python 3 et environnement virtuel, `pip install`, Mosquitto local ou broker public de test, SQLite et DB Browser, VS Code, et un script `verifier_poste.py` qui publie un message, le reçoit et écrit dans SQLite | Rien : il sert à valider le poste |
 | Simulateurs de process et de robot (`simulateurs/`) | `simulateur_mqtt.py` envoie au choix, dans un menu, les événements `cycle`, `etat`, `defaut` et `tache` sur `cellule/<equipe>/…`, ainsi que des messages mal formés et des rafales pour éprouver le collecteur ; `simulateur_api.py` a les endpoints de l'API fournie (`api_robot/`) sans robot ; classe `RobotSimule` pour l'API CQRS (support `API_CQRS_REST_Flask.md`) | L'équipe et le mot de passe MQTT (en tête de chaque fichier), les messages propres au process |
 | API du robot (`api_robot/`) | API de départ à lancer sur le robot (port 3000) : état du robot, position home, calibration, anneau de LED ; une tâche à la fois, début et fin de chaque tâche publiés sur `cellule/<equipe>/tache` | Les tâches propres au process (modèle à copier en fin de fichier), dans l'API et dans son simulateur |
-| Collecteur MQTT configurable (`collecteur/`) | Script de création de la base (`creer_bdd.py`) et collecteur Python simple (abonnement, validation du JSON, insertion dans `messages` et `cycles`), paramètres en tête de fichier | L'équipe et le mot de passe MQTT, l'adresse du broker, les champs du message, les tables propres au process |
+| Collecteur MQTT configurable (`collecteur/`) | Script de création de la base (`creer_bdd.py`) et collecteur Python simple (abonnement, validation du JSON, insertion dans `messages` et `cycles`), paramètres en tête de fichier | L'équipe, l'adresse du broker, les champs du message, les tables propres au process |
 | Site web Flask de base (`site_web/`) | Tableau de bord minimal d'une page : boutons de commande qui appellent l'API du robot ou son simulateur, état du robot et derniers messages MQTT (lus dans `cellule.db`) mis à jour toutes les 2 secondes | Les pages, les compteurs, la mise en forme, les commandes |
 
 **Déroulé**
@@ -244,7 +244,7 @@ Mosquitto, SQLite et Flask s'exécutent sans serveur. Chaque équipe travaille s
 | Semaine 3 | Site web adapté (dernier état, cycles, compteurs) | `cours/site_web_HTML_CSS.md`, `cours/intro_flask.md` |
 | Semaine 4 | API de commande en mode simulé reliée au site, dossier complété | `cours/API_CQRS_REST_Flask.md` |
 
-**Broker public de test.** Sans serveur, les équipes peuvent utiliser un broker MQTT public (par exemple `test.mosquitto.org` ou `broker.hivemq.com`, sans compte) pour tester d'un poste à l'autre. À respecter : ces brokers sont ouverts à tous, donc préfixer les topics par un identifiant propre à l'équipe (`cellule/g1e1-<mot aléatoire>/…`), n'y envoyer aucune donnée sensible, et ne pas compter sur leur disponibilité. Le broker local reste la référence ; à la séance 3, on passe au broker authentifié du serveur en changeant les paramètres en tête de chaque programme (`BROKER`, `EQUIPE`, `MOT_DE_PASSE`).
+**Broker public de test.** Sans serveur, les équipes peuvent utiliser un broker MQTT public (par exemple `test.mosquitto.org` ou `broker.hivemq.com`, sans compte) pour tester d'un poste à l'autre. À respecter : ces brokers sont ouverts à tous, donc préfixer les topics par un identifiant propre à l'équipe (`cellule/g1e1-<mot aléatoire>/…`), n'y envoyer aucune donnée sensible, et ne pas compter sur leur disponibilité. Le broker local reste la référence ; à la séance 3, on passe au broker du serveur en changeant les paramètres en tête de chaque programme (`BROKER`, `EQUIPE`).
 
 
 ### Séance 3 : intégration sur le serveur (MQTT, collecte dans SQLite, site web et API)
@@ -267,8 +267,8 @@ Les équipes ont avancé sur leur laptop pendant quatre semaines, à partir des 
 | Durée | Activité |
 |-------|----------|
 | 40 min | **Démonstration par équipe** (5 min chacune, sur laptop, en local) : le simulateur, le collecteur, la base SQLite, le site web et l'API fonctionnent ensemble. Une équipe dont un sous-ensemble ne fonctionne pas le signale et repart des fournitures de la séance 2 |
-| 20 min | **Accès au serveur** : l'enseignant remet à chaque équipe ses codes d'accès (compte Linux, utilisateur MQTT) une fois les démonstrations faites. Connexion (SSH, avec VS Code Remote SSH si la salle a accès à Internet) ; mêmes identifiant et mot de passe sur le serveur et sur les postes Linux de la salle |
-| 30 min | **MQTT sur le serveur** : publier et s'abonner sur le broker du serveur avec l'authentification et les topics de l'équipe (MQTT Explorer puis `paho-mqtt`), passage du broker local au broker du serveur par les paramètres en tête de chaque programme (`BROKER`, `EQUIPE`, `MOT_DE_PASSE`) |
+| 20 min | **Accès au serveur** : l'enseignant remet à chaque équipe ses codes d'accès (compte Linux) une fois les démonstrations faites. Connexion (SSH, avec VS Code Remote SSH si la salle a accès à Internet) ; mêmes identifiant et mot de passe sur le serveur et sur les postes Linux de la salle |
+| 30 min | **MQTT sur le serveur** : publier et s'abonner sur le broker du serveur avec les topics de l'équipe (MQTT Explorer puis `paho-mqtt`), passage du broker local au broker du serveur par les paramètres en tête de chaque programme (`BROKER`, `EQUIPE`) |
 | 40 min | **Collecte** : le simulateur publie les événements du process de l'équipe ; le collecteur tourne sur le serveur, reçoit les messages, les valide et les insère dans SQLite. Requêtes de contrôle (nombre de cycles, durée moyenne) |
 | 40 min | **API** : API de commande du robot selon le principe CQRS (`GET /requetes/etat`, `POST /commandes/demarrer`, `/commandes/arreter`, `/commandes/calibrer`) en mode simulé (`RobotSimule`), sans appel au robot. Exécution sur le serveur, sur le port attribué à l'équipe (5001 à 5008) |
 | 40 min | **Site web** : tableau de bord exécuté sur le serveur (port 8001 à 8008), lisant la base SQLite (dernier état, liste des cycles, compteurs), avec des boutons de commande appelant l'API |
@@ -428,7 +428,7 @@ Le serveur sert à la séance 3 (salle D3.10, sur un réseau séparé), puis aux
 
 - Distribution Linux 64 bits pour Raspberry Pi (par exemple Ubuntu Server 24.04 LTS) avec serveur SSH
 - Un compte par équipe (8 comptes : `g1e1` à `g2e4`), avec son dossier personnel, créés avec `scripts/creer_comptes_equipes.sh` (mêmes comptes sur les postes Linux de la salle D3.10)
-- Broker Mosquitto avec authentification : un utilisateur MQTT par équipe, limité aux topics de l'équipe
+- Broker Mosquitto ouvert sur le réseau du module (sans compte) : chaque équipe publie sous `cellule/<equipe>/`
 - Python 3 et les paquets du projet (`paho-mqtt`, `flask`, `requests`), installés à l'avance
 - SQLite (bibliothèque et outil en ligne de commande)
 - Ports attribués par équipe : 5001 à 5008 pour l'API simulée, 8001 à 8008 pour le site web

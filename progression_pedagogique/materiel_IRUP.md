@@ -73,7 +73,7 @@ Chaque équipe a un **identifiant technique** (minuscules, sans accent, utilisé
 
 Un thème par classe : les étoiles pour BACHTECH24 (Sirius, Rigel, Antares et Capella en réserve), les fleuves de France pour B3RNSPP26 (Dordogne, Marne, Saône et Meuse en réserve), les métaux pour BACHINGE24 (voir `materiel_ISTP.md`). Les robots de B3RNSPP26 sont les robots restants une fois les robots avec caméra affectés à BACHTECH24 (les numéros sont à ajuster en conséquence). Chaque équipe garde le même robot pendant toute la durée du projet : les poses et la calibration sont propres à un robot.
 
-Sur le NUC, un compte Linux, un utilisateur MQTT et un compte Grafana sont créés par identifiant.
+Sur le NUC, un compte Linux et un compte Grafana sont créés par identifiant.
 
 
 ## 3. Matériel
@@ -170,7 +170,7 @@ L'heure du NUC doit être correcte (horodatage des cycles). Elle est réglée pa
 Contenu du disque :
 
 - Ubuntu Server 24.04 LTS avec SSH, adresse IP fixe `192.168.10.10` (procédure complète dans `install/install_nuc.md`)
-- Mosquitto avec authentification : un utilisateur MQTT par équipe (6), limité aux topics de l'équipe
+- Mosquitto ouvert (sans compte) : chaque équipe publie sous `cellule/<equipe>/`
 - Python 3, paquets du projet (`paho-mqtt`, `flask`, `requests`) installés à l'avance, ainsi qu'un dépôt local de paquets pour une installation hors ligne (`package_nuc/` de l'an dernier)
 - SQLite (bibliothèque et outil en ligne de commande) : base `~/supervision/cellule.db` de chaque équipe, lue par son site web et par Grafana
 - Grafana (port 3000) avec l'adaptateur SQLite (`frser-sqlite-datasource`) : une source de données par équipe, qui lit sa base en lecture seule, un utilisateur et un dossier de dashboards par équipe

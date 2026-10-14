@@ -682,7 +682,7 @@ Un programme serveur doit écouter sur la bonne interface : Flask lancé sans op
 ping 192.168.10.10                       # 1. le robot joint-il le serveur ? (couches 1 à 3)
 nc -zv 192.168.10.10 1883                # 2. le port MQTT est-il ouvert ? (couche 4)
 ss -tlnp | grep -E ':1883|:500|:800'     # 3. sur le serveur : qui écoute, et sur quelle adresse ?
-mosquitto_sub -h 192.168.10.10 -u g1e1 -P mot-de-passe-equipe -t 'cellule/g1e1/#' -v   # 4. application
+mosquitto_sub -h 192.168.10.10 -t 'cellule/g1e1/#' -v   # 4. application
 curl http://192.168.10.21:3000/requetes/etat                                           # 5. API du robot
 ```
 
@@ -692,7 +692,6 @@ curl http://192.168.10.21:3000/requetes/etat                                    
 | `ping` réussit mais `Connection refused` sur 1883 | Broker arrêté, ou n'écoutant que sur `127.0.0.1` |
 | `Connection refused` sur le port du site web | Flask lancé sans `--host 0.0.0.0`, ou mauvais port |
 | Délai dépassé (timeout) sur un port | Pare-feu (`ufw`) qui bloque le port |
-| Connexion MQTT refusée « not authorised » | Mauvais identifiant ou mot de passe, ou sujet hors des droits de l'équipe |
 | Le robot ne répond plus après un redémarrage | Son adresse a changé : faire une réservation DHCP ou une configuration statique |
 | Durées de cycle ou dates aberrantes | Horloge du robot ou du serveur mal réglée : synchroniser avec NTP |
 

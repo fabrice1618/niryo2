@@ -12,8 +12,7 @@ from datetime import datetime
 import paho.mqtt.client as mqtt
 
 # --- Paramètres à adapter -------------------------------------------------
-EQUIPE = "g1e1"                        # identifiant de l'équipe, aussi compte MQTT
-MOT_DE_PASSE = "mot-de-passe-equipe"   # mot de passe MQTT de l'équipe ; "" pour un broker sans mot de passe
+EQUIPE = "g1e1"                        # identifiant de l'équipe, dans les topics MQTT
 BROKER = "localhost"                   # "192.168.10.10" depuis un poste du fab lab, ou un broker public
 
 MENU = f"""
@@ -105,8 +104,6 @@ def rafale():
 
 # --- Connexion au broker -----------------------------------------------------------
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=f"{EQUIPE}_simulateur")
-if MOT_DE_PASSE:                       # pas de compte sur un broker sans mot de passe
-    client.username_pw_set(EQUIPE, MOT_DE_PASSE)
 try:
     client.connect(BROKER, 1883)
 except OSError as e:
@@ -115,7 +112,7 @@ except OSError as e:
 client.loop_start()
 time.sleep(1)                          # le temps que le broker accepte la connexion
 if not client.is_connected():
-    print("Connexion refusée par le broker : vérifier EQUIPE et MOT_DE_PASSE")
+    print("Connexion refusée par le broker : vérifier BROKER")
     raise SystemExit(1)
 
 # --- Le menu ---------------------------------------------------------------------------

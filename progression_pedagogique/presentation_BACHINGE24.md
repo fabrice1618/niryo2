@@ -128,7 +128,7 @@ Prérequis : bases de Python, notions de réseau (révisées dans le support `re
 | F2 Recevoir les commandes | Accepter « démarrer », « arrêter », « calibrer » et les exécuter sur le robot | Piloter | API de commande |
 | F3 Exposer l'état | Répondre à tout moment à « que fait le robot ? », sans gêner un mouvement | Informer | API de commande |
 | F4 Publier les événements | Signaler début et fin de cycle, changements d'état, défauts | Observer | Client MQTT du robot |
-| F5 Transmettre les messages | Recevoir les messages des robots, les distribuer, isoler les équipes | Observer | Broker Mosquitto |
+| F5 Transmettre les messages | Recevoir les messages des robots, les distribuer, séparer les équipes par sujet | Observer | Broker Mosquitto |
 | F6 Collecter et stocker | S'abonner, valider les messages, enregistrer le journal et les cycles | Observer | Collecteur + base SQLite |
 | F7 Présenter | Tableau de bord (état, cycles, compteurs) et boutons de commande | Les trois | Site web Flask |
 

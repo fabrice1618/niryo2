@@ -5,8 +5,6 @@ EQUIPE = "g1e1"                        # identifiant de l'équipe (topics MQTT, 
 # Broker MQTT du serveur du module
 BROKER = "192.168.10.10"               # adresse du serveur (le Raspberry Pi d'ISTP est en .11)
 PORT_MQTT = 1883
-MQTT_UTILISATEUR = "g1e1"
-MQTT_MOT_DE_PASSE = "mot-de-passe-equipe"
 
 # Topics des essais (les topics du projet sont cycle, etat et defaut)
 TOPIC_ESSAI = f"cellule/{EQUIPE}/essai"     # publié par le robot (scripts 4 et 7)

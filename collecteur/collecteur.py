@@ -17,8 +17,7 @@ from datetime import datetime, timezone
 import paho.mqtt.client as mqtt
 
 # --- Paramètres à adapter -------------------------------------------------
-EQUIPE = "g1e1"                        # identifiant de l'équipe, aussi compte MQTT
-MOT_DE_PASSE = "mot-de-passe-equipe"   # mot de passe MQTT de l'équipe ; "" pour un broker sans mot de passe
+EQUIPE = "g1e1"                        # identifiant de l'équipe, dans les topics MQTT
 BROKER = "localhost"                   # "localhost" sur le serveur du module, "192.168.10.10" depuis un poste
 BASE = "cellule.db"                    # créée par creer_bdd.py
 
@@ -28,7 +27,7 @@ file_messages = queue.Queue()          # messages reçus, en attente d'écriture
 # --- Réception des messages --------------------------------------------------
 def on_connect(client, userdata, flags, reason_code, properties):
     if reason_code.is_failure:
-        print("Connexion refusée par le broker : vérifier EQUIPE et MOT_DE_PASSE")
+        print(f"Connexion refusée par le broker : {reason_code}")
         client.disconnect()
     else:
         client.subscribe(f"cellule/{EQUIPE}/#", qos=1)   # tous les messages de l'équipe
@@ -81,8 +80,6 @@ threading.Thread(target=ecrivain, daemon=True).start()
 # client_id fixe et clean_session=False : le broker garde les messages
 # publiés pendant que le collecteur est arrêté, et les envoie au redémarrage
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=f"{EQUIPE}_collecteur", clean_session=False)
-if MOT_DE_PASSE:                       # pas de compte sur un broker sans mot de passe
-    client.username_pw_set(EQUIPE, MOT_DE_PASSE)
 client.on_connect = on_connect
 client.on_message = on_message
 

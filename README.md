@@ -104,7 +104,7 @@ Pour répondre aux trois besoins, la cellule existante est complétée par des f
 | F2 Recevoir les commandes | Accepter « démarrer », « arrêter », « calibrer » et les exécuter sur le robot | Piloter | API de commande (CQRS) | Flask, Python ROS Wrapper |
 | F3 Exposer l'état | Répondre à tout moment à « que fait le robot ? », sans gêner un mouvement en cours | Informer | API de commande (CQRS) | Flask |
 | F4 Publier les événements | Signaler début et fin de cycle, changements d'état, défauts | Observer | Client MQTT du robot | `paho-mqtt` |
-| F5 Transmettre les messages | Recevoir les messages des robots, les distribuer aux abonnés, isoler les équipes | Observer | Broker | Mosquitto, un compte par équipe |
+| F5 Transmettre les messages | Recevoir les messages des robots, les distribuer aux abonnés, séparer les équipes par sujet | Observer | Broker | Mosquitto, ouvert sur le réseau du module |
 | F6 Collecter et stocker | S'abonner, valider les messages, enregistrer le journal brut et les cycles | Observer | Collecteur + base | Python, `sqlite3`, SQLite (`cellule.db`) |
 | F7 Présenter | Tableau de bord (état, cycles, compteurs) et boutons de commande | Les trois | Site web | Flask, Jinja2, HTML / CSS |
 

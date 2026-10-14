@@ -2,7 +2,7 @@
 """Script 5 : recevoir un ordre par MQTT et faire clignoter l'anneau de LED dans la couleur reçue.
 
 Sur le robot : ~/cellule/lancer.sh script5_mqtt_reception.py
-Sur un poste : mosquitto_pub -h 192.168.10.10 -u g1e1 -P mot-de-passe-equipe -t cellule/g1e1/led -m rouge
+Sur un poste : mosquitto_pub -h 192.168.10.10 -t cellule/g1e1/led -m rouge
 """
 import time
 
@@ -10,7 +10,7 @@ import paho.mqtt.client as mqtt
 import rospy
 from niryo_robot_python_ros_wrapper.ros_wrapper import *
 
-from config import BROKER, PORT_MQTT, MQTT_UTILISATEUR, MQTT_MOT_DE_PASSE, EQUIPE, TOPIC_LED, COULEURS
+from config import BROKER, PORT_MQTT, EQUIPE, TOPIC_LED, COULEURS
 
 rospy.init_node("essai_script5")
 n = NiryoRosWrapper()
@@ -38,7 +38,6 @@ def on_message(client, userdata, msg):
 
 
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=f"{EQUIPE}_script5")
-client.username_pw_set(MQTT_UTILISATEUR, MQTT_MOT_DE_PASSE)
 client.on_connect = on_connect
 client.on_message = on_message
 client.connect(BROKER, PORT_MQTT, keepalive=60)

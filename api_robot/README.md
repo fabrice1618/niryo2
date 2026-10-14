@@ -55,7 +55,7 @@ Le collecteur les enregistre avec les autres messages de l'équipe. Un `fin_tach
 
 Flask et paho-mqtt doivent être installés sur le robot (dossier `install_robot/`).
 
-1. Adapter les **paramètres en haut de `api_robot.py`** : identifiant de l'équipe, mot de passe MQTT, adresse du broker.
+1. Adapter les **paramètres en haut de `api_robot.py`** : identifiant de l'équipe, adresse du broker.
 2. Copier le dossier sur le robot (remplacer `.21` par l'adresse de votre robot) et lancer l'API :
 
    ```bash

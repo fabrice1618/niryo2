@@ -92,7 +92,7 @@ Le test peut être relancé à tout moment, avec des options :
 | Essai de paho-mqtt | Création d'un client MQTT, sans réseau |
 | Python ROS Wrapper | Import de `rospy` et de `NiryoRosWrapper` |
 | Port de l'API | Le port 3000 est libre (`--port-api` pour en tester un autre) |
-| `--broker HOTE` | Connexion au broker MQTT (`--utilisateur` et `--mot-de-passe` si le broker en demande) |
+| `--broker HOTE` | Connexion au broker MQTT |
 | `--robot` | Connexion au robot par ROS, lecture des axes et de DI5. **Rien ne bouge** |
 
 Le script se termine par un bilan ; il renvoie le code 1 si un test échoue.

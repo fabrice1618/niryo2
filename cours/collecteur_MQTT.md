@@ -25,7 +25,7 @@ Les appareils (capteurs, robots, passerelles) publient leurs données sur un bro
 
 | Brique | Choix | Où |
 | --- | --- | --- |
-| Broker | Mosquitto (open source, léger), avec un utilisateur par équipe | Serveur du module |
+| Broker | Mosquitto (open source, léger), ouvert sur le réseau du module | Serveur du module |
 | Client Python | `paho-mqtt` version 2 | Robot (publication) et serveur (collecteur) |
 | Base de données | SQLite (fichier `cellule.db`) ; PostgreSQL pour monter en charge | Serveur du module |
 | Langage | Python 3 | |
@@ -123,7 +123,6 @@ import paho.mqtt.client as mqtt
 
 EQUIPE = "g1e1"
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=f"robot-{EQUIPE}")
-client.username_pw_set(EQUIPE, "mot-de-passe-equipe")
 client.will_set(f"cellule/{EQUIPE}/etat", json.dumps({"etat": "hors_ligne"}), qos=1, retain=True)
 client.connect("192.168.10.10", 1883)      # adresse du serveur du module
 client.loop_start()                         # boucle réseau dans un fil séparé
@@ -233,7 +232,6 @@ import paho.mqtt.client as mqtt
 BROKER, PORT = "localhost", 1883
 SUJET = "cellule/g1e1/#"
 BASE = "cellule.db"
-UTILISATEUR, MOT_DE_PASSE = "g1e1", "mot-de-passe-equipe"
 TAILLE_LOT = 100          # écrit dès 100 messages en attente...
 DELAI_LOT = 2.0           # ... ou au plus tard toutes les 2 secondes
 
@@ -294,7 +292,6 @@ def main():
 
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2,
                          client_id="collecteur-g1e1", clean_session=False)
-    client.username_pw_set(UTILISATEUR, MOT_DE_PASSE)
     client.on_connect = on_connect
     client.on_message = on_message
     client.reconnect_delay_set(min_delay=1, max_delay=30)
@@ -372,7 +369,7 @@ Un collecteur tourne en continu pendant des mois : il doit survivre aux coupures
 | Base indisponible ou disque plein | Messages qui s'accumulent en mémoire | Nouvel essai de l'écrivain (déjà dans le squelette), surveillance de la taille de la file, alerte |
 | Arrêt brutal du programme | Perte du lot en cours (au plus 100 messages ou 2 secondes) | Réduire la taille du lot, ou vider la file proprement à l'arrêt (gestion de `SIGTERM`) |
 | Croissance continue de la base | Disque saturé, requêtes plus lentes | Politique de rétention : suppression périodique des vieux messages, ou agrégation (une moyenne par heure) |
-| Broker ouvert à tous | Messages falsifiés, données exposées | Identifiant et mot de passe (un par équipe dans le module), TLS (port 8883), droits par sujet sur le broker (fichier ACL de Mosquitto) |
+| Broker ouvert à tous | Messages falsifiés, données exposées | Dans le module, le broker est ouvert, sur un réseau local fermé. En production : identifiant et mot de passe par client, TLS (port 8883), droits par sujet sur le broker (fichier ACL de Mosquitto) |
 | Horloge du robot mal réglée | Durées ou dates aberrantes | Synchroniser l'heure (NTP), contrôler les valeurs (durée positive et raisonnable) avant d'insérer un cycle |
 
 **Le compromis des lots**
@@ -420,10 +417,10 @@ pip install paho-mqtt
 python collecteur.py
 
 # 3. Espionner les messages de l'équipe, dans un troisième terminal
-mosquitto_sub -h 192.168.10.10 -u g1e1 -P mot-de-passe-equipe -t 'cellule/g1e1/#' -v
+mosquitto_sub -h 192.168.10.10 -t 'cellule/g1e1/#' -v
 
 # 4. Publier un message de test, dans un quatrième terminal
-mosquitto_pub -h 192.168.10.10 -u g1e1 -P mot-de-passe-equipe -t cellule/g1e1/cycle -q 1 \
+mosquitto_pub -h 192.168.10.10 -t cellule/g1e1/cycle -q 1 \
   -m '{"evenement": "fin_cycle", "piece": 1, "duree": 18.2, "zone": "A", "horodatage": "2026-11-17T08:30:18"}'
 
 # 5. Vérifier en base (après 2 secondes, le temps du lot)

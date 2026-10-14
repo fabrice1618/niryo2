@@ -52,11 +52,10 @@ Un message mal formé (pas du JSON, `duree` absente ou qui n'est pas un nombre) 
 
    Depuis un poste : avec VS Code Remote SSH, ou `scp creer_bdd.py collecteur.py g1e1@192.168.10.10:~/supervision/`.
 
-2. **Adapter les paramètres** en haut de chaque fichier : l'identifiant de l'équipe et l'adresse de son robot dans `creer_bdd.py` ; l'identifiant, le mot de passe MQTT et le broker dans `collecteur.py` :
+2. **Adapter les paramètres** en haut de chaque fichier : l'identifiant de l'équipe et l'adresse de son robot dans `creer_bdd.py` ; l'identifiant et le broker dans `collecteur.py` :
 
    ```python
-   EQUIPE = "g1e1"                        # identifiant de l'équipe, aussi compte MQTT
-   MOT_DE_PASSE = "mot-de-passe-equipe"   # mot de passe MQTT de l'équipe
+   EQUIPE = "g1e1"                        # identifiant de l'équipe, dans les topics MQTT
    BROKER = "localhost"                   # le collecteur tourne sur le serveur, comme le broker
    ```
 
@@ -93,7 +92,7 @@ Un **seul collecteur par équipe** à la fois : deux collecteurs de même nom (`
 Le collecteur se vérifie avec le **simulateur MQTT** (`simulateurs/simulateur_mqtt.py`), qui envoie, au choix dans un menu, les messages du robot : le collecteur ne voit pas la différence avec le vrai robot. Mode d'emploi complet du simulateur dans `simulateurs/README.md`.
 
 1. **Premier terminal** : le collecteur tourne (`cd ~/supervision && python3 collecteur.py`).
-2. **Deuxième terminal** : copier le simulateur, lui donner **les mêmes paramètres** que le collecteur (`EQUIPE`, `MOT_DE_PASSE`, `BROKER`, en tête de fichier), puis le lancer :
+2. **Deuxième terminal** : copier le simulateur, lui donner **les mêmes paramètres** que le collecteur (`EQUIPE`, `BROKER`, en tête de fichier), puis le lancer :
 
    ```bash
    cp /opt/cellule/fournitures/simulateurs/simulateur_mqtt.py ~/
@@ -139,10 +138,10 @@ Le simulateur sert aussi après chaque modification du collecteur : une nouvelle
 |---|---|---|
 | `Base cellule.db absente` | Base pas encore créée, ou collecteur lancé depuis un autre dossier | `cd ~/supervision`, puis `python3 creer_bdd.py` |
 | `Broker localhost injoignable` | Pas de broker à cette adresse, ou broker arrêté | Vérifier `BROKER` (`localhost` sur le serveur, `192.168.10.10` depuis un poste du fab lab) |
-| `Connexion refusée par le broker` | Identifiant ou mot de passe MQTT faux | Vérifier `EQUIPE` et `MOT_DE_PASSE` |
+| `Connexion refusée par le broker` | Le broker refuse la connexion (autre service sur le port 1883, broker mal configuré) | Vérifier `BROKER` ; lire le code de refus affiché |
 | `message mal formé, pas de cycle enregistré` | Fin de cycle qui n'est pas du JSON, ou sans `duree`, `horodatage` ou `evenement` | Rien côté collecteur : le message est gardé dans `messages`. Corriger l'émetteur |
 | `erreur d'écriture dans la base` | Table absente (`no such table`), base verrouillée, disque plein | Relancer `creer_bdd.py` ; lire le message d'erreur |
-| Aucun message reçu, sans erreur | Message publié hors de `cellule/<equipe>/`, ou faute de frappe dans l'identifiant | Sur le broker du module, une équipe ne lit et n'écrit que sous `cellule/<son identifiant>/`. Espionner avec `mosquitto_sub -h localhost -u g1e1 -P mot-de-passe-equipe -t 'cellule/g1e1/#' -v` |
+| Aucun message reçu, sans erreur | Message publié hors de `cellule/<equipe>/`, ou faute de frappe dans l'identifiant | Le collecteur ne reçoit que `cellule/<son identifiant>/…`. Espionner tout le trafic avec `mosquitto_sub -h localhost -t 'cellule/#' -v` |
 | Messages dans `messages`, mais aucun cycle | Pas de robot pour l'équipe dans `robots` | Vérifier `EQUIPE` dans `creer_bdd.py`, le relancer |
 
 
@@ -195,9 +194,9 @@ Relancer le collecteur. La nouvelle table ne se remplit qu'avec les messages re�
 
 ## Essais réalisés
 
-Avec un broker Mosquitto configuré comme celui du serveur du module (un compte par équipe, droits limités à `cellule/<équipe>/#`) et le simulateur MQTT :
+Avec un broker Mosquitto configuré comme celui du serveur du module (ouvert, sans compte) et le simulateur MQTT :
 
 - chaque choix du menu du simulateur, dont les messages mal formés et la rafale : 1014 messages envoyés, 1014 enregistrés, 1002 cycles, les 6 messages mal formés signalés sans arrêt du collecteur ; la rafale est écrite en moins de 5 secondes ;
 - message publié collecteur arrêté : reçu au redémarrage ;
 - redémarrage du broker : reconnexion automatique, message suivant enregistré ;
-- base absente, mauvais mot de passe : message clair, arrêt du collecteur.
+- base absente, broker absent : message clair, arrêt du collecteur.

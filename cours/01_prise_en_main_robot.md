@@ -827,7 +827,6 @@ flowchart LR
 import paho.mqtt.client as mqtt
 
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id="g1e1_script4")
-client.username_pw_set("g1e1", "mot-de-passe-equipe")
 client.connect("192.168.10.10", 1883, keepalive=60)
 client.loop_start()                  # le réseau MQTT est géré en arrière-plan
 client.publish("cellule/g1e1/essai", json.dumps(message), qos=1)
@@ -837,7 +836,7 @@ client.publish("cellule/g1e1/essai", json.dumps(message), qos=1)
 
 1. Se connecter au broker avec les paramètres de `config.py`.
 2. Publier chaque seconde, sur `cellule/<equipe>/essai`, un message JSON : `evenement` (`"essai"`), `numero` (compteur), `di5` (`"HIGH"` ou `"LOW"`), `horodatage`.
-3. Sur votre poste, suivre les messages : `mosquitto_sub -h 192.168.10.10 -u g1e1 -P mot-de-passe-equipe -t 'cellule/g1e1/#' -v`.
+3. Sur votre poste, suivre les messages : `mosquitto_sub -h 192.168.10.10 -t 'cellule/g1e1/#' -v`.
 4. Fermer proprement la connexion à l'arrêt (`loop_stop`, `disconnect`).
 
 **Vérifier**
@@ -864,7 +863,7 @@ client.publish("cellule/g1e1/essai", json.dumps(message), qos=1)
 1. S'abonner à `cellule/<equipe>/led` **dans** la fonction `on_connect` (appelée à chaque connexion).
 2. Dans `on_message`, lire la couleur reçue (`rouge`, `vert`, `bleu`) et faire clignoter l'anneau 2 secondes ; afficher « couleur inconnue » sinon.
 3. Le programme principal ne fait qu'attendre : tout se passe dans `on_message`.
-4. Depuis un poste : `mosquitto_pub -h 192.168.10.10 -u g1e1 -P mot-de-passe-equipe -t cellule/g1e1/led -m rouge`.
+4. Depuis un poste : `mosquitto_pub -h 192.168.10.10 -t cellule/g1e1/led -m rouge`.
 
 **Vérifier**
 

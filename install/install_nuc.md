@@ -10,7 +10,7 @@ Par rapport au Raspberry Pi d'ISTP ([`install_raspberry.md`](install_raspberry.m
 |---|---|---|
 | Ubuntu Server 24.04 LTS | Système, sur SSD USB | |
 | OpenSSH | Connexion des équipes | 22 |
-| Mosquitto | Broker MQTT, un compte par équipe | 1883 |
+| Mosquitto | Broker MQTT, ouvert (sans compte) | 1883 |
 | Python 3.12 + `/opt/cellule/venv` | Collecteurs, sites web et API des équipes | 5001 à 5006, 8001 à 8006 |
 | SQLite | Base `~/supervision/cellule.db` de chaque équipe, écrite par son collecteur, lue par son site web et par Grafana | |
 | Grafana + adaptateur SQLite | Dashboards de production, une source de données et un dossier par équipe | 3000 |
@@ -89,38 +89,24 @@ cd ~/niryo2/scripts
 sudo ./creer_comptes_equipes.sh irup        # crée comptes_irup.txt (mode 600)
 ```
 
-Les comptes `t1e1`, `t1e2` et `r1e1` à `r1e4` ont des dossiers privés. Le même mot de passe sert pour SSH, MQTT et Grafana.
+Les comptes `t1e1`, `t1e2` et `r1e1` à `r1e4` ont des dossiers privés. Le même mot de passe sert pour SSH et Grafana.
 
 
 ## 5. Broker Mosquitto
 
+Le broker est **ouvert** : pas de compte, pas de mot de passe, pas de droits par sujet. Il n'est joignable que sur le réseau local du module. Chaque équipe publie sous `cellule/<son identifiant>/` : c'est une **convention**, que le broker ne vérifie pas.
+
 ```bash
 sudo tee /etc/mosquitto/conf.d/cellule.conf >/dev/null <<'EOF'
 listener 1883 0.0.0.0
-allow_anonymous false
-password_file /etc/mosquitto/passwd
-acl_file /etc/mosquitto/acl
+allow_anonymous true
 EOF
 
-sudo tee /etc/mosquitto/acl >/dev/null <<'EOF'
-# Enseignant : tout le projet
-user prof
-topic readwrite cellule/#
-
-# Chaque équipe : uniquement cellule/<son identifiant>/...
-pattern readwrite cellule/%u/#
-EOF
-
-sudo install -m 600 /dev/null /etc/mosquitto/passwd     # créé non lisible par les autres
-grep -v '^#' ~/niryo2/scripts/comptes_irup.txt | while IFS=: read -r equipe mdp; do
-    sudo mosquitto_passwd -b /etc/mosquitto/passwd "$equipe" "$mdp"
-done
-sudo mosquitto_passwd -b /etc/mosquitto/passwd prof 'MOT_DE_PASSE_PROF'
-sudo chown mosquitto:mosquitto /etc/mosquitto/passwd /etc/mosquitto/acl
-sudo chmod 600 /etc/mosquitto/passwd /etc/mosquitto/acl
 sudo systemctl enable mosquitto
 sudo systemctl restart mosquitto
 ```
+
+Limite connue : une équipe peut lire et écrire les topics d'une autre (identifiant mal recopié, curiosité). Deux clients MQTT de même nom, par exemple deux collecteurs lancés avec le même `EQUIPE`, se déconnectent l'un l'autre : en cas de messages qui manquent, vérifier d'abord que chaque équipe a son propre identifiant.
 
 
 ## 6. Python : un environnement commun

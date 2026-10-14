@@ -155,7 +155,7 @@ def verifier_port(port):
         s.close()
 
 
-def verifier_broker(hote, port, utilisateur, mot_de_passe):
+def verifier_broker(hote, port):
     titre("Broker MQTT {}:{}".format(hote, port))
     from paho.mqtt.client import CallbackAPIVersion, Client
 
@@ -167,8 +167,6 @@ def verifier_broker(hote, port, utilisateur, mot_de_passe):
         connecte.set()
 
     client = Client(CallbackAPIVersion.VERSION2, client_id="test_installation")
-    if utilisateur:
-        client.username_pw_set(utilisateur, mot_de_passe)
     client.on_connect = on_connect
     try:
         client.connect(hote, port, keepalive=10)
@@ -199,8 +197,6 @@ def main():
     parser = argparse.ArgumentParser(description="Vérifie l'installation du projet sur le robot Ned2.")
     parser.add_argument("--broker", metavar="HOTE", help="tester aussi la connexion au broker MQTT")
     parser.add_argument("--port-mqtt", type=int, default=1883, help="port du broker (1883)")
-    parser.add_argument("--utilisateur", help="identifiant MQTT, si le broker en demande un")
-    parser.add_argument("--mot-de-passe", help="mot de passe MQTT")
     parser.add_argument("--port-api", type=int, default=PORT_API, help="port de l'API ({})".format(PORT_API))
     parser.add_argument("--robot", action="store_true", help="se connecter au robot (lit les axes et DI5)")
     parser.add_argument("--sans-ros", action="store_true", help="ne pas tester ROS (essai sur un PC)")
@@ -214,7 +210,7 @@ def main():
         verifier_robot()
     verifier_port(args.port_api)
     if args.broker:
-        verifier_broker(args.broker, args.port_mqtt, args.utilisateur, args.mot_de_passe)
+        verifier_broker(args.broker, args.port_mqtt)
     verifier_outils()
 
     titre("Bilan")
