@@ -1,7 +1,7 @@
 # Codes d'accès NiryoAcademy : à garder hors du dépôt public
 documentation_Niryo_Ned2/00_Inventaire/NiryoAcademy_codes_acces.msg
 
-# Lancement en local : environnement Python et dossier de travail (voir site_web/README.md)
+# Lancement en local (lancer.py, voir site_web/README.md) : environnement Python et base créés au premier lancement
 venv/
-travail/
+cellule.db
 __pycache__/

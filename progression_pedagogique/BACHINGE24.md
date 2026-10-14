@@ -239,7 +239,7 @@ Mosquitto, SQLite et Flask s'exécutent sans serveur. Chaque équipe travaille s
 
 | Jalon | Travail | Support |
 |-------|---------|---------|
-| Semaine 1 | Poste validé, fournitures lancées en local, données du process définies (topics, message JSON) | Howto, `cours/collecteur_MQTT.md` |
+| Semaine 1 | Poste validé, fournitures lancées en local (`python lancer.py ...` depuis la racine, mode d'emploi dans `site_web/README.md`), données du process définies (topics, message JSON) | Howto, `cours/collecteur_MQTT.md` |
 | Semaine 2 | Simulateur adapté aux données de l'équipe, collecteur configuré, tables SQLite créées | `cours/SQL.md`, `cours/collecteur_MQTT.md` |
 | Semaine 3 | Site web adapté (dernier état, cycles, compteurs) | `cours/site_web_HTML_CSS.md`, `cours/intro_flask.md` |
 | Semaine 4 | API de commande en mode simulé reliée au site, dossier complété | `cours/API_CQRS_REST_Flask.md` |

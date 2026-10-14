@@ -1,5 +1,5 @@
 # Bibliothèques pour lancer sur un poste le collecteur, les simulateurs et le site web
-# (environnement unique : python3 -m venv venv, puis pip install -r requirements.txt).
+# (environnement unique : dossier venv, créé et rempli par lancer.py au premier lancement).
 # api_robot/ et essai_robot/ ne se lancent pas ici : ils s'exécutent sur le robot (voir install_robot/).
 flask
 paho-mqtt>=2
