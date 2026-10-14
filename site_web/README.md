@@ -64,7 +64,7 @@ Avec `debug=True` (dernière ligne de `supervision.py`), le site redémarre tout
 
 Sur son propre poste (Windows, macOS ou Linux), sans le serveur du module, tout le projet se lance **depuis la racine du dépôt**, avec un seul outil : `lancer.py`. Il n'y a rien à copier, ni environnement à activer.
 
-**1. Installer Python**, une seule fois : version 3.10 ou plus récente, sur <https://www.python.org/downloads/>. Sous Windows, **cocher « Add python.exe to PATH »** dans la première fenêtre de l'installateur. Vérifier dans un terminal (PowerShell sous Windows) :
+**1. Installer Python**, une seule fois (les autres logiciels du poste, VS Code, WinSCP, DB Browser, MQTT Explorer, sont dans `INSTALLATION_POSTE.md`, à la racine) : version 3.10 ou plus récente, sur <https://www.python.org/downloads/>. Sous Windows, **cocher « Add python.exe to PATH »** dans la première fenêtre de l'installateur. Vérifier dans un terminal (PowerShell sous Windows) :
 
 ```bash
 python --version             # sous Linux et macOS : python3 --version
