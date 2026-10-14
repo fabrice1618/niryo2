@@ -149,7 +149,7 @@ gantt
 
 - Effectif inférieur à 12 : **2 équipes**, chacune sur son robot. À partir de la séance 8, ce sont des robots équipés d'une caméra, conservés jusqu'à l'évaluation de juin.
 - Équipes constituées à la séance 1 (taille selon l'effectif) et conservées jusqu'à l'évaluation.
-- Noms proposés (identifiant, nom) : `t1e1` Vega, `t1e2` Altair (voir `materiel_IRUP.md`).
+- Identifiants des équipes : `tech1` et `tech2` (voir `materiel_IRUP.md`).
 
 **Supports de cours** (dossier `cours/`, et `README.md` à la racine)
 
@@ -338,7 +338,7 @@ sequenceDiagram
 
 Conventions reprises des supports `cours/collecteur_MQTT.md` et `cours/SQL.md` (détail et exemples de messages dans le `README.md`, section 6) :
 
-- Topics : `cellule/<equipe>/cycle`, `cellule/<equipe>/etat` (message retenu), `cellule/<equipe>/defaut`, `cellule/<equipe>/tache` (tâches de l'API du robot), avec `<equipe>` de la forme `t1e1` dans cette classe (voir la section 7)
+- Topics : `cellule/<equipe>/cycle`, `cellule/<equipe>/etat` (message retenu), `cellule/<equipe>/defaut`, `cellule/<equipe>/tache` (tâches de l'API du robot), avec `<equipe>` de la forme `tech1` dans cette classe (voir la section 7)
 - Message : `{"evenement": "fin_cycle", "piece": 12, "duree": 18.2, "zone": "A", "horodatage": "2026-12-01T14:30:18"}`
 - Tables : `messages(id, recu_le, sujet, charge, qos, retain)` (journal brut), `robots(id, nom, equipe, adresse_ip)` et `cycles(id, robot_id, debut, duree, zone, statut)` (lue par le site web et par Grafana)
 
@@ -750,14 +750,14 @@ Le serveur est le **NUC du fab lab**, partagé avec la classe B3RNSPP26 (l'autre
 - **Vision (séances 10 et 11) :** le traitement d'image s'exécute sur le poste de l'équipe (installation de `pyniryo` et `opencv-python` avec `pip`), pas sur le serveur : pas de charge supplémentaire côté serveur, seuls les résultats passent par le broker.
 - **Charge :** 6 équipes au plus sur le NUC (2 de cette classe, 4 de B3RNSPP26), jamais en même temps. Grafana s'ajoute aux autres services : à mesurer sur le NUC (mémoire disponible à vérifier).
 - **Réseau :** toutes les séances avec serveur se déroulent sur le réseau du fab lab (`192.168.10.0/24`, NUC en `.10`, robots en `.21` à `.24`, API sur chaque robot, port 3000, le port 5000 étant pris par le logiciel système de Niryo). SSH (22), MQTT (1883), HTTP (5001, 5002, 8001 et 8002) et Grafana (3000) doivent être joignables depuis les postes des étudiants.
-- **Identifiants et ports :** le NUC est partagé avec B3RNSPP26. Les équipes de cette classe sont `t1e1` (Vega) et `t1e2` (Altair), avec les ports API 5001 et 5002 et les ports site 8001 et 8002 ; celles de B3RNSPP26 sont `r1e1` à `r1e4` (ports 5003 à 5006 et 8003 à 8006). La classe BACHINGE24 utilise un autre serveur (le Raspberry Pi d'ISTP), avec l'adresse `192.168.10.11` les jours de séance au fab lab.
+- **Identifiants et ports :** le NUC est partagé avec B3RNSPP26. Les équipes de cette classe sont `tech1` et `tech2`, avec les ports API 5001 et 5002 et les ports site 8001 et 8002 ; celles de B3RNSPP26 sont `g1` à `g4` (ports 5003 à 5006 et 8003 à 8006). La classe BACHINGE24 utilise un autre serveur (le Raspberry Pi d'ISTP), avec l'adresse `192.168.10.11` les jours de séance au fab lab.
 
 
 ## 8. Points à arbitrer
 
 1. **Intitulé du planning.** Le planning officiel désigne le cours sous le nom « Fils Rouges », et non « Infrastructure client / serveur dans un contexte industriel ». À confirmer : même module, même référentiel de compétences, volume de 45h30. Si le référentiel le permet, ajouter deux compétences pour les extensions (exploiter une image, analyser des données de production).
-2. **Effectif.** Effectif inférieur à 12 : 2 équipes (`t1e1` Vega, `t1e2` Altair), chacune sur son robot avec caméra. Pas de partage de robot : les séances 8 à 11 et 13 se déroulent avec les 2 équipes en parallèle.
-3. **Matériel de vision.** Plusieurs robots du fab lab ont une caméra : les identifier (2 au moins, un par équipe) et les affecter à `t1e1` et `t1e2` dès la séance 8. À vérifier avant de s'engager : un espace de travail (workspace) calibré dans Niryo Studio, des pièces de plusieurs couleurs et formes, un éclairage stable. Les noms des fonctions de vision de `pyniryo` cités dans les séances 10 et 11 sont à vérifier dans la version installée.
+2. **Effectif.** Effectif inférieur à 12 : 2 équipes (`tech1`, `tech2`), chacune sur son robot avec caméra. Pas de partage de robot : les séances 8 à 11 et 13 se déroulent avec les 2 équipes en parallèle.
+3. **Matériel de vision.** Plusieurs robots du fab lab ont une caméra : les identifier (2 au moins, un par équipe) et les affecter à `tech1` et `tech2` dès la séance 8. À vérifier avant de s'engager : un espace de travail (workspace) calibré dans Niryo Studio, des pièces de plusieurs couleurs et formes, un éclairage stable. Les noms des fonctions de vision de `pyniryo` cités dans les séances 10 et 11 sont à vérifier dans la version installée.
 4. **Où s'exécute le programme de vision ?** Proposition : sur le poste de l'équipe, avec `pyniryo` à distance (le robot est piloté depuis le poste). L'API de commande, elle, tourne sur le robot avec le programme embarqué du socle (Python ROS Wrapper) : un programme de vision qui pilote aussi le bras par `pyniryo` ne doit pas tourner en même temps qu'un cycle lancé par l'API ; relier la commande « démarrer » au cycle avec vision est à trancher (soit la vision reste un programme séparé lancé par l'équipe, soit l'API le démarre).
 5. **Grafana et la pile allégée.** Grafana n'est pas dans la pile du socle (`README.md`, section 4). Le choix reste une extension, utilisée aussi en B3RNSPP26 (séance 11). Retenu : Grafana lit directement les bases SQLite des équipes avec l'adaptateur communautaire `frser-sqlite-datasource` (voir la section 7), essayé avec Grafana 13.2 ; une seule base par équipe, comme dans le socle. Revers : l'adaptateur n'est pas maintenu par Grafana Labs (vérifier sa compatibilité avant une mise à jour de Grafana) et les requêtes du TP de l'an dernier, écrites pour MySQL, sont à adapter.
 6. **Longs intervalles entre séances.** 7 semaines entre les séances 5 et 6, 8 semaines entre les séances 7 et 8, 5 semaines entre les séances 12 et 13. Le robot n'est pas utilisé entre la séance 1 (28/10) et la séance 8 (25/03). Proposition : dossier v2 à la séance 7, code testé en mode simulé avant la séance 8, vérification de chaque cellule avant la séance 13.

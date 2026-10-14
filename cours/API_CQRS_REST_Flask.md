@@ -504,7 +504,7 @@ sequenceDiagram
     A-->>W: 202 Accepted + id
     W-->>O: redirection + message « commande envoyée »
     loop chaque cycle
-        A->>B: PUBLISH cellule/g1e1/cycle (début, fin, durée)
+        A->>B: PUBLISH cellule/g1/cycle (début, fin, durée)
     end
     O->>W: GET / (tableau de bord)
     W->>A: GET /requetes/etat

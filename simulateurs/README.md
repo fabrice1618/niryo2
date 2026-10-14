@@ -6,9 +6,9 @@ Tant que le robot n'est pas intégré, deux simulateurs prennent sa place :
 
 ```mermaid
 flowchart LR
-    SM["simulateur_mqtt.py<br/>(le robot qui publie)"] -- "MQTT<br/>cellule/g1e1/…" --> B["Broker"] --> C["Collecteur"] --> DB[("cellule.db")] --> W["Site web"]
+    SM["simulateur_mqtt.py<br/>(le robot qui publie)"] -- "MQTT<br/>cellule/g1/…" --> B["Broker"] --> C["Collecteur"] --> DB[("cellule.db")] --> W["Site web"]
     W -- "HTTP<br/>POST /robot/…" --> SA["simulateur_api.py<br/>(le robot qui reçoit les ordres)"]
-    SA -- "MQTT<br/>cellule/g1e1/tache" --> B
+    SA -- "MQTT<br/>cellule/g1/tache" --> B
 ```
 
 | Fichier | Rôle |
@@ -32,16 +32,16 @@ Pendant les tests, par exemple chez soi ou avant d'avoir accès au serveur, on p
 Dans les paramètres en haut de chaque fichier :
 
 ```python
-EQUIPE = "g1e1_k7q2"                   # identifiant rendu unique : voir ci-dessous
+EQUIPE = "g1_k7q2"                   # identifiant rendu unique : voir ci-dessous
 BROKER = "test.mosquitto.org"
 ```
 
-Le collecteur doit utiliser le même broker et s'abonner au même identifiant (`cellule/g1e1_k7q2/#`). Ces réglages valent aussi pour MQTT Explorer.
+Le collecteur doit utiliser le même broker et s'abonner au même identifiant (`cellule/g1_k7q2/#`). Ces réglages valent aussi pour MQTT Explorer.
 
 Précautions, car un broker public est partagé avec le monde entier :
 
 - **Tout le monde peut lire et écrire vos messages** : n'y envoyer que des données d'essai, jamais d'information personnelle.
-- **Rendre l'identifiant unique** en ajoutant quelques caractères au hasard (`g1e1_k7q2`) : d'autres utilisateurs publient peut-être déjà sur `cellule/g1e1/…`. Ce nom sert aussi à l'identifiant de client MQTT : deux clients de même nom se déconnectent l'un l'autre.
+- **Rendre l'identifiant unique** en ajoutant quelques caractères au hasard (`g1_k7q2`) : d'autres utilisateurs publient peut-être déjà sur `cellule/g1/…`. Ce nom sert aussi à l'identifiant de client MQTT : deux clients de même nom se déconnectent l'un l'autre.
 - **Les messages retenus restent** sur le broker (état du robot) : ne pas s'étonner d'en recevoir d'anciens.
 - **Aucune garantie** : le broker peut être lent, saturé ou arrêté, et le réseau de l'établissement peut bloquer le port 1883. Les mesures de charge (rafale) n'y ont pas de sens.
 
@@ -55,7 +55,7 @@ python3 simulateur_mqtt.py
 ```
 
 ```text
-Simulateur MQTT, équipe g1e1, broker localhost
+Simulateur MQTT, équipe g1, broker localhost
   1. Cycle complet (début puis fin)
   2. Début de cycle
   3. Fin de cycle
@@ -98,7 +98,7 @@ Il ne fait rien bouger. Pour chaque appel, il affiche l'endpoint, envoie un mess
 ```bash
 curl http://127.0.0.1:5001/robot/etat
 curl -X POST http://127.0.0.1:5001/robot/ledring/vert       # {"couleur": "vert", "statut": "terminee", "tache": "ledring"}
-mosquitto_sub -h localhost -t 'cellule/g1e1/tache' -v
+mosquitto_sub -h localhost -t 'cellule/g1/tache' -v
 ```
 
 Les endpoints, les réponses et les messages MQTT sont **ceux de l'API du robot** : le site web passe de l'un à l'autre en changeant seulement l'adresse (`http://127.0.0.1:5001` puis `http://192.168.10.21:3000`). Comme sur le robot, une seule tâche s'exécute à la fois : une demande qui arrive pendant une tâche est refusée tout de suite (`409`, « robot occupé »), et `GET /robot/etat` répond même pendant une tâche, avec le champ `tache_en_cours` (nom de la tâche, ou `null`). Le détail est dans `api_robot/README.md`.

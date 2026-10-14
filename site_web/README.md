@@ -38,7 +38,7 @@ Le site utilise Flask et `requests` (déjà installés sur le serveur ; sur un p
 2. **Adapter les paramètres** en haut de `supervision.py` :
 
    ```python
-   EQUIPE = "g1e1"                        # identifiant de l'équipe, affiché en titre
+   EQUIPE = "g1"                        # identifiant de l'équipe, affiché en titre
    URL_API = "http://127.0.0.1:5001"      # simulateur d'API ; le robot : "http://192.168.10.21:3000"
    BASE = "cellule.db"                    # base remplie par le collecteur
    PORT_SITE = 8001                       # 8000 + numéro de l'équipe (8001 à 8008)
@@ -88,7 +88,7 @@ Sous Windows, si `python` ouvre le Microsoft Store ou n'est pas reconnu, essayer
 
 - **Le broker public de test `test.mosquitto.org`**, sans rien installer : mettre `BROKER = "test.mosquitto.org"` dans les trois programmes qui l'utilisent (`collecteur.py`, `simulateur_api.py`, `simulateur_mqtt.py`). Il est ouvert à tous sur le port 1883 : pas de compte et aucun chiffrement. Trois précautions, parce que **tout le monde** y publie et s'y abonne :
 
-  - **Choisir un `EQUIPE` unique**, le même dans les cinq fichiers du tableau (par exemple `g1e1-dupont`, avec votre nom). Avec `g1e1`, vous recevriez les messages de toute personne qui fait le même essai, et deux collecteurs qui portent le même nom de client se déconnectent l'un l'autre ;
+  - **Choisir un `EQUIPE` unique**, le même dans les cinq fichiers du tableau (par exemple `g1-dupont`, avec votre nom). Avec `g1`, vous recevriez les messages de toute personne qui fait le même essai, et deux collecteurs qui portent le même nom de client se déconnectent l'un l'autre ;
   - **n'y envoyer rien de confidentiel** : les messages sont lisibles par tous, et un message retenu (`etat`) reste sur le broker après l'arrêt du simulateur ;
   - **ne pas en dépendre** : c'est un service de test, parfois lent ou indisponible. Il convient pour essayer le site, pas pour une séance : sur le serveur du module, le broker est le Mosquitto du serveur.
 

@@ -9,9 +9,9 @@
 #
 # Usage : sudo ./creer_comptes_equipes.sh [options] <jeu>
 #
-#   <jeu>  inge   les 8 équipes de BACHINGE24 : g1e1 à g1e4, g2e1 à g2e4
-#          irup   les 6 équipes de l'IRUP : t1e1, t1e2 (BACHTECH24), r1e1 à r1e4 (B3RNSPP26)
-#          ou une liste d'identifiants (g1e1 g1e2 ...)
+#   <jeu>  inge   les 8 équipes de BACHINGE24 : g1 à g4, g5 à g8
+#          irup   les 6 équipes de l'IRUP : tech1, tech2 (BACHTECH24), g1 à g4 (B3RNSPP26)
+#          ou une liste d'identifiants (g1 g2 ...)
 #
 # Options :
 #   -f, --fichier FICHIER   fichier des mots de passe, une ligne « identifiant:motdepasse »
@@ -34,14 +34,6 @@ FICHIER=""
 REINIT=0
 SIMULATION=0
 SUPPRIMER=0
-
-# Nom d'équipe affiché (commentaire du compte), sans accent.
-declare -A NOMS=(
-  [g1e1]="Cuivre"  [g1e2]="Fer"     [g1e3]="Zinc"    [g1e4]="Etain"
-  [g2e1]="Argent"  [g2e2]="Nickel"  [g2e3]="Cobalt"  [g2e4]="Titane"
-  [t1e1]="Vega"    [t1e2]="Altair"
-  [r1e1]="Loire"   [r1e2]="Rhone"   [r1e3]="Seine"   [r1e4]="Garonne"
-)
 
 aide() { sed -n '3,/^set -euo/p' "$0" | sed '$d' | sed 's/^# \{0,1\}//'; }
 erreur() { echo "Erreur : $*" >&2; exit 1; }
@@ -66,8 +58,8 @@ done
 
 # --- Liste des identifiants --------------------------------------------------
 case "${JEU[0]}" in
-  inge) COMPTES=(g1e1 g1e2 g1e3 g1e4 g2e1 g2e2 g2e3 g2e4); NOM_JEU=inge ;;
-  irup) COMPTES=(t1e1 t1e2 r1e1 r1e2 r1e3 r1e4);           NOM_JEU=irup ;;
+  inge) COMPTES=(g1 g2 g3 g4 g5 g6 g7 g8); NOM_JEU=inge ;;
+  irup) COMPTES=(tech1 tech2 g1 g2 g3 g4);           NOM_JEU=irup ;;
   *)    COMPTES=("${JEU[@]}");                              NOM_JEU=perso ;;
 esac
 for c in "${COMPTES[@]}"; do
@@ -138,7 +130,7 @@ for c in "${COMPTES[@]}"; do
   fi
 
   if [ "$existe" -eq 0 ]; then
-    agir useradd --create-home --shell /bin/bash --comment "Equipe ${NOMS[$c]:-$c}" "$c"
+    agir useradd --create-home --shell /bin/bash --comment "Equipe $c" "$c"
     etat="créé"
   else
     etat="mot de passe appliqué"

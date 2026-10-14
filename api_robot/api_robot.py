@@ -21,7 +21,7 @@ from flask import Flask, request
 from niryo_robot_python_ros_wrapper.ros_wrapper import *
 
 # --- Paramètres à adapter -------------------------------------------------
-EQUIPE = "g1e1"                        # identifiant de l'équipe, dans les topics MQTT
+EQUIPE = "g1"                        # identifiant de l'équipe, dans les topics MQTT
 BROKER = "192.168.10.10"               # serveur du module (le Raspberry Pi d'ISTP est en .11)
 PORT_API = 3000                        # le port 5000 du robot est pris par le logiciel de Niryo
 JOINTS_HOME = [0.0, 0.3, -1.3, 0.0, 0.0, 0.0]       # position home : angles des 6 axes (radians)

@@ -118,7 +118,7 @@ Le programme s'arrête quand on ferme la session SSH. Pour qu'il continue à tou
 ## Points d'attention
 
 - **Port de l'API : 3000.** Le port 5000 du robot est déjà pris par le logiciel système de Niryo (c'est par lui que Niryo Studio communique avec le robot).
-- **Un nom de nœud ROS propre au programme.** L'export de Niryo Studio appelle `rospy.init_node('niryo_blockly_interpreted_code')`, le même nom que les programmes lancés depuis Niryo Studio : deux nœuds du même nom s'excluent. Dans le programme de l'équipe, utiliser un autre nom, par exemple `rospy.init_node('cellule_g1e1')`.
+- **Un nom de nœud ROS propre au programme.** L'export de Niryo Studio appelle `rospy.init_node('niryo_blockly_interpreted_code')`, le même nom que les programmes lancés depuis Niryo Studio : deux nœuds du même nom s'excluent. Dans le programme de l'équipe, utiliser un autre nom, par exemple `rospy.init_node('cellule_g1')`.
 - **Un seul programme commande le robot à la fois.** Ne pas lancer de programme depuis Niryo Studio pendant que l'API tourne.
 - **Lancer avec `lancer.sh` ou `python3`, pas avec `flask run --debug`** : le rechargeur de Flask lance le programme deux fois, donc deux connexions au robot.
 - **Lancer depuis l'onglet Python de Niryo Studio** : il ne connaît pas `~/cellule/libs`. Si c'est nécessaire, ajouter en tête du programme `import sys` puis `sys.path.insert(0, "/home/niryo/cellule/libs")`.

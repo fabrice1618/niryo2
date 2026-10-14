@@ -8,7 +8,7 @@ Pour repartir d'une base vide : supprimer cellule.db, puis relancer ce script.
 import sqlite3
 
 # --- Paramètres à adapter -------------------------------------------------
-EQUIPE = "g1e1"                        # identifiant de l'équipe
+EQUIPE = "g1"                        # identifiant de l'équipe
 ADRESSE_ROBOT = "192.168.10.21"        # adresse du robot de l'équipe
 BASE = "cellule.db"
 
@@ -19,7 +19,7 @@ conn.executescript("""
 CREATE TABLE IF NOT EXISTS messages (
     id        INTEGER PRIMARY KEY,
     recu_le   TEXT    NOT NULL,          -- heure de réception, en UTC
-    sujet     TEXT    NOT NULL,          -- ex. cellule/g1e1/cycle
+    sujet     TEXT    NOT NULL,          -- ex. cellule/g1/cycle
     charge    TEXT    NOT NULL,          -- contenu du message, tel quel
     qos       INTEGER NOT NULL,
     retain    INTEGER NOT NULL DEFAULT 0

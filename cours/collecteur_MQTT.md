@@ -32,9 +32,9 @@ Les appareils (capteurs, robots, passerelles) publient leurs données sur un bro
 
 ```mermaid
 flowchart LR
-    ROBOT["Programme du robot Ned2<br/>publisher"] -- "cellule/g1e1/cycle" --> BROKER["Broker Mosquitto"]
+    ROBOT["Programme du robot Ned2<br/>publisher"] -- "cellule/g1/cycle" --> BROKER["Broker Mosquitto"]
     SIM["Simulateur de process<br/>(sans robot)"] -. "mêmes topics" .-> BROKER
-    BROKER -- "abonnement cellule/g1e1/#" --> COLL["Collecteur Python<br/>subscriber"]
+    BROKER -- "abonnement cellule/g1/#" --> COLL["Collecteur Python<br/>subscriber"]
     COLL -- "INSERT" --> DB[("cellule.db")]
     DB -- "SELECT" --> WEB["Site web Flask"]
 ```
@@ -53,12 +53,12 @@ MQTT est un protocole de messagerie léger, fondé sur la publication et l'abonn
 
 **Les sujets (topics)**
 
-Un sujet est une chaîne hiérarchique séparée par des `/` : `cellule/g1e1/cycle`. Un abonné peut utiliser des jokers :
+Un sujet est une chaîne hiérarchique séparée par des `/` : `cellule/g1/cycle`. Un abonné peut utiliser des jokers :
 
 - `+` remplace exactement un niveau : `cellule/+/defaut` couvre les défauts de toutes les équipes.
-- `#` remplace tous les niveaux restants, à la fin du sujet : `cellule/g1e1/#` couvre tout ce que publie l'équipe g1e1.
+- `#` remplace tous les niveaux restants, à la fin du sujet : `cellule/g1/#` couvre tout ce que publie l'équipe g1.
 
-Le collecteur s'abonne en général avec un joker, par exemple `cellule/g1e1/#`, pour tout recevoir sans lister chaque sujet.
+Le collecteur s'abonne en général avec un joker, par exemple `cellule/g1/#`, pour tout recevoir sans lister chaque sujet.
 
 **Bonnes pratiques de nommage** : du général au particulier (cellule, équipe, type de message), en minuscules, sans espace ni accent, sans `/` au début. Pas de `+` ni `#` dans un sujet de publication.
 
@@ -78,7 +78,7 @@ La qualité de service s'applique à chaque lien : l'éditeur vers le broker, pu
 
 **Autres notions utiles**
 
-- **Retain** : le broker garde le dernier message d'un sujet et le renvoie à tout nouvel abonné. Pratique pour connaître le dernier état (`cellule/g1e1/etat` : « en cycle », « arrêté »), mais ce n'est pas un historique.
+- **Retain** : le broker garde le dernier message d'un sujet et le renvoie à tout nouvel abonné. Pratique pour connaître le dernier état (`cellule/g1/etat` : « en cycle », « arrêté »), mais ce n'est pas un historique.
 - **Testament (Last Will)** : message que le broker publie à la place d'un client qui disparaît sans se déconnecter proprement. Le robot peut ainsi déclarer `{"etat": "hors_ligne"}` sur son sujet d'état s'il perd le réseau.
 - **Session persistante** : avec un identifiant de client fixe et une session persistante, le broker met en file les messages (QoS 1 ou 2) reçus pendant que le collecteur est déconnecté, et les livre à la reconnexion.
 - **Port** : 1883 en clair, 8883 avec TLS.
@@ -96,7 +96,7 @@ Le contenu des messages est une **convention** que chaque équipe fixe dans son 
 | `cellule/<equipe>/defaut` | Robot | Pièce non détectée, prise manquée, erreur du robot | 1 | non |
 | `cellule/<equipe>/tache` | API du robot | Début et fin de chaque tâche commandée (`debut_tache`, `fin_tache`) | 1 | non |
 
-`<equipe>` vaut par exemple `g1e1` : sur le broker du module, chaque équipe n'a le droit de publier et de lire que sous `cellule/<son équipe>/`.
+`<equipe>` vaut par exemple `g1` : sur le broker du module, chaque équipe n'a le droit de publier et de lire que sous `cellule/<son équipe>/`.
 
 **Charges utiles (JSON)**
 
@@ -121,7 +121,7 @@ from datetime import datetime
 
 import paho.mqtt.client as mqtt
 
-EQUIPE = "g1e1"
+EQUIPE = "g1"
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=f"robot-{EQUIPE}")
 client.will_set(f"cellule/{EQUIPE}/etat", json.dumps({"etat": "hors_ligne"}), qos=1, retain=True)
 client.connect("192.168.10.10", 1883)      # adresse du serveur du module
@@ -156,7 +156,7 @@ Le collecteur reçoit les messages d'un côté et les écrit en base de l'autre,
 ```mermaid
 flowchart LR
     P["Robot ou simulateur<br/>publient"] --> B["Broker Mosquitto"]
-    B -- "cellule/g1e1/#" --> CB
+    B -- "cellule/g1/#" --> CB
     subgraph COLL["Collecteur Python"]
         CB["on_message<br/>(fil réseau MQTT)"] -- "put" --> Q[["File d'attente<br/>queue.Queue"]]
         Q -- "get, par lots" --> W["Écrivain<br/>(fil dédié)"]
@@ -174,7 +174,7 @@ Le plus simple et le plus sûr : une table `messages` qui garde chaque message t
 CREATE TABLE IF NOT EXISTS messages (
     id        INTEGER PRIMARY KEY,
     recu_le   TEXT    NOT NULL,          -- horodatage de réception, en UTC
-    sujet     TEXT    NOT NULL,          -- ex. cellule/g1e1/cycle
+    sujet     TEXT    NOT NULL,          -- ex. cellule/g1/cycle
     charge    TEXT    NOT NULL,          -- contenu brut du message (souvent du JSON)
     qos       INTEGER NOT NULL,
     retain    INTEGER NOT NULL DEFAULT 0
@@ -230,7 +230,7 @@ from datetime import datetime, timezone
 import paho.mqtt.client as mqtt
 
 BROKER, PORT = "localhost", 1883
-SUJET = "cellule/g1e1/#"
+SUJET = "cellule/g1/#"
 BASE = "cellule.db"
 TAILLE_LOT = 100          # écrit dès 100 messages en attente...
 DELAI_LOT = 2.0           # ... ou au plus tard toutes les 2 secondes
@@ -291,7 +291,7 @@ def main():
     threading.Thread(target=ecrivain, daemon=True).start()
 
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2,
-                         client_id="collecteur-g1e1", clean_session=False)
+                         client_id="collecteur-g1", clean_session=False)
     client.on_connect = on_connect
     client.on_message = on_message
     client.reconnect_delay_set(min_delay=1, max_delay=30)
@@ -324,7 +324,7 @@ import json
 
 def extraire_cycle(conn, sujet, charge):
     """Insère un cycle si le message est une fin de cycle valide ; sinon ne fait rien."""
-    parties = sujet.split("/")              # ["cellule", "g1e1", "cycle"]
+    parties = sujet.split("/")              # ["cellule", "g1", "cycle"]
     if len(parties) != 3 or parties[2] != "cycle":
         return
     equipe = parties[1]
@@ -417,10 +417,10 @@ pip install paho-mqtt
 python collecteur.py
 
 # 3. Espionner les messages de l'équipe, dans un troisième terminal
-mosquitto_sub -h 192.168.10.10 -t 'cellule/g1e1/#' -v
+mosquitto_sub -h 192.168.10.10 -t 'cellule/g1/#' -v
 
 # 4. Publier un message de test, dans un quatrième terminal
-mosquitto_pub -h 192.168.10.10 -t cellule/g1e1/cycle -q 1 \
+mosquitto_pub -h 192.168.10.10 -t cellule/g1/cycle -q 1 \
   -m '{"evenement": "fin_cycle", "piece": 1, "duree": 18.2, "zone": "A", "horodatage": "2026-11-17T08:30:18"}'
 
 # 5. Vérifier en base (après 2 secondes, le temps du lot)
@@ -428,7 +428,7 @@ sqlite3 cellule.db "SELECT recu_le, sujet, charge FROM messages ORDER BY id DESC
 sqlite3 cellule.db "SELECT * FROM cycles ORDER BY id DESC LIMIT 5;"
 ```
 
-Le message publié à l'étape 4 doit apparaître dans `mosquitto_sub` (étape 3), puis en base à l'étape 5, avec son sujet et son heure de réception. Pour qu'un cycle soit créé, le robot `g1e1` doit exister dans la table `robots`.
+Le message publié à l'étape 4 doit apparaître dans `mosquitto_sub` (étape 3), puis en base à l'étape 5, avec son sujet et son heure de réception. Pour qu'un cycle soit créé, le robot `g1` doit exister dans la table `robots`.
 
 **Pour tester la reconnexion**
 

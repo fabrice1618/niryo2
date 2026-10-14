@@ -34,7 +34,7 @@ Le **cahier de recette** (`cahier_recette.md`, dans ce dossier : au moins 8 test
 |---|---|
 | Classe | À COMPLÉTER |
 | Groupe (s'il y en a un) | À COMPLÉTER |
-| Identifiant technique de l'équipe (`EQUIPE`) | À COMPLÉTER (exemples : `g1e1`, `t1e2`, `r1e4`) |
+| Identifiant technique de l'équipe (`EQUIPE`) | À COMPLÉTER (exemples : `g1`, `tech2`, `g4`) |
 | Nom de l'équipe | À COMPLÉTER |
 | Membres | À COMPLÉTER |
 | Numéro du robot affecté | À COMPLÉTER (1 à 4) |
@@ -176,30 +176,30 @@ Rappel : `EQUIPE`, `BROKER` et les ports doivent être **cohérents entre tous l
 
 | Fichier | Paramètre | Rôle | Valeur par défaut fournie | Valeur de l'équipe |
 |---|---|---|---|---|
-| `collecteur/creer_bdd.py` | `EQUIPE` | Identifiant de l'équipe | `"g1e1"` | À COMPLÉTER |
+| `collecteur/creer_bdd.py` | `EQUIPE` | Identifiant de l'équipe | `"g1"` | À COMPLÉTER |
 | `collecteur/creer_bdd.py` | `ADRESSE_ROBOT` | Adresse du robot, enregistrée dans la table `robots` | `"192.168.10.21"` | À COMPLÉTER |
 | `collecteur/creer_bdd.py` | `BASE` | Fichier de la base | `"cellule.db"` | À COMPLÉTER |
-| `collecteur/collecteur.py` | `EQUIPE` | Identifiant ; le collecteur s'abonne à `cellule/<EQUIPE>/#` | `"g1e1"` | À COMPLÉTER |
+| `collecteur/collecteur.py` | `EQUIPE` | Identifiant ; le collecteur s'abonne à `cellule/<EQUIPE>/#` | `"g1"` | À COMPLÉTER |
 | `collecteur/collecteur.py` | `BROKER` | Adresse du broker | `"localhost"` | À COMPLÉTER |
 | `collecteur/collecteur.py` | `BASE` | Fichier de la base (le même que le site) | `"cellule.db"` | À COMPLÉTER |
-| `simulateurs/simulateur_mqtt.py` | `EQUIPE` | Identifiant de l'équipe | `"g1e1"` | À COMPLÉTER |
+| `simulateurs/simulateur_mqtt.py` | `EQUIPE` | Identifiant de l'équipe | `"g1"` | À COMPLÉTER |
 | `simulateurs/simulateur_mqtt.py` | `BROKER` | Adresse du broker | `"localhost"` | À COMPLÉTER |
-| `simulateurs/simulateur_api.py` | `EQUIPE` | Identifiant de l'équipe | `"g1e1"` | À COMPLÉTER |
+| `simulateurs/simulateur_api.py` | `EQUIPE` | Identifiant de l'équipe | `"g1"` | À COMPLÉTER |
 | `simulateurs/simulateur_api.py` | `BROKER` | Adresse du broker | `"localhost"` | À COMPLÉTER |
 | `simulateurs/simulateur_api.py` | `PORT_API` | Port du simulateur d'API (`5000 + n`) | `5001` | À COMPLÉTER |
 | `simulateurs/simulateur_api.py` | `COULEURS` | Couleurs acceptées pour l'anneau de LED | `["rouge", "vert", "bleu", "jaune", "blanc"]` | À COMPLÉTER |
-| `site_web/supervision.py` | `EQUIPE` | Identifiant, affiché en titre | `"g1e1"` | À COMPLÉTER |
+| `site_web/supervision.py` | `EQUIPE` | Identifiant, affiché en titre | `"g1"` | À COMPLÉTER |
 | `site_web/supervision.py` | `URL_API` | Adresse de l'API : simulateur (`http://127.0.0.1:<PORT_API>`) ou robot (`http://<adresse du robot>:3000`) | `"http://127.0.0.1:5001"` | À COMPLÉTER |
 | `site_web/supervision.py` | `BASE` | Fichier de la base (le même que le collecteur) | `"cellule.db"` | À COMPLÉTER |
 | `site_web/supervision.py` | `PORT_SITE` | Port du site (`8000 + n`) | `8001` | À COMPLÉTER |
 | `site_web/supervision.py` | `COULEURS` | Couleurs proposées dans le formulaire, **les mêmes que dans l'API** | `["rouge", "vert", "bleu", "jaune", "blanc"]` | À COMPLÉTER |
 | `site_web/supervision.py` | `app.secret_key` | Clé des messages `flash` du site | `"dev-seulement"` | À COMPLÉTER |
-| `api_robot/api_robot.py` | `EQUIPE` | Identifiant de l'équipe | `"g1e1"` | À COMPLÉTER |
+| `api_robot/api_robot.py` | `EQUIPE` | Identifiant de l'équipe | `"g1"` | À COMPLÉTER |
 | `api_robot/api_robot.py` | `BROKER` | Adresse du serveur, depuis le robot | `"192.168.10.10"` | À COMPLÉTER |
 | `api_robot/api_robot.py` | `PORT_API` | Port de l'API sur le robot | `3000` | À COMPLÉTER |
 | `api_robot/api_robot.py` | `JOINTS_HOME` | Position home (6 angles, radians) | `[0.0, 0.3, -1.3, 0.0, 0.0, 0.0]` | À COMPLÉTER |
 | `api_robot/api_robot.py` | `COULEURS` | Couleurs de l'anneau (`[rouge, vert, bleu, 0]`) | rouge, vert, bleu, jaune, blanc | À COMPLÉTER |
-| `essai_robot/config.py` | `EQUIPE` | Identifiant de l'équipe | `"g1e1"` | À COMPLÉTER |
+| `essai_robot/config.py` | `EQUIPE` | Identifiant de l'équipe | `"g1"` | À COMPLÉTER |
 | `essai_robot/config.py` | `BROKER` | Adresse du serveur, depuis le robot | `"192.168.10.10"` | À COMPLÉTER |
 | `essai_robot/config.py` | `PORT_MQTT` | Port MQTT | `1883` | À COMPLÉTER |
 | `essai_robot/config.py` | `TOPIC_ESSAI`, `TOPIC_LED` | Topics des scripts d'essai (distincts des topics du projet) | `cellule/<EQUIPE>/essai`, `cellule/<EQUIPE>/led` | À COMPLÉTER |
@@ -274,12 +274,12 @@ Une base SQLite par équipe, le fichier `cellule.db`. Elle est créée par `coll
 |---|---|---|---|---|
 | `messages` | `id` | entier | clé primaire | Numéro du message |
 | `messages` | `recu_le` | texte | obligatoire | Heure de réception, en UTC |
-| `messages` | `sujet` | texte | obligatoire | Sujet MQTT (`cellule/g1e1/cycle`) |
+| `messages` | `sujet` | texte | obligatoire | Sujet MQTT (`cellule/g1/cycle`) |
 | `messages` | `charge` | texte | obligatoire | Contenu du message, tel quel |
 | `messages` | `qos` | entier | obligatoire | Qualité de service reçue |
 | `messages` | `retain` | entier | 0 par défaut | 1 si le message est retenu |
 | `robots` | `id` | entier | clé primaire | Numéro du robot |
-| `robots` | `nom` | texte | obligatoire, unique | Nom (`ned2-g1e1`) |
+| `robots` | `nom` | texte | obligatoire, unique | Nom (`ned2-g1`) |
 | `robots` | `equipe` | texte | obligatoire | Identifiant de l'équipe |
 | `robots` | `adresse_ip` | texte | | Adresse du robot |
 | `cycles` | `id` | entier | clé primaire | Numéro du cycle |

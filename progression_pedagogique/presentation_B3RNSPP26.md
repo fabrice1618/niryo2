@@ -184,16 +184,15 @@ Exemples de messages (JSON), sur `cellule/<equipe>/cycle` :
 
 | Élément | Convention (proposition de départ, fixée par chaque équipe dans son dossier) |
 |---------|------------|
-| Topics MQTT | `cellule/<equipe>/cycle`, `…/etat` (message retenu), `…/defaut`, `…/tache` (tâches de l'API) ; `<equipe>` de `r1e1` à `r1e4` |
+| Topics MQTT | `cellule/<equipe>/cycle`, `…/etat` (message retenu), `…/defaut`, `…/tache` (tâches de l'API) ; `<equipe>` de `g1` à `g4` |
 | Tables SQLite | `messages` (journal brut), `robots`, `cycles` (lue par le site web et par Grafana), dans `cellule.db` |
 | API du robot | Fournie : `GET /robot/etat`, `POST /robot/home`, `/robot/autocalibrate`, `/robot/ledring/<couleur>` ; cible CQRS : `GET /requetes/etat`, `POST /commandes/demarrer`, `/arreter`, `/calibrer` |
 | Ports | API simulées 5003 à 5006, sites web 8003 à 8006 (un par équipe), API sur le robot 3000, MQTT 1883, Grafana 3000 (sur le serveur) |
 
 </div>
 
-| Équipe | `r1e1` | `r1e2` | `r1e3` | `r1e4` |
+| Équipe | `g1` | `g2` | `g3` | `g4` |
 |--------|--------|--------|--------|--------|
-| Nom | Loire | Rhône | Seine | Garonne |
 | API simulée / site web | 5003 / 8003 | 5004 / 8004 | 5005 / 8005 | 5006 / 8006 |
 
 ---

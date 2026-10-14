@@ -111,7 +111,7 @@ gantt
 - 4 robots, une équipe par robot dans chaque groupe : 4 équipes par groupe, 8 équipes au total.
 - 22 étudiants : 6 équipes de 3 et 2 équipes de 2.
 - Les équipes sont constituées à la séance 1 et restent les mêmes jusqu'à l'évaluation.
-- Identifiants `g1e1` à `g2e4` et noms (thème des métaux) : voir `materiel_ISTP.md`.
+- Identifiants `g1` à `g8` : voir `materiel_ISTP.md`.
 
 **Supports de cours** (dossier `cours/`, et `README.md` à la racine)
 
@@ -244,7 +244,7 @@ Mosquitto, SQLite et Flask s'exécutent sans serveur. Chaque équipe travaille s
 | Semaine 3 | Site web adapté (dernier état, cycles, compteurs) | `cours/site_web_HTML_CSS.md`, `cours/intro_flask.md` |
 | Semaine 4 | API de commande en mode simulé reliée au site, dossier complété | `cours/API_CQRS_REST_Flask.md` |
 
-**Broker public de test.** Sans serveur, les équipes peuvent utiliser un broker MQTT public (par exemple `test.mosquitto.org` ou `broker.hivemq.com`, sans compte) pour tester d'un poste à l'autre. À respecter : ces brokers sont ouverts à tous, donc préfixer les topics par un identifiant propre à l'équipe (`cellule/g1e1-<mot aléatoire>/…`), n'y envoyer aucune donnée sensible, et ne pas compter sur leur disponibilité. Le broker local reste la référence ; à la séance 3, on passe au broker du serveur en changeant les paramètres en tête de chaque programme (`BROKER`, `EQUIPE`).
+**Broker public de test.** Sans serveur, les équipes peuvent utiliser un broker MQTT public (par exemple `test.mosquitto.org` ou `broker.hivemq.com`, sans compte) pour tester d'un poste à l'autre. À respecter : ces brokers sont ouverts à tous, donc préfixer les topics par un identifiant propre à l'équipe (`cellule/g1-<mot aléatoire>/…`), n'y envoyer aucune donnée sensible, et ne pas compter sur leur disponibilité. Le broker local reste la référence ; à la séance 3, on passe au broker du serveur en changeant les paramètres en tête de chaque programme (`BROKER`, `EQUIPE`).
 
 
 ### Séance 3 : intégration sur le serveur (MQTT, collecte dans SQLite, site web et API)
@@ -313,7 +313,7 @@ Le scénario complet, de la commande jusqu'à l'affichage des cycles, est dans l
 
 Conventions reprises des supports `cours/collecteur_MQTT.md` et `cours/SQL.md` (détail et exemples de messages dans le `README.md`, section 6) :
 
-- Topics : `cellule/<equipe>/cycle`, `cellule/<equipe>/etat` (message retenu), `cellule/<equipe>/defaut`, `cellule/<equipe>/tache` (tâches de l'API du robot), avec `<equipe>` de la forme `g1e1`
+- Topics : `cellule/<equipe>/cycle`, `cellule/<equipe>/etat` (message retenu), `cellule/<equipe>/defaut`, `cellule/<equipe>/tache` (tâches de l'API du robot), avec `<equipe>` de la forme `g1`
 - Message : `{"evenement": "fin_cycle", "piece": 12, "duree": 18.2, "zone": "A", "horodatage": "2026-11-17T08:30:18"}`
 - Tables : `messages(id, recu_le, sujet, charge, qos, retain)` (journal brut), `robots(id, nom, equipe, adresse_ip)` et `cycles(id, robot_id, debut, duree, zone, statut)` (lue par le site web)
 
@@ -427,7 +427,7 @@ Le serveur sert à la séance 3 (salle D3.10, sur un réseau séparé), puis aux
 **Contenu préparé sur le SSD** (procédure complète dans `install/install_raspberry.md`)
 
 - Distribution Linux 64 bits pour Raspberry Pi (par exemple Ubuntu Server 24.04 LTS) avec serveur SSH
-- Un compte par équipe (8 comptes : `g1e1` à `g2e4`), avec son dossier personnel, créés avec `scripts/creer_comptes_equipes.sh` (mêmes comptes sur les postes Linux de la salle D3.10)
+- Un compte par équipe (8 comptes : `g1` à `g8`), avec son dossier personnel, créés avec `scripts/creer_comptes_equipes.sh` (mêmes comptes sur les postes Linux de la salle D3.10)
 - Broker Mosquitto ouvert sur le réseau du module (sans compte) : chaque équipe publie sous `cellule/<equipe>/`
 - Python 3 et les paquets du projet (`paho-mqtt`, `flask`, `requests`), installés à l'avance
 - SQLite (bibliothèque et outil en ligne de commande)
@@ -436,7 +436,7 @@ Le serveur sert à la séance 3 (salle D3.10, sur un réseau séparé), puis aux
 
 **Réseau**
 
-- **En salle D3.10 (séance 3)** : un réseau séparé permet d'utiliser le serveur. Les postes Linux de la salle y sont raccordés ; un switch apporté par l'enseignant connecte les laptops des étudiants et le Pi. SSH (22), MQTT (1883) et les ports HTTP (5001 à 5008 et 8001 à 8008) doivent être autorisés entre les postes et le Pi.
+- **En salle D3.10 (séance 3)** : un réseau séparé permet d'utiliser le serveur. Les postes Linux de la salle y sont raccordés ; deux switches 5 ports (avec câbles) apportés par l'enseignant connectent les laptops des équipes (un par équipe environ) et le Pi. SSH (22), MQTT (1883) et les ports HTTP (5001 à 5008 et 8001 à 8008) doivent être autorisés entre les postes et le Pi.
 - **Au fab lab (séances 4 et 5)** : le serveur rejoint le réseau des robots avec une adresse IP fixe (plan d'adressage proposé dans `cours/reseau_TCP_IP.md` : réseau `192.168.10.0/24`, robots en `.21` à `.24`). Le NUC de l'IRUP occupe l'adresse `.10` : le Pi prend `.11` (voir `materiel_ISTP.md`). L'API tourne alors sur chaque robot (Python ROS Wrapper), port 3000 : le port 5000 du robot est pris par le logiciel système de Niryo. Les bibliothèques Python du projet sont installées à l'avance sur chaque robot avec le dossier `install_robot/`.
 
 ```mermaid

@@ -1,6 +1,6 @@
 """Paramètres communs aux scripts d'essai : à adapter à votre équipe et à votre robot."""
 
-EQUIPE = "g1e1"                        # identifiant de l'équipe (topics MQTT, client MQTT)
+EQUIPE = "g1"                        # identifiant de l'équipe (topics MQTT, client MQTT)
 
 # Broker MQTT du serveur du module
 BROKER = "192.168.10.10"               # adresse du serveur (le Raspberry Pi d'ISTP est en .11)

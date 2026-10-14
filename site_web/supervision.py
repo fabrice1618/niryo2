@@ -15,7 +15,7 @@ import requests
 from flask import Flask, flash, redirect, render_template, request, url_for
 
 # --- Paramètres à adapter -------------------------------------------------
-EQUIPE = "g1e1"                        # identifiant de l'équipe, affiché en titre
+EQUIPE = "g1"                        # identifiant de l'équipe, affiché en titre
 URL_API = "http://127.0.0.1:5001"      # simulateur d'API ; le robot : "http://192.168.10.21:3000"
 BASE = "cellule.db"                    # base remplie par le collecteur
 PORT_SITE = 8001                       # 8000 + numéro de l'équipe (8001 à 8008)

@@ -6,8 +6,8 @@ Le collecteur est le programme qui relie le broker MQTT à la base de données. 
 
 ```mermaid
 flowchart LR
-    R["Robot, API du robot<br/>ou simulateur"] -- "cellule/g1e1/…" --> B["Broker Mosquitto"]
-    B -- "abonnement<br/>cellule/g1e1/#" --> C["collecteur.py"]
+    R["Robot, API du robot<br/>ou simulateur"] -- "cellule/g1/…" --> B["Broker Mosquitto"]
+    B -- "abonnement<br/>cellule/g1/#" --> C["collecteur.py"]
     C -- "INSERT" --> DB[("cellule.db<br/>créée par creer_bdd.py")]
     DB -- "SELECT" --> W["Site web Flask"]
 ```
@@ -27,7 +27,7 @@ Les deux fichiers ont leurs **paramètres en haut du fichier**. Ils fonctionnent
 | Table | Contenu | Remplie par |
 |---|---|---|
 | `messages(id, recu_le, sujet, charge, qos, retain)` | **Tous** les messages reçus, tels quels, même mal formés. `recu_le` : heure de réception, en UTC | Le collecteur, à chaque message |
-| `robots(id, nom, equipe, adresse_ip)` | Le robot de l'équipe (`ned2-g1e1`) | `creer_bdd.py` |
+| `robots(id, nom, equipe, adresse_ip)` | Le robot de l'équipe (`ned2-g1`) | `creer_bdd.py` |
 | `cycles(id, robot_id, debut, duree, zone, statut)` | Un cycle par fin de cycle. `debut` : horodatage posé par le robot, en heure locale | Le collecteur, à chaque fin de cycle |
 
 Le collecteur enregistre un cycle quand il reçoit, sur `cellule/<equipe>/cycle`, un message de la forme :
@@ -50,12 +50,12 @@ Un message mal formé (pas du JSON, `duree` absente ou qui n'est pas un nombre) 
    cp /opt/cellule/fournitures/collecteur/*.py ~/supervision/
    ```
 
-   Depuis un poste : avec VS Code Remote SSH, ou `scp creer_bdd.py collecteur.py g1e1@192.168.10.10:~/supervision/`.
+   Depuis un poste : avec VS Code Remote SSH, ou `scp creer_bdd.py collecteur.py g1@192.168.10.10:~/supervision/`.
 
 2. **Adapter les paramètres** en haut de chaque fichier : l'identifiant de l'équipe et l'adresse de son robot dans `creer_bdd.py` ; l'identifiant et le broker dans `collecteur.py` :
 
    ```python
-   EQUIPE = "g1e1"                        # identifiant de l'équipe, dans les topics MQTT
+   EQUIPE = "g1"                        # identifiant de l'équipe, dans les topics MQTT
    BROKER = "localhost"                   # le collecteur tourne sur le serveur, comme le broker
    ```
 
@@ -68,9 +68,9 @@ Un message mal formé (pas du JSON, `duree` absente ou qui n'est pas un nombre) 
    ```
 
    ```text
-   Collecteur de l'équipe g1e1, base cellule.db (Ctrl+C pour arrêter)
-   Connecté à localhost, abonné à cellule/g1e1/#
-   2026-11-17T07:30:18+00:00  cellule/g1e1/cycle  {"evenement": "fin_cycle", "piece": 1, "duree": 18.2, ...}
+   Collecteur de l'équipe g1, base cellule.db (Ctrl+C pour arrêter)
+   Connecté à localhost, abonné à cellule/g1/#
+   2026-11-17T07:30:18+00:00  cellule/g1/cycle  {"evenement": "fin_cycle", "piece": 1, "duree": 18.2, ...}
    ```
 
    Chaque message reçu s'affiche, avec son heure de réception (UTC) et son sujet. **Ctrl+C** arrête le collecteur.
@@ -84,7 +84,7 @@ Un message mal formé (pas du JSON, `duree` absente ou qui n'est pas un nombre) 
    tmux attach -t collecteur       # revenir voir le collecteur (Ctrl+C pour l'arrêter)
    ```
 
-Un **seul collecteur par équipe** à la fois : deux collecteurs de même nom (`g1e1_collecteur`) se déconnectent l'un l'autre sans arrêt.
+Un **seul collecteur par équipe** à la fois : deux collecteurs de même nom (`g1_collecteur`) se déconnectent l'un l'autre sans arrêt.
 
 
 ## Vérifier qu'il fonctionne : le simulateur
@@ -159,7 +159,7 @@ Le collecteur a deux parties, reliées par une **file d'attente** (`file_message
 
 Pourquoi une file : la réception ne doit jamais attendre la base. Si la base est lente ou occupée (le site web la lit en même temps), les messages s'accumulent dans la file au lieu de bloquer la réception.
 
-Le collecteur se connecte avec un identifiant fixe (`g1e1_collecteur`) et `clean_session=False` : pendant qu'il est arrêté, le broker garde pour lui les messages publiés en QoS 1 (c'est le cas du robot, de l'API et du simulateur) et les envoie au redémarrage.
+Le collecteur se connecte avec un identifiant fixe (`g1_collecteur`) et `clean_session=False` : pendant qu'il est arrêté, le broker garde pour lui les messages publiés en QoS 1 (c'est le cas du robot, de l'API et du simulateur) et les envoie au redémarrage.
 
 Par rapport au squelette du support de cours, il écrit les messages **un par un** au lieu de les écrire par lots : c'est plus simple, et assez rapide pour une cellule (environ 1000 messages en quelques secondes). Un arrêt par Ctrl+C pendant une rafale peut perdre les messages qui attendaient encore dans la file.
 

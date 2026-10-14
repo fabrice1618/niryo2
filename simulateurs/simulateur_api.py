@@ -18,7 +18,7 @@ import paho.mqtt.client as mqtt
 from flask import Flask, request
 
 # --- Paramètres à adapter -------------------------------------------------
-EQUIPE = "g1e1"                        # identifiant de l'équipe, dans les topics MQTT
+EQUIPE = "g1"                        # identifiant de l'équipe, dans les topics MQTT
 BROKER = "localhost"                   # "192.168.10.10" depuis un poste du fab lab, ou un broker public
 PORT_API = 5001                        # 5000 + numéro de l'équipe (5001 à 5008)
 COULEURS = ["rouge", "vert", "bleu", "jaune", "blanc"]

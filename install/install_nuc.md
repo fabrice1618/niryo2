@@ -2,7 +2,7 @@
 
 Infrastructure client / serveur dans un contexte industriel
 
-Ce document décrit, pas à pas, la préparation du serveur NUC du fab lab de l'IRUP. Il héberge le broker MQTT et, pour chacune des 6 équipes (`t1e1`, `t1e2` de BACHTECH24, `r1e1` à `r1e4` de B3RNSPP26), le collecteur, la base de données, le site web et l'API simulée, ainsi qu'une instance **Grafana** commune. Il démarre sur un SSD externe : le disque interne n'est ni utilisé ni modifié. Le matériel et le calendrier sont dans `progression_pedagogique/materiel_IRUP.md`.
+Ce document décrit, pas à pas, la préparation du serveur NUC du fab lab de l'IRUP. Il héberge le broker MQTT et, pour chacune des 6 équipes (`tech1`, `tech2` de BACHTECH24, `g1` à `g4` de B3RNSPP26), le collecteur, la base de données, le site web et l'API simulée, ainsi qu'une instance **Grafana** commune. Il démarre sur un SSD externe : le disque interne n'est ni utilisé ni modifié. Le matériel et le calendrier sont dans `progression_pedagogique/materiel_IRUP.md`.
 
 Par rapport au Raspberry Pi d'ISTP ([`install_raspberry.md`](install_raspberry.md)), le NUC ajoute **Grafana**, qui lit directement la base SQLite `cellule.db` de chaque équipe, en lecture seule, grâce à un adaptateur (le plugin communautaire `frser-sqlite-datasource`). Il n'y a qu'une base par équipe : le collecteur et le site web restent ceux des cours.
 
@@ -89,7 +89,7 @@ cd ~/niryo2/scripts
 sudo ./creer_comptes_equipes.sh irup        # crée comptes_irup.txt (mode 600)
 ```
 
-Les comptes `t1e1`, `t1e2` et `r1e1` à `r1e4` ont des dossiers privés. Le même mot de passe sert pour SSH et Grafana.
+Les comptes `tech1`, `tech2` et `g1` à `g4` ont des dossiers privés. Le même mot de passe sert pour SSH et Grafana.
 
 
 ## 5. Broker Mosquitto
@@ -177,8 +177,8 @@ grep -v '^#' ~/niryo2/scripts/comptes_irup.txt | while IFS=: read -r equipe mdp;
 done
 ```
 
-- Les autres équipes n'ont toujours aucun accès au dossier : `ls /home/r1e1` reste refusé.
-- L'ACL par défaut ne vaut que pour les fichiers créés **après** elle. Pour une base qui existait déjà : `sudo setfacl -m u:grafana:r /home/r1e1/supervision/cellule.db`. Si une équipe supprime et recrée son dossier `supervision`, relancer la boucle.
+- Les autres équipes n'ont toujours aucun accès au dossier : `ls /home/g1` reste refusé.
+- L'ACL par défaut ne vaut que pour les fichiers créés **après** elle. Pour une base qui existait déjà : `sudo setfacl -m u:grafana:r /home/g1/supervision/cellule.db`. Si une équipe supprime et recrée son dossier `supervision`, relancer la boucle.
 - Aucun réglage n'est demandé aux équipes, pas même le mode WAL : Grafana ouvre la base en lecture seule et, si le collecteur est en train d'écrire un lot, attend qu'il ait fini (section 7.4). Les écritures du collecteur, par lots courts, ne sont pas gênées.
 
 ### 7.4 Une source de données par équipe
@@ -240,14 +240,14 @@ Limite de la version gratuite de Grafana : toutes les sources de données sont v
 Pour tester Grafana avant les vrais cycles, remplir la base d'une équipe de test avec 500 cycles fictifs, un par minute. La commande est lancée avec le compte de l'équipe, à qui la base appartient ; les tables sont celles du cours de SQL.
 
 ```bash
-sudo -u r1e1 sqlite3 /home/r1e1/supervision/cellule.db <<'SQL'
+sudo -u g1 sqlite3 /home/g1/supervision/cellule.db <<'SQL'
 CREATE TABLE IF NOT EXISTS robots (
     id INTEGER PRIMARY KEY, nom TEXT NOT NULL UNIQUE,
     equipe TEXT NOT NULL, adresse_ip TEXT);
 CREATE TABLE IF NOT EXISTS cycles (
     id INTEGER PRIMARY KEY, robot_id INTEGER NOT NULL REFERENCES robots(id),
     debut TEXT NOT NULL, duree REAL NOT NULL, zone TEXT, statut TEXT NOT NULL DEFAULT 'ok');
-INSERT INTO robots (nom, equipe, adresse_ip) VALUES ('robot1', 'r1e1', '192.168.10.21');
+INSERT INTO robots (nom, equipe, adresse_ip) VALUES ('robot1', 'g1', '192.168.10.21');
 WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < 500)
 INSERT INTO cycles (robot_id, debut, duree, zone, statut)
 SELECT 1, strftime('%Y-%m-%dT%H:%M:%S', 'now', 'localtime', -i || ' minutes'),
@@ -258,11 +258,11 @@ FROM n;
 SQL
 ```
 
-Comme dans le collecteur, `debut` est l'heure locale posée par le robot, sans fuseau (`2026-11-17T08:30:18`). Effacer la base d'essai ensuite (le collecteur la recrée) : `sudo -u r1e1 rm /home/r1e1/supervision/cellule.db`.
+Comme dans le collecteur, `debut` est l'heure locale posée par le robot, sans fuseau (`2026-11-17T08:30:18`). Effacer la base d'essai ensuite (le collecteur la recrée) : `sudo -u g1 rm /home/g1/supervision/cellule.db`.
 
 ### 7.7 Panneau d'essai
 
-Se connecter à `http://192.168.10.10:3000` avec le compte `r1e1`, créer un dashboard dans le dossier « Équipe r1e1 », un panneau « Time series » sur la source `SQLite r1e1`, avec la requête :
+Se connecter à `http://192.168.10.10:3000` avec le compte `g1`, créer un dashboard dans le dossier « Équipe g1 », un panneau « Time series » sur la source `SQLite g1`, avec la requête :
 
 ```sql
 SELECT unixepoch(debut, 'utc') AS time, duree AS "durée (s)"
@@ -284,8 +284,8 @@ Pour compter les cycles par heure : `SELECT unixepoch(debut, 'utc') / 3600 * 360
 systemctl is-active mosquitto ssh grafana-server            # 3 fois active
 ss -tlnp | grep -E ':22 |:1883 |:3000 '
 python3 -c "import flask, paho.mqtt, requests; print('ok')"  # depuis un compte d'équipe
-sudo -u grafana sqlite3 "file:/home/r1e1/supervision/cellule.db?mode=ro" "SELECT count(*) FROM cycles;"   # Grafana lit la base
-sudo -u r1e2 ls /home/r1e1                                   # refusé : dossier d'une autre équipe
+sudo -u grafana sqlite3 "file:/home/g1/supervision/cellule.db?mode=ro" "SELECT count(*) FROM cycles;"   # Grafana lit la base
+sudo -u g2 ls /home/g1                                   # refusé : dossier d'une autre équipe
 ```
 
 - [ ] MQTT : chaque équipe publie et reçoit sur ses topics, rien sur ceux des autres (mêmes commandes que dans `install_raspberry.md`, section 9)
@@ -303,7 +303,7 @@ sudo -u r1e2 ls /home/r1e1                                   # refusé : dossier
 - **Après chaque séance**, collecteurs arrêtés (une base copiée pendant une écriture peut être incohérente) : dossiers des équipes avec leurs bases, configuration et dashboards Grafana. L'option `--acls` conserve les droits donnés à Grafana.
 
   ```bash
-  sudo tar czf ~/sauvegarde_$(date +%F).tgz --acls /home/t1e? /home/r1e? /etc/mosquitto /etc/grafana /var/lib/grafana
+  sudo tar czf ~/sauvegarde_$(date +%F).tgz --acls /home/tech[12] /home/g[1-4] /etc/mosquitto /etc/grafana /var/lib/grafana
   ```
 
-- **Restauration d'une base** : `sudo tar xzf sauvegarde_2027-03-25.tgz --acls -C / home/r1e1/supervision/cellule.db`.
+- **Restauration d'une base** : `sudo tar xzf sauvegarde_2027-03-25.tgz --acls -C / home/g1/supervision/cellule.db`.

@@ -60,18 +60,18 @@ Le fab lab est dans la même configuration pour toutes les classes (section 3.2)
 
 ## 2. Équipes
 
-Chaque équipe a un **identifiant technique** (minuscules, sans accent, utilisé dans les comptes, les topics MQTT et les noms de fichiers) et un **nom** affiché sur le site web et dans Grafana. Les deux classes partagent le NUC : les identifiants et les ports sont donc distincts d'une classe à l'autre.
+Chaque équipe a un **identifiant technique** (minuscules, sans accent, utilisé dans les comptes, les topics MQTT et les noms de fichiers). Les deux classes partagent le NUC : les identifiants et les ports sont donc distincts d'une classe à l'autre.
 
-| Identifiant | Nom | Classe | Robot | Port API simulée | Port site web |
-|-------------|-----|--------|-------|------------------|---------------|
-| `t1e1` | Vega | BACHTECH24 | Robot avec caméra, numéro à renseigner | 5001 | 8001 |
-| `t1e2` | Altair | BACHTECH24 | Robot avec caméra, numéro à renseigner | 5002 | 8002 |
-| `r1e1` | Loire | B3RNSPP26 | Robot 1 (`192.168.10.21`) | 5003 | 8003 |
-| `r1e2` | Rhône | B3RNSPP26 | Robot 2 (`192.168.10.22`) | 5004 | 8004 |
-| `r1e3` | Seine | B3RNSPP26 | Robot 3 (`192.168.10.23`) | 5005 | 8005 |
-| `r1e4` | Garonne | B3RNSPP26 | Robot 4 (`192.168.10.24`) | 5006 | 8006 |
+| Identifiant | Classe | Robot | Port API simulée | Port site web |
+|-------------|--------|-------|------------------|---------------|
+| `tech1` | BACHTECH24 | Robot avec caméra, numéro à renseigner | 5001 | 8001 |
+| `tech2` | BACHTECH24 | Robot avec caméra, numéro à renseigner | 5002 | 8002 |
+| `g1` | B3RNSPP26 | Robot 1 (`192.168.10.21`) | 5003 | 8003 |
+| `g2` | B3RNSPP26 | Robot 2 (`192.168.10.22`) | 5004 | 8004 |
+| `g3` | B3RNSPP26 | Robot 3 (`192.168.10.23`) | 5005 | 8005 |
+| `g4` | B3RNSPP26 | Robot 4 (`192.168.10.24`) | 5006 | 8006 |
 
-Un thème par classe : les étoiles pour BACHTECH24 (Sirius, Rigel, Antares et Capella en réserve), les fleuves de France pour B3RNSPP26 (Dordogne, Marne, Saône et Meuse en réserve), les métaux pour BACHINGE24 (voir `materiel_ISTP.md`). Les robots de B3RNSPP26 sont les robots restants une fois les robots avec caméra affectés à BACHTECH24 (les numéros sont à ajuster en conséquence). Chaque équipe garde le même robot pendant toute la durée du projet : les poses et la calibration sont propres à un robot.
+Les robots de B3RNSPP26 sont les robots restants une fois les robots avec caméra affectés à BACHTECH24 (les numéros sont à ajuster en conséquence). Chaque équipe garde le même robot pendant toute la durée du projet : les poses et la calibration sont propres à un robot.
 
 Sur le NUC, un compte Linux et un compte Grafana sont créés par identifiant.
 
@@ -235,7 +235,7 @@ Préparation et tests :
 | Échéance | Action | Séance concernée |
 |----------|--------|------------------|
 | Avant le jeu. 15/10/2026 | Vérification du fab lab et des robots (section 5.3) ; confirmation des réservations d'octobre et novembre | B3RNSPP26, séance 1 |
-| Avant le mer. 28/10/2026 | Caméras repérées et testées, robots avec caméra affectés aux équipes `t1e1` et `t1e2` | BACHTECH24, séance 1 |
+| Avant le mer. 28/10/2026 | Caméras repérées et testées, robots avec caméra affectés aux équipes `tech1` et `tech2` | BACHTECH24, séance 1 |
 | Avant le ven. 06/11/2026 | Vérification du NUC (section 5.2) ; disque préparé, cloné et testé (section 5.1) ; répétition (section 5.5) | BACHTECH24, séance 3 |
 | Avant le mar. 10/11/2026 | Comptes de B3RNSPP26 vérifiés ; sauvegarde du disque | B3RNSPP26, séance 3 |
 | Avant le mar. 01/12/2026 | Sauvegarde ; mises à jour de sécurité | BACHTECH24, séances 4 et 5 |

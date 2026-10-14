@@ -12,7 +12,7 @@ from datetime import datetime
 import paho.mqtt.client as mqtt
 
 # --- Paramètres à adapter -------------------------------------------------
-EQUIPE = "g1e1"                        # identifiant de l'équipe, dans les topics MQTT
+EQUIPE = "g1"                        # identifiant de l'équipe, dans les topics MQTT
 BROKER = "localhost"                   # "192.168.10.10" depuis un poste du fab lab, ou un broker public
 
 MENU = f"""

@@ -417,7 +417,7 @@ maquette/
 
   <main class="contenu">
     <h1>Tableau de bord</h1>
-    <p>Robot <strong>ned2-g1e1</strong> : <span class="etat marche">en cycle</span></p>
+    <p>Robot <strong>ned2-g1</strong> : <span class="etat marche">en cycle</span></p>
 
     <section class="grille">
       <article class="carte">

@@ -36,7 +36,7 @@ Une communication réseau est découpée en couches : chacune rend un service à
 Exemple : le robot (192.168.10.21) publie une fin de cycle en MQTT vers le serveur (192.168.10.10).
 
 ```text
-Application  :                                         [ PUBLISH cellule/g1e1/cycle {"duree": 18.2} ]
+Application  :                                         [ PUBLISH cellule/g1/cycle {"duree": 18.2} ]
 Transport    :                          [ TCP 52344 → 1883 | données MQTT ]
 Internet     :       [ IP 192.168.10.21 → 192.168.10.10 | segment TCP ]
 Accès réseau : [ Ethernet MAC robot → MAC serveur | paquet IP | FCS ]
@@ -533,7 +533,7 @@ L'adresse est prêtée pour une durée limitée, par exemple 24 heures.
 | --- | --- | --- |
 | Étendue (scope, pool) | Plage d'adresses à distribuer | 192.168.1.100 à 192.168.1.199 |
 | Exclusions | Adresses de la plage à ne jamais distribuer | 192.168.1.150 à .159 |
-| Réservation | Une même adresse toujours donnée à la même carte (selon l'adresse MAC) | Robot Ned2 de l'équipe g1e1 : toujours 192.168.10.21 |
+| Réservation | Une même adresse toujours donnée à la même carte (selon l'adresse MAC) | Robot Ned2 de l'équipe g1 : toujours 192.168.10.21 |
 | Durée du bail | Validité de l'adresse | 8 heures ou 24 heures |
 | Options | Paramètres complémentaires envoyés au client | Masque (option 1), routeur ou passerelle (3), serveurs DNS (6), nom de domaine (15) |
 
@@ -638,8 +638,8 @@ Le projet fil rouge fait communiquer plusieurs types de machines : les robots Ne
 ```mermaid
 flowchart LR
     subgraph LAN["Réseau du fab lab 192.168.10.0/24"]
-        R1["Robot Ned2 g1e1<br/>192.168.10.21<br/>API Flask :3000"]
-        R2["Robots g1e2 à g1e4<br/>.22 à .24"]
+        R1["Robot Ned2 g1<br/>192.168.10.21<br/>API Flask :3000"]
+        R2["Robots g2 à g4<br/>.22 à .24"]
         SRV["Serveur du module<br/>192.168.10.10 (statique)<br/>SSH :22 · MQTT :1883 · sites :8001-8008"]
         PC["Postes étudiants<br/>.100 à .199 (DHCP)"]
         GW["Routeur<br/>192.168.10.1"]
@@ -682,7 +682,7 @@ Un programme serveur doit écouter sur la bonne interface : Flask lancé sans op
 ping 192.168.10.10                       # 1. le robot joint-il le serveur ? (couches 1 à 3)
 nc -zv 192.168.10.10 1883                # 2. le port MQTT est-il ouvert ? (couche 4)
 ss -tlnp | grep -E ':1883|:500|:800'     # 3. sur le serveur : qui écoute, et sur quelle adresse ?
-mosquitto_sub -h 192.168.10.10 -t 'cellule/g1e1/#' -v   # 4. application
+mosquitto_sub -h 192.168.10.10 -t 'cellule/g1/#' -v   # 4. application
 curl http://192.168.10.21:3000/requetes/etat                                           # 5. API du robot
 ```
 
@@ -789,7 +789,7 @@ Le poste n'a reçu aucune réponse DHCP (il n'y a pas de serveur DHCP sur le câ
 
 Sans `--host 0.0.0.0`, Flask n'écoute que sur la boucle locale `127.0.0.1` : seules les connexions venant du serveur lui-même sont acceptées. `ss -tlnp` le montre : `127.0.0.1:8001` au lieu de `0.0.0.0:8001`.
 
-**Exercice 12 (cellule).** Le robot g1e1 est en `192.168.10.21/24`, passerelle `192.168.10.1`. Le serveur est en `192.168.10.10/24`. Le robot publie en MQTT vers le serveur : quelles adresses IP et MAC portent la trame émise par le robot ? Même question si le broker était sur Internet, en `203.0.113.50`.
+**Exercice 12 (cellule).** Le robot g1 est en `192.168.10.21/24`, passerelle `192.168.10.1`. Le serveur est en `192.168.10.10/24`. Le robot publie en MQTT vers le serveur : quelles adresses IP et MAC portent la trame émise par le robot ? Même question si le broker était sur Internet, en `203.0.113.50`.
 
 | Destination | Même réseau ? | MAC de destination de la trame | IP de destination du paquet |
 | --- | --- | --- | --- |

@@ -163,7 +163,7 @@ Exemples :
 ```python
 # avec les routes des exemples précédents
 url_for("accueil")                     # → "/"
-url_for("robot", nom="ned2-g1e1")      # → "/robots/ned2-g1e1"
+url_for("robot", nom="ned2-g1")      # → "/robots/ned2-g1"
 url_for("cycle", numero=42)            # → "/cycles/42"
 ```
 
@@ -263,7 +263,7 @@ Voir la documentation de [l'objet Request](https://flask.palletsprojects.com/en/
 où les parties entre doubles accolades seront remplacées par le contenu des variables `nom` et `etat`, par exemple :
 
 ```html
-<p>Robot ned2-g1e1 : en cycle</p>
+<p>Robot ned2-g1 : en cycle</p>
 ```
 
 ### Templates en Flask
@@ -679,7 +679,7 @@ CREATE TABLE cycles (id INTEGER PRIMARY KEY,
                      robot_id INTEGER NOT NULL REFERENCES robots(id),
                      debut TEXT NOT NULL, duree REAL, zone TEXT,
                      statut TEXT NOT NULL DEFAULT 'ok');
-INSERT INTO robots (nom, equipe, adresse_ip) VALUES ('ned2-g1e1', 'g1e1', '192.168.10.21');
+INSERT INTO robots (nom, equipe, adresse_ip) VALUES ('ned2-g1', 'g1', '192.168.10.21');
 """)
 t = datetime.now() - timedelta(hours=1)
 for _ in range(60):

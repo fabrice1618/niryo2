@@ -133,7 +133,7 @@ L'historique ne passe pas par l'API : l'API répond à « que fait le robot main
 
 ### Les échanges : un scénario complet
 
-Exemple de l'équipe `g1e1` : l'opérateur lance une série de pièces, puis consulte le tableau de bord.
+Exemple de l'équipe `g1` : l'opérateur lance une série de pièces, puis consulte le tableau de bord.
 
 ```mermaid
 sequenceDiagram
@@ -146,7 +146,7 @@ sequenceDiagram
     participant DB as Base SQLite
 
     Note over B,C: Au démarrage du serveur
-    C->>B: SUBSCRIBE cellule/g1e1/#35;
+    C->>B: SUBSCRIBE cellule/g1/#35;
 
     Note over O,P: Piloter
     O->>W: Clic sur « Démarrer »
@@ -156,14 +156,14 @@ sequenceDiagram
     A->>P: Lance la série de cycles (tâche de fond)
 
     Note over P,DB: Observer
-    P->>B: PUBLISH cellule/g1e1/etat {"etat": "en_cycle"} (retenu)
+    P->>B: PUBLISH cellule/g1/etat {"etat": "en_cycle"} (retenu)
     B->>C: Transmission
     C->>DB: INSERT INTO messages
     loop Pour chaque pièce
-        P->>B: PUBLISH cellule/g1e1/cycle {"evenement": "debut_cycle"}
+        P->>B: PUBLISH cellule/g1/cycle {"evenement": "debut_cycle"}
         B->>C: Transmission
         C->>DB: INSERT INTO messages
-        P->>B: PUBLISH cellule/g1e1/cycle {"evenement": "fin_cycle", "duree": 18.2}
+        P->>B: PUBLISH cellule/g1/cycle {"evenement": "fin_cycle", "duree": 18.2}
         B->>C: Transmission
         C->>DB: INSERT INTO messages, puis INSERT INTO cycles
     end
@@ -218,7 +218,7 @@ Le contenu exact des messages est fixé par chaque équipe dans son dossier d'an
 
 | Élément | Convention |
 |---------|------------|
-| Topics MQTT | `cellule/<equipe>/cycle`, `cellule/<equipe>/etat` (message retenu), `cellule/<equipe>/defaut`, `cellule/<equipe>/tache` (début et fin des tâches de l'API du robot), avec `<equipe>` de la forme `g1e1` |
+| Topics MQTT | `cellule/<equipe>/cycle`, `cellule/<equipe>/etat` (message retenu), `cellule/<equipe>/defaut`, `cellule/<equipe>/tache` (début et fin des tâches de l'API du robot), avec `<equipe>` de la forme `g1` |
 | Tables | `messages(id, recu_le, sujet, charge, qos, retain)` (journal brut), `robots(id, nom, equipe, adresse_ip)`, `cycles(id, robot_id, debut, duree, zone, statut)` (lue par le site web) |
 | API CQRS (cible) | `GET /requetes/etat`, `POST /commandes/demarrer`, `POST /commandes/arreter`, `POST /commandes/calibrer` (réponse `202 Accepted` et identifiant de commande) |
 | API fournie (point de départ) | `GET /robot/etat`, `POST /robot/home`, `POST /robot/autocalibrate`, `POST /robot/ledring/<couleur>` (réponse à la fin de la tâche, `409` si le robot est occupé) |

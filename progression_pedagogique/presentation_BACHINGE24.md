@@ -183,7 +183,7 @@ Exemples de messages (JSON), sur `cellule/<equipe>/cycle` :
 
 | Élément | Convention (proposition de départ, fixée par chaque équipe dans son dossier) |
 |---------|------------|
-| Topics MQTT | `cellule/<equipe>/cycle`, `…/etat` (message retenu), `…/defaut`, `…/tache` (tâches de l'API) ; `<equipe>` de la forme `g1e1` |
+| Topics MQTT | `cellule/<equipe>/cycle`, `…/etat` (message retenu), `…/defaut`, `…/tache` (tâches de l'API) ; `<equipe>` de la forme `g1` |
 | Tables SQLite | `messages` (journal brut), `robots`, `cycles` (lue par le site web), dans `cellule.db` |
 | API du robot | Fournie : `GET /robot/etat`, `POST /robot/home`, `/robot/autocalibrate`, `/robot/ledring/<couleur>` ; cible CQRS : `GET /requetes/etat`, `POST /commandes/demarrer`, `/arreter`, `/calibrer` |
 | Ports | API simulées 5001 à 5008, sites web 8001 à 8008 (un par équipe), API sur le robot 3000, MQTT 1883 |

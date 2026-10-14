@@ -90,7 +90,7 @@ gantt
 
 **Le projet** : lire les sections 1 à 3 du `README.md` (contexte, besoins, objectifs). Retenir que le programme écrit aujourd'hui deviendra le **programme process** de la cellule, celui qui publiera plus tard ses événements en MQTT.
 
-**Les équipes** : chaque équipe reçoit un robot et un identifiant (de la forme `g1e1`) qu'elle garde jusqu'à l'évaluation. Noter dans le tableau de la partie 6 le numéro du robot et son adresse IP.
+**Les équipes** : chaque équipe reçoit un robot et un identifiant (de la forme `g1`) qu'elle garde jusqu'à l'évaluation. Noter dans le tableau de la partie 6 le numéro du robot et son adresse IP.
 
 **Pourquoi des consignes de sécurité pour un petit robot ?** Le Ned2 est un robot « collaboratif » : il est léger et sa force est limitée. Il peut tout de même pincer les doigts, heurter un objet ou une personne penchée sur la table, et son bras retombe quand on coupe l'alimentation. La règle est simple : **le robot ne bouge jamais sans que toute l'équipe le sache.**
 
@@ -386,7 +386,7 @@ Le sens du convoyeur (FORWARD ou BACKWARD) dépend de la façon dont il est inst
 - [ ] Le convoyeur s'arrête quand la pièce arrive devant le capteur
 - [ ] Le cycle complet fonctionne une fois, à vitesse réduite
 - [ ] Le cycle est répété trois fois de suite sans intervention, en reposant une pièce à chaque tour
-- [ ] Le programme est enregistré dans Niryo Studio sous le nom de l'équipe (par exemple `g1e1_cycle`)
+- [ ] Le programme est enregistré dans Niryo Studio sous le nom de l'équipe (par exemple `g1_cycle`)
 
 **Si vous avez fini en avance** : faire clignoter l'anneau de LED en vert à chaque fin de cycle, compter les pièces dans une variable, alterner la dépose entre les zones A et B, arrêter le cycle si aucune pièce n'arrive au bout de 30 secondes.
 
@@ -537,7 +537,7 @@ for piece in range(1, 4):
 
 **Pourquoi découper ?** Ajouter la publication d'un message, changer de zone de dépose ou ajouter un délai maximal dans `attendre_piece` ne touchera alors qu'**une seule fonction**, sans risquer de casser le reste du cycle.
 
-**Un nom de nœud propre à l'équipe.** Le programme sera ensuite lancé sur le robot sans Niryo Studio. Remplacer dès maintenant `rospy.init_node('niryo_blockly_interpreted_code')` par un nom propre à l'équipe, par exemple `rospy.init_node('cellule_g1e1')` : Niryo Studio utilise ce nom pour ses propres programmes, et deux nœuds ROS du même nom ne peuvent pas tourner ensemble.
+**Un nom de nœud propre à l'équipe.** Le programme sera ensuite lancé sur le robot sans Niryo Studio. Remplacer dès maintenant `rospy.init_node('niryo_blockly_interpreted_code')` par un nom propre à l'équipe, par exemple `rospy.init_node('cellule_g1')` : Niryo Studio utilise ce nom pour ses propres programmes, et deux nœuds ROS du même nom ne peuvent pas tourner ensemble.
 
 ### Vérifier
 
@@ -645,7 +645,7 @@ Ces données correspondent au message que la cellule publiera plus tard, par exe
 
 | Équipe | Robot n° | Adresse IP du robot | Sens du convoyeur | État de DI5 avec pièce |
 |--------|----------|---------------------|-------------------|------------------------|
-| `g1e1` | | | FORWARD / BACKWARD | HIGH / LOW |
+| `g1` | | | FORWARD / BACKWARD | HIGH / LOW |
 
 | Variable | x | y | z | roll | pitch | yaw |
 |----------|---|---|---|------|-------|-----|
@@ -826,17 +826,17 @@ flowchart LR
 ```python
 import paho.mqtt.client as mqtt
 
-client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id="g1e1_script4")
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id="g1_script4")
 client.connect("192.168.10.10", 1883, keepalive=60)
 client.loop_start()                  # le réseau MQTT est géré en arrière-plan
-client.publish("cellule/g1e1/essai", json.dumps(message), qos=1)
+client.publish("cellule/g1/essai", json.dumps(message), qos=1)
 ```
 
 **Travail demandé**
 
 1. Se connecter au broker avec les paramètres de `config.py`.
 2. Publier chaque seconde, sur `cellule/<equipe>/essai`, un message JSON : `evenement` (`"essai"`), `numero` (compteur), `di5` (`"HIGH"` ou `"LOW"`), `horodatage`.
-3. Sur votre poste, suivre les messages : `mosquitto_sub -h 192.168.10.10 -t 'cellule/g1e1/#' -v`.
+3. Sur votre poste, suivre les messages : `mosquitto_sub -h 192.168.10.10 -t 'cellule/g1/#' -v`.
 4. Fermer proprement la connexion à l'arrêt (`loop_stop`, `disconnect`).
 
 **Vérifier**
@@ -863,7 +863,7 @@ client.publish("cellule/g1e1/essai", json.dumps(message), qos=1)
 1. S'abonner à `cellule/<equipe>/led` **dans** la fonction `on_connect` (appelée à chaque connexion).
 2. Dans `on_message`, lire la couleur reçue (`rouge`, `vert`, `bleu`) et faire clignoter l'anneau 2 secondes ; afficher « couleur inconnue » sinon.
 3. Le programme principal ne fait qu'attendre : tout se passe dans `on_message`.
-4. Depuis un poste : `mosquitto_pub -h 192.168.10.10 -t cellule/g1e1/led -m rouge`.
+4. Depuis un poste : `mosquitto_pub -h 192.168.10.10 -t cellule/g1/led -m rouge`.
 
 **Vérifier**
 

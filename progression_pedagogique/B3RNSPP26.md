@@ -122,7 +122,7 @@ gantt
 
 - Effectif inférieur à 12 : **4 équipes**, une équipe par robot (4 robots), le même robot de la séance 1 à l'évaluation.
 - Équipes de 2 ou 3, constituées à la séance 1 et conservées jusqu'à l'évaluation de mai.
-- Noms proposés (identifiant, nom) : `r1e1` Loire, `r1e2` Rhône, `r1e3` Seine, `r1e4` Garonne (voir `materiel_IRUP.md`).
+- Identifiants des équipes : `g1` à `g4` (voir `materiel_IRUP.md`).
 
 **Supports de cours** (dossier `cours/`, et `README.md` à la racine)
 
@@ -274,7 +274,7 @@ sequenceDiagram
 
 Conventions reprises des supports `cours/collecteur_MQTT.md` et `cours/SQL.md` (détail et exemples de messages dans le `README.md`, section 6) :
 
-- Topics : `cellule/<equipe>/cycle`, `cellule/<equipe>/etat` (message retenu), `cellule/<equipe>/defaut`, `cellule/<equipe>/tache` (tâches de l'API du robot), avec `<equipe>` de la forme `r1e1` dans cette classe (voir la section 6)
+- Topics : `cellule/<equipe>/cycle`, `cellule/<equipe>/etat` (message retenu), `cellule/<equipe>/defaut`, `cellule/<equipe>/tache` (tâches de l'API du robot), avec `<equipe>` de la forme `g1` dans cette classe (voir la section 6)
 - Message : `{"evenement": "fin_cycle", "piece": 12, "duree": 18.2, "zone": "A", "horodatage": "2026-11-10T09:30:18"}`
 - Tables : `messages(id, recu_le, sujet, charge, qos, retain)` (journal brut), `robots(id, nom, equipe, adresse_ip)` et `cycles(id, robot_id, debut, duree, zone, statut)` (lue par le site web)
 
@@ -643,7 +643,7 @@ Le serveur est le **NUC du fab lab**, partagé avec la classe BACHTECH24 (l'autr
 
 - **Dates d'utilisation :** séances 3 (10/11/2026), 6 à 8 (17 et 18/02/2027), 9 (24/02/2027), 10 à 12 (04 et 05/05/2027). Les séances 4 et 5 (cours en salle) n'utilisent pas le serveur. Longues périodes sans utilisation : le travail des équipes doit rester sur le disque.
 - **Réseau :** toutes les séances avec serveur se déroulent sur le réseau du fab lab (`192.168.10.0/24`, NUC en `.10`, robots en `.21` à `.24`, API sur chaque robot, port 3000, le port 5000 étant pris par le logiciel système de Niryo). SSH (22), MQTT (1883), HTTP (5003 à 5006 et 8003 à 8006) et Grafana (3000) doivent être joignables depuis les postes des étudiants.
-- **Identifiants et ports :** le NUC est partagé avec BACHTECH24. Les équipes de cette classe sont `r1e1` à `r1e4` (ports API 5003 à 5006, ports site 8003 à 8006) ; celles de BACHTECH24 sont `t1e1` et `t1e2` (ports 5001, 5002, 8001 et 8002). La classe BACHINGE24 utilise un autre serveur (le Raspberry Pi d'ISTP), avec l'adresse `192.168.10.11` les jours de séance au fab lab.
+- **Identifiants et ports :** le NUC est partagé avec BACHTECH24. Les équipes de cette classe sont `g1` à `g4` (ports API 5003 à 5006, ports site 8003 à 8006) ; celles de BACHTECH24 sont `tech1` et `tech2` (ports 5001, 5002, 8001 et 8002). La classe BACHINGE24 utilise un autre serveur (le Raspberry Pi d'ISTP), avec l'adresse `192.168.10.11` les jours de séance au fab lab.
 - **Grafana (séance 11) :** une instance unique sur le NUC (port 3000), qui lit directement la base SQLite de chaque équipe (`~/supervision/cellule.db`, adaptateur SQLite en lecture seule), et un dossier de dashboards par équipe (détails dans `BACHTECH24.md`, section 7 ; installation dans `install/install_nuc.md`).
 
 

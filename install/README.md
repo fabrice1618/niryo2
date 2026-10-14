@@ -18,7 +18,7 @@ flowchart LR
     subgraph SRV["Serveur du module (Ubuntu Server 24.04)"]
         MQ["Mosquitto :1883<br/>ouvert (sans compte),<br/>topics cellule/&lt;equipe&gt;/#"]
         PY["Python 3.12<br/>/opt/cellule/venv<br/>flask, paho-mqtt, requests"]
-        HOME["Comptes Linux g1e1…<br/>dossiers privés :<br/>collecteur, ~/supervision/cellule.db,<br/>site, API"]
+        HOME["Comptes Linux g1…<br/>dossiers privés :<br/>collecteur, ~/supervision/cellule.db,<br/>site, API"]
     end
     ROB["Robots Ned2"] -- "MQTT" --> MQ
     PC["Postes des étudiants"] -- "SSH :22" --> HOME

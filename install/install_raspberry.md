@@ -2,7 +2,7 @@
 
 Infrastructure client / serveur dans un contexte industriel
 
-Ce document décrit, pas à pas, la préparation du serveur Raspberry Pi d'ISTP : il héberge le broker MQTT et, pour chacune des 8 équipes (`g1e1` à `g2e4`), le collecteur, la base SQLite `cellule.db`, le site web et l'API simulée. Le Pi sert d'abord en salle D3.10 sur un réseau séparé, puis au fab lab, en `192.168.10.11` (le NUC de l'IRUP occupe `.10`). Le matériel et le calendrier sont dans `progression_pedagogique/materiel_ISTP.md`.
+Ce document décrit, pas à pas, la préparation du serveur Raspberry Pi d'ISTP : il héberge le broker MQTT et, pour chacune des 8 équipes (`g1` à `g8`), le collecteur, la base SQLite `cellule.db`, le site web et l'API simulée. Le Pi sert d'abord en salle D3.10 sur un réseau séparé, puis au fab lab, en `192.168.10.11` (le NUC de l'IRUP occupe `.10`). Le matériel et le calendrier sont dans `progression_pedagogique/materiel_ISTP.md`.
 
 | Composant | Rôle | Port |
 |---|---|---|
@@ -113,7 +113,7 @@ cd ~/niryo2/scripts
 sudo ./creer_comptes_equipes.sh inge        # crée comptes_inge.txt (mode 600)
 ```
 
-Le script crée les comptes `g1e1` à `g2e4` avec des mots de passe aléatoires et des dossiers personnels privés (une équipe ne lit pas les fichiers des autres). Garder `comptes_inge.txt` : il sert pour les postes de la salle D3.10 (`sudo ./creer_comptes_equipes.sh --fichier comptes_inge.txt inge`).
+Le script crée les comptes `g1` à `g8` avec des mots de passe aléatoires et des dossiers personnels privés (une équipe ne lit pas les fichiers des autres). Garder `comptes_inge.txt` : il sert pour les postes de la salle D3.10 (`sudo ./creer_comptes_equipes.sh --fichier comptes_inge.txt inge`).
 
 
 ## 5. Broker Mosquitto
@@ -189,11 +189,11 @@ python3 -c "import flask, paho.mqtt, requests; print('ok')"   # depuis un compte
 
 # MQTT : sans compte, le message publié est reçu par l'abonné
 mosquitto_sub -h localhost -t 'cellule/#' -v &
-mosquitto_pub -h localhost -t cellule/g1e1/etat -m '{"etat": "essai"}'      # s'affiche
+mosquitto_pub -h localhost -t cellule/g1/etat -m '{"etat": "essai"}'      # s'affiche
 ```
 
 - [ ] Connexion SSH avec un compte d'équipe, depuis un poste Linux de la salle et depuis un laptop
-- [ ] Une équipe ne peut pas lire le dossier d'une autre (`ls /home/g1e2` refusé)
+- [ ] Une équipe ne peut pas lire le dossier d'une autre (`ls /home/g2` refusé)
 - [ ] Le site Flask d'une équipe de test s'ouvre depuis un laptop (`flask run --host 0.0.0.0 --port 8001`)
 - [ ] **Essai de charge** : 8 simulateurs, 8 collecteurs et 16 serveurs Flask lancés ensemble, plusieurs connexions VS Code Remote SSH ; surveiller la mémoire et la température avec `htop` et `vcgencmd measure_temp`
 - [ ] Redémarrage complet : Mosquitto et SSH repartent seuls, l'heure est juste
@@ -212,7 +212,7 @@ mosquitto_pub -h localhost -t cellule/g1e1/etat -m '{"etat": "essai"}'      # s'
 - **Après chaque séance**, collecteurs arrêtés (une base copiée pendant une écriture peut être incohérente), copie du travail des équipes :
 
   ```bash
-  sudo tar czf ~/sauvegarde_$(date +%F).tgz /home/g?e? /etc/mosquitto
+  sudo tar czf ~/sauvegarde_$(date +%F).tgz /home/g[1-8] /etc/mosquitto
   ```
 
 - **Remise à zéro** en fin de module : réécrire l'image du SSD, ou supprimer les comptes (`sudo ./creer_comptes_equipes.sh --supprimer inge`).

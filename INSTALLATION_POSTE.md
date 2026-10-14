@@ -58,7 +58,7 @@ Ouvrir le dossier du projet : *Fichier > Ouvrir le dossier*, choisir le dossier 
 Le serveur n'est joignable que depuis **le réseau du module** (salle de cours ou fab lab), pas depuis chez soi. L'enseignant remet à chaque équipe :
 
 - l'**adresse du serveur** : au fab lab, `192.168.10.10` (NUC de l'IRUP) ou `192.168.10.11` (Raspberry Pi d'ISTP) ;
-- l'**identifiant** de l'équipe (`g1e1`, `t1e2`, `r1e3`...) et son **mot de passe**, les mêmes pour SSH et pour la copie de fichiers.
+- l'**identifiant** de l'équipe (`g1`, `tech2`, `g3`...) et son **mot de passe**, les mêmes pour SSH et pour la copie de fichiers.
 
 Le client SSH est déjà dans Windows 10 et 11. Vérifier dans PowerShell :
 
@@ -69,14 +69,14 @@ ssh -V
 S'il est absent : *Paramètres > Applications > Fonctionnalités facultatives > Ajouter une fonctionnalité > Client OpenSSH*. Puis se connecter :
 
 ```powershell
-ssh g1e1@192.168.10.10
+ssh g1@192.168.10.10
 ```
 
 - À la première connexion, SSH demande de confirmer l'identité du serveur : répondre `yes`.
 - Le mot de passe **ne s'affiche pas pendant la saisie** (pas d'étoiles) : c'est normal, taper puis valider.
 - On arrive dans le dossier personnel de l'équipe (`~`). `exit` ferme la connexion.
 
-**Variante : travailler directement sur le serveur avec VS Code.** Avec l'extension Remote - SSH : `F1`, « Remote-SSH: Connect to Host... », `g1e1@192.168.10.10`, puis *Ouvrir le dossier* `~/supervision`. Les fichiers se modifient sur le serveur, sans copie. Attention : à la première connexion, VS Code installe un composant sur le serveur, ce qui demande un **accès Internet du serveur**. Sans Internet, développer sur son poste et copier avec WinSCP.
+**Variante : travailler directement sur le serveur avec VS Code.** Avec l'extension Remote - SSH : `F1`, « Remote-SSH: Connect to Host... », `g1@192.168.10.10`, puis *Ouvrir le dossier* `~/supervision`. Les fichiers se modifient sur le serveur, sans copie. Attention : à la première connexion, VS Code installe un composant sur le serveur, ce qui demande un **accès Internet du serveur**. Sans Internet, développer sur son poste et copier avec WinSCP.
 
 ## 5. Copier ses fichiers vers le serveur : WinSCP
 
@@ -87,7 +87,7 @@ Dans WinSCP, fenêtre « Connexion » :
 | Protocole | SFTP |
 | Nom d'hôte | L'adresse du serveur (`192.168.10.10`) |
 | Numéro de port | 22 |
-| Nom d'utilisateur | L'identifiant de l'équipe (`g1e1`) |
+| Nom d'utilisateur | L'identifiant de l'équipe (`g1`) |
 | Mot de passe | Celui de l'équipe |
 
 *Enregistrer* garde la session pour la prochaine fois. À la première connexion, WinSCP demande de confirmer la clé du serveur : *Oui*.
@@ -112,8 +112,8 @@ Ce qu'il faut copier, dans le dossier `supervision` du serveur (à créer s'il n
 La même copie en ligne de commande, depuis le dossier du projet :
 
 ```powershell
-scp collecteur/creer_bdd.py collecteur/collecteur.py site_web/supervision.py g1e1@192.168.10.10:~/supervision/
-scp -r site_web/templates site_web/static g1e1@192.168.10.10:~/supervision/
+scp collecteur/creer_bdd.py collecteur/collecteur.py site_web/supervision.py g1@192.168.10.10:~/supervision/
+scp -r site_web/templates site_web/static g1@192.168.10.10:~/supervision/
 ```
 
 ## 6. Voir la base de données : DB Browser for SQLite
@@ -139,7 +139,7 @@ Créer une connexion (bouton **+**) :
 | Port | 1883 | 1883 |
 | Username, Password | **Vides** : pas de compte | **Vides** |
 
-Cliquer sur **Connect** : les sujets (`cellule/g1e1/cycle`, `etat`, `defaut`, `tache`) apparaissent dans l'arbre à gauche au fur et à mesure des messages, avec leur contenu à droite. Pour publier un message à la main, utiliser le panneau *Publish* en bas à droite : sujet, contenu JSON, puis *Publish*.
+Cliquer sur **Connect** : les sujets (`cellule/g1/cycle`, `etat`, `defaut`, `tache`) apparaissent dans l'arbre à gauche au fur et à mesure des messages, avec leur contenu à droite. Pour publier un message à la main, utiliser le panneau *Publish* en bas à droite : sujet, contenu JSON, puis *Publish*.
 
 Sur le broker du serveur (ou le broker public), tout le monde voit les sujets des autres équipes : repérer le sien (`cellule/<identifiant>/...`).
 
