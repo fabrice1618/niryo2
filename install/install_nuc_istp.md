@@ -74,53 +74,22 @@ Sur les postes Windows des étudiants, les installateurs sont sur <https://dbeav
 
 Le serveur a toujours la même adresse fixe, `192.168.1.2`, au fab lab comme en salle D3.10. Ubuntu Desktop gère le réseau avec NetworkManager : on crée un profil de connexion par situation, puis une commande qui active le bon.
 
+Les scripts de ce document sont dans le dépôt du cours, copié sur le NUC dans `~/niryo2` (ou seulement son dossier `scripts/`). Le script `scripts/istp_reseau.sh` crée les trois profils (`cellule-fablab`, `cellule-salle` et `cellule-dhcp`, adresse fixe `192.168.1.2/24` pour les deux premiers) et installe la commande `profil-reseau`. Il détecte lui-même l'interface Ethernet du NUC et peut être relancé sans risque (un profil existant n'est pas recréé ; la configuration de dnsmasq, en revanche, est réécrite).
+
+| Profil | Adresse | Routeur et DNS |
+|---|---|---|
+| `fablab` | `192.168.1.2/24` | `192.168.1.1`, le routeur du fab lab |
+| `salle` | `192.168.1.2/24` | aucun (le NUC y est le serveur DHCP, voir plus bas) |
+| `dhcp` | donnée par la box | celle de la box (préparation à la maison ou en cas de doute) |
+
 ```bash
-# Nom de l'interface Ethernet du NUC (par exemple enp3s0) : à vérifier avant de continuer
-IFACE=$(ip -br link | awk '$1 ~ /^e/ {print $1; exit}')
-echo "$IFACE"
-
-# Fab lab : adresse fixe, routeur du fab lab
-sudo nmcli connection add type ethernet ifname "$IFACE" con-name cellule-fablab autoconnect no \
-    ipv4.method manual ipv4.addresses 192.168.1.2/24 ipv4.gateway 192.168.1.1 ipv4.dns 192.168.1.1
-
-# Salle D3.10 : même adresse, sans routeur (le NUC y est le serveur DHCP, voir plus bas)
-sudo nmcli connection add type ethernet ifname "$IFACE" con-name cellule-salle autoconnect no \
-    ipv4.method manual ipv4.addresses 192.168.1.2/24
-
-# Préparation à la maison ou en cas de doute : adresse donnée par la box (DHCP)
-sudo nmcli connection add type ethernet ifname "$IFACE" con-name cellule-dhcp autoconnect no \
-    ipv4.method auto
+cd ~/niryo2/scripts
+sudo ./istp_reseau.sh
 ```
 
 Dans la salle, l'adresse reste à confirmer avec ISTP. Si ISTP fournit un routeur vers Internet, l'ajouter au profil : `sudo nmcli connection modify cellule-salle ipv4.gateway <routeur> ipv4.dns <routeur>`. Pour voir les profils : `nmcli connection show`.
 
-Une petite commande change de profil :
-
-```bash
-sudo tee /usr/local/sbin/profil-reseau >/dev/null <<'EOF'
-#!/bin/bash
-# Usage : sudo profil-reseau fablab|salle|dhcp
-set -e
-profil="cellule-$1"
-nmcli -g NAME connection show | grep -qx "$profil" || { echo "Profils : fablab salle dhcp"; exit 1; }
-# Au prochain démarrage du NUC, seul le profil choisi démarre
-nmcli -g NAME,TYPE connection show | awk -F: '$2=="802-3-ethernet" {print $1}' | while read -r c; do
-    nmcli connection modify "$c" connection.autoconnect no
-done
-nmcli connection modify "$profil" connection.autoconnect yes
-nmcli connection up "$profil"
-# Serveur DHCP (voir plus bas) : démarré seulement dans le profil salle
-if [ "$1" = salle ]; then
-    systemctl enable dnsmasq
-    systemctl restart dnsmasq
-else
-    systemctl disable --now dnsmasq
-fi
-ip -4 -br addr show scope global
-echo "dnsmasq : $(systemctl is-active dnsmasq)"
-EOF
-sudo chmod 755 /usr/local/sbin/profil-reseau
-```
+La commande `profil-reseau` (installée par le script ci-dessus, source `scripts/istp_profil_reseau.sh`) change de profil : elle n'active au prochain démarrage que le profil choisi, le met en route, et démarre ou arrête le serveur DHCP.
 
 `sudo profil-reseau fablab` au fab lab, `sudo profil-reseau salle` en salle D3.10 (c'est le seul profil qui démarre le serveur DHCP). Attention : en SSH, la connexion est coupée si l'adresse change ; garder un écran et un clavier à portée de main.
 
@@ -131,26 +100,7 @@ Sur le réseau séparé de la salle, le NUC distribue lui-même les adresses aux
 
 **Règle : un seul serveur DHCP par réseau.** Si le réseau de la salle a déjà son DHCP (routeur d'ISTP), ne pas démarrer celui du NUC. Au fab lab, le routeur de l'IRUP distribue déjà les adresses : le serveur du NUC doit y être arrêté, sinon les postes reçoivent des adresses de deux serveurs.
 
-```bash
-IFACE=$(ip -br link | awk '$1 ~ /^e/ {print $1; exit}')     # même interface qu'au-dessus
-
-sudo tee /etc/dnsmasq.d/cellule.conf >/dev/null <<EOF
-# DHCP seul : port=0 désactive la partie DNS (le port 53 est pris par systemd-resolved)
-port=0
-interface=$IFACE
-bind-dynamic
-dhcp-authoritative
-dhcp-range=192.168.1.100,192.168.1.199,255.255.255.0,12h
-# Ni passerelle ni DNS envoyés aux postes : la salle n'a pas forcément d'accès à Internet.
-# S'il y a un routeur, remplacer ces deux lignes par :
-#   dhcp-option=option:router,192.168.1.1
-#   dhcp-option=option:dns-server,192.168.1.1
-dhcp-option=3
-dhcp-option=6
-EOF
-
-sudo dnsmasq --test             # "syntax check OK"
-```
+La configuration de dnsmasq (`/etc/dnsmasq.d/cellule.conf`) est écrite par `scripts/istp_reseau.sh` : DHCP seul (`port=0`, le port 53 est pris par `systemd-resolved`), plage `192.168.1.100` à `192.168.1.199`, bail de 12 h. Ni passerelle ni DNS ne sont envoyés aux postes, car la salle n'a pas forcément d'accès à Internet. S'il y a un routeur, remplacer dans ce fichier les lignes `dhcp-option=3` et `dhcp-option=6` par `dhcp-option=option:router,192.168.1.1` et `dhcp-option=option:dns-server,192.168.1.1`, puis `sudo systemctl restart dnsmasq`. Le script vérifie la syntaxe (`dnsmasq --test`, réponse « syntax check OK »).
 
 Le NUC doit avoir son adresse fixe `192.168.1.2` (profil `salle`) : sans une adresse dans le réseau `192.168.1.0/24`, dnsmasq n'a aucune plage à distribuer sur l'interface.
 
@@ -189,14 +139,11 @@ Le script crée les comptes `g1` à `g8` avec des mots de passe aléatoires et d
 Le broker est **ouvert** : pas de compte, pas de mot de passe, pas de droits par sujet. Il n'est joignable que sur le réseau local du module. Chaque équipe publie sous `cellule/<son identifiant>/` : c'est une **convention**, que le broker ne vérifie pas.
 
 ```bash
-sudo tee /etc/mosquitto/conf.d/cellule.conf >/dev/null <<'EOF'
-listener 1883 0.0.0.0
-allow_anonymous true
-EOF
-
-sudo systemctl enable mosquitto
-sudo systemctl restart mosquitto
+cd ~/niryo2/scripts
+sudo ./nuc_mosquitto.sh
 ```
+
+Le script écrit `/etc/mosquitto/conf.d/cellule.conf` (écoute sur le port 1883, accès anonyme), puis active et redémarre Mosquitto.
 
 Limite connue : une équipe peut lire et écrire les topics d'une autre (identifiant mal recopié, curiosité). Deux clients MQTT de même nom, par exemple deux collecteurs lancés avec le même `EQUIPE`, se déconnectent l'un l'autre : en cas de messages qui manquent, vérifier d'abord que chaque équipe a son propre identifiant.
 
@@ -208,13 +155,11 @@ Le robot d'une équipe, ses simulateurs et son collecteur utilisent le même ide
 Ubuntu 24.04 interdit `pip install` dans le Python du système. On crée un environnement commun, en tête du `PATH` de tous les comptes : `python3` et `pip` désignent alors cet environnement, sans `source` ni `activate`.
 
 ```bash
-sudo python3 -m venv /opt/cellule/venv
-sudo /opt/cellule/venv/bin/pip install flask paho-mqtt requests
-echo 'export PATH=/opt/cellule/venv/bin:$PATH' | sudo tee /etc/profile.d/cellule.sh
-
-# Copie des paquets pour une réinstallation sans Internet
-sudo /opt/cellule/venv/bin/pip download -d /opt/cellule/paquets flask paho-mqtt requests
+cd ~/niryo2/scripts
+sudo ./nuc_python.sh
 ```
+
+Le script crée `/opt/cellule/venv` avec Flask, paho-mqtt et requests, le place en tête du `PATH` (`/etc/profile.d/cellule.sh`) et copie les paquets dans `/opt/cellule/paquets` pour une réinstallation sans Internet. Internet est nécessaire pendant son exécution.
 
 Une équipe qui veut une bibliothèque de plus l'installe pour elle seule : `pip install --user nom` (dans `~/.local`). Les paquets de `/opt/cellule/venv` ne sont modifiables que par `prof`.
 
@@ -226,10 +171,9 @@ Une équipe qui veut une bibliothèque de plus l'installe pour elle seule : `pip
 Les briques remises à la séance 2 sont aussi déposées sur le serveur, en lecture pour tous : les simulateurs (`simulateurs/`), le collecteur et le script de création de la base (`collecteur/`), la base du tableau de bord (`site_web/`) et l'API du robot (`api_robot/`), copiés depuis ce dépôt (cloné dans `~/niryo2`), ainsi que les autres fournitures de la séance (squelette de l'API CQRS en mode simulé, gabarits) :
 
 ```bash
-sudo mkdir -p /opt/cellule/fournitures
-sudo cp -r ~/niryo2/{simulateurs,collecteur,site_web,api_robot} /opt/cellule/fournitures/
-sudo cp -r ~/fournitures/* /opt/cellule/fournitures/      # autres fournitures, s'il y en a
-sudo chmod -R a+rX /opt/cellule/fournitures
+cd ~/niryo2/scripts
+sudo ./nuc_fournitures.sh                       # les quatre briques du dépôt
+sudo ./nuc_fournitures.sh ~/fournitures         # idem, avec un dossier d'autres fournitures
 ```
 
 Chaque équipe copie ce dont elle a besoin dans son dossier, en suivant le `README.md` de chaque brique : collecteur et site dans `~/supervision/` (`cp /opt/cellule/fournitures/collecteur/*.py ~/supervision/`, `cp -r /opt/cellule/fournitures/site_web/* ~/supervision/`), simulateurs dans le dossier personnel, avec ses ports : API simulée `5000 + n`, site `8000 + n`, où `n` est le numéro de l'équipe (1 à 8).
@@ -240,13 +184,11 @@ Chaque équipe copie ce dont elle a besoin dans son dossier, en suivant le `READ
 Sur le réseau séparé de la salle et au fab lab, le pare-feu peut rester désactivé. Pour l'activer :
 
 ```bash
-sudo ufw allow 22/tcp
-sudo ufw allow 1883/tcp
-sudo ufw allow 67/udp           # serveur DHCP (salle D3.10)
-sudo ufw allow 5001:5008/tcp
-sudo ufw allow 8001:8008/tcp
-sudo ufw enable
+cd ~/niryo2/scripts
+sudo ./istp_pare_feu.sh
 ```
+
+Le script ouvre 22 (SSH), 1883 (MQTT), 67/udp (serveur DHCP de la salle), 5001 à 5008 (API simulées) et 8001 à 8008 (sites), puis active le pare-feu.
 
 
 ## 9. Vérifications

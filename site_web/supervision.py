@@ -6,7 +6,7 @@
     /commande/...      une route par bouton : envoie la commande à l'API du robot
 
 Lancement, dans le dossier du site : python3 supervision.py
-Puis ouvrir http://192.168.1.10:8001 depuis un poste (http://127.0.0.1:8001 sur son poste)
+Puis ouvrir http://192.168.1.2:8001 depuis un poste (http://127.0.0.1:8001 sur son poste)
 """
 import sqlite3
 from datetime import datetime

@@ -176,7 +176,7 @@ url_for("cycles", zone="A", limite=20)     # → "/cycles?zone=A&limite=20"
 - Le paramètre `_external` peut être mis à `True` pour générer une URL absolue :
 
 ```python
-url_for("accueil", _external=True)     # → "http://192.168.1.10:8001/"
+url_for("accueil", _external=True)     # → "http://192.168.1.2:8001/"
 ```
 
 `url_for` ne fonctionne que pendant le traitement d'une requête (dans une vue ou un template) ; pour l'essayer dans la console Python, utilisez `with app.test_request_context(): print(url_for("accueil"))`.

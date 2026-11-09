@@ -45,7 +45,7 @@ Précautions, car un broker public est partagé avec le monde entier :
 - **Les messages retenus restent** sur le broker (état du robot) : ne pas s'étonner d'en recevoir d'anciens.
 - **Aucune garantie** : le broker peut être lent, saturé ou arrêté, et le réseau de l'établissement peut bloquer le port 1883. Les mesures de charge (rafale) n'y ont pas de sens.
 
-Pour les séances, revenir au broker du module : `EQUIPE` sans suffixe, `BROKER = "192.168.1.10"` (ou `"localhost"` sur le serveur).
+Pour les séances, revenir au broker du module : `EQUIPE` sans suffixe, `BROKER = "192.168.1.2"` (ou `"localhost"` sur le serveur).
 
 
 ## Simulateur MQTT

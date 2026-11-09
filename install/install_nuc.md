@@ -57,29 +57,16 @@ Le NUC a une horloge sauvegardée : sans Internet au fab lab, il garde l'heure. 
 
 ## 3. Réseau : adresse fixe
 
-Repérer le nom de l'interface Ethernet (`ip link`, par exemple `enp86s0`), puis :
+Les scripts de ce document sont dans le dépôt du cours, copié sur le NUC dans `~/niryo2` (ou seulement son dossier `scripts/`).
 
 ```bash
-echo "network: {config: disabled}" | sudo tee /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
-sudo rm -f /etc/netplan/*.yaml
-sudo tee /etc/netplan/50-cellule.yaml >/dev/null <<'EOF'
-network:
-  version: 2
-  ethernets:
-    enp86s0:
-      dhcp4: false
-      addresses: [192.168.1.10/24]
-      routes:
-        - to: default
-          via: 192.168.1.1
-      nameservers:
-        addresses: [192.168.1.1]
-EOF
-sudo chmod 600 /etc/netplan/50-cellule.yaml
-sudo netplan apply
+cd ~/niryo2/scripts
+sudo ./irup_reseau.sh
 ```
 
-Pendant la préparation hors du fab lab, remplacer le contenu par `dhcp4: true`.
+Le script détecte l'interface Ethernet, écrit `/etc/netplan/50-cellule.yaml` (adresse fixe `192.168.1.2/24`, routeur et DNS `192.168.1.1`) et applique la configuration. En SSH, la connexion est coupée puisque l'adresse change : garder un écran et un clavier à portée de main.
+
+Pendant la préparation hors du fab lab, lancer `sudo ./irup_reseau.sh dhcp` : l'adresse est alors donnée par la box.
 
 
 ## 4. Comptes des équipes
@@ -97,14 +84,11 @@ Les comptes `tech1`, `tech2` et `g1` à `g4` ont des dossiers privés. Le même 
 Le broker est **ouvert** : pas de compte, pas de mot de passe, pas de droits par sujet. Il n'est joignable que sur le réseau local du module. Chaque équipe publie sous `cellule/<son identifiant>/` : c'est une **convention**, que le broker ne vérifie pas.
 
 ```bash
-sudo tee /etc/mosquitto/conf.d/cellule.conf >/dev/null <<'EOF'
-listener 1883 0.0.0.0
-allow_anonymous true
-EOF
-
-sudo systemctl enable mosquitto
-sudo systemctl restart mosquitto
+cd ~/niryo2/scripts
+sudo ./nuc_mosquitto.sh
 ```
+
+Le script écrit `/etc/mosquitto/conf.d/cellule.conf` (écoute sur le port 1883, accès anonyme), puis active et redémarre Mosquitto.
 
 Limite connue : une équipe peut lire et écrire les topics d'une autre (identifiant mal recopié, curiosité). Deux clients MQTT de même nom, par exemple deux collecteurs lancés avec le même `EQUIPE`, se déconnectent l'un l'autre : en cas de messages qui manquent, vérifier d'abord que chaque équipe a son propre identifiant.
 
@@ -112,13 +96,13 @@ Limite connue : une équipe peut lire et écrire les topics d'une autre (identif
 ## 6. Python : un environnement commun
 
 ```bash
-sudo python3 -m venv /opt/cellule/venv
-sudo /opt/cellule/venv/bin/pip install flask paho-mqtt requests
-echo 'export PATH=/opt/cellule/venv/bin:$PATH' | sudo tee /etc/profile.d/cellule.sh
-sudo /opt/cellule/venv/bin/pip download -d /opt/cellule/paquets flask paho-mqtt requests
+cd ~/niryo2/scripts
+sudo ./nuc_python.sh
 ```
 
-Les briques fournies aux équipes se déposent dans `/opt/cellule/fournitures`, comme sur le NUC d'ISTP (section 7 de `install_nuc_istp.md`).
+Le script crée `/opt/cellule/venv` avec Flask, paho-mqtt et requests, le place en tête du `PATH` et copie les paquets dans `/opt/cellule/paquets` pour une réinstallation sans Internet.
+
+Les briques fournies aux équipes se déposent dans `/opt/cellule/fournitures` avec `sudo ./nuc_fournitures.sh`, comme sur le NUC d'ISTP (section 7 de `install_nuc_istp.md`).
 
 
 ## 7. Grafana et l'adaptateur SQLite
@@ -128,13 +112,8 @@ Les briques fournies aux équipes se déposent dans `/opt/cellule/fournitures`, 
 Grafana vient du dépôt officiel de Grafana Labs. L'adaptateur SQLite, un plugin communautaire, s'installe ensuite avec la commande `grafana cli` :
 
 ```bash
-sudo apt install -y apt-transport-https wget gnupg
-sudo mkdir -p /etc/apt/keyrings
-wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg >/dev/null
-echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" \
-    | sudo tee /etc/apt/sources.list.d/grafana.list
-sudo apt update && sudo apt install -y grafana
-sudo grafana cli plugins install frser-sqlite-datasource
+cd ~/niryo2/scripts
+sudo ./irup_grafana_installer.sh
 ```
 
 Versions essayées : Grafana 13.2 et adaptateur 4.0. L'adaptateur n'est pas maintenu par Grafana Labs : avant une mise à jour de Grafana, vérifier sur sa page (grafana.com, « SQLite » dans les plugins) qu'il reste compatible.
@@ -168,17 +147,14 @@ Les deux dernières options évitent que Grafana cherche Internet pendant les s�
 Chaque équipe range sa base à un emplacement fixe, celui de la structure de projet du cours de Flask : `~/supervision/cellule.db`, où son collecteur écrit et où son site web lit. Grafana tourne sous le compte système `grafana`, alors que les dossiers des équipes sont privés (mode 700). Des ACL lui donnent le strict nécessaire : traverser les dossiers jusqu'à la base et la lire.
 
 ```bash
-grep -v '^#' ~/niryo2/scripts/comptes_irup.txt | while IFS=: read -r equipe mdp; do
-    sudo -u "$equipe" mkdir -p "/home/$equipe/supervision"
-    # traverser le dossier personnel et supervision/, sans pouvoir en lister le contenu
-    sudo setfacl -m u:grafana:x "/home/$equipe" "/home/$equipe/supervision"
-    # lire les fichiers créés ensuite dans supervision/, dont cellule.db
-    sudo setfacl -d -m u:grafana:r "/home/$equipe/supervision"
-done
+cd ~/niryo2/scripts
+sudo ./irup_grafana_acl.sh
 ```
 
+Le script lit `comptes_irup.txt` (créé à la section 4) et, pour chaque équipe, crée `~/supervision` si besoin puis donne l'ACL à Grafana.
+
 - Les autres équipes n'ont toujours aucun accès au dossier : `ls /home/g1` reste refusé.
-- L'ACL par défaut ne vaut que pour les fichiers créés **après** elle. Pour une base qui existait déjà : `sudo setfacl -m u:grafana:r /home/g1/supervision/cellule.db`. Si une équipe supprime et recrée son dossier `supervision`, relancer la boucle.
+- L'ACL par défaut ne vaut que pour les fichiers créés **après** elle. Pour une base qui existait déjà : `sudo setfacl -m u:grafana:r /home/g1/supervision/cellule.db`. Si une équipe supprime et recrée son dossier `supervision`, relancer le script, qui traite aussi une base déjà existante.
 - Aucun réglage n'est demandé aux équipes, pas même le mode WAL : Grafana ouvre la base en lecture seule et, si le collecteur est en train d'écrire un lot, attend qu'il ait fini (section 7.4). Les écritures du collecteur, par lots courts, ne sont pas gênées.
 
 ### 7.4 Une source de données par équipe
@@ -186,25 +162,11 @@ done
 Les sources de données sont déclarées dans un fichier (« provisioning ») : elles sont recréées à chaque démarrage, à l'identique.
 
 ```bash
-{
-echo "apiVersion: 1"
-echo "datasources:"
-grep -v '^#' ~/niryo2/scripts/comptes_irup.txt | while IFS=: read -r equipe mdp; do
-cat <<EOF
-  - name: SQLite ${equipe}
-    uid: sqlite-${equipe}
-    type: frser-sqlite-datasource
-    jsonData:
-      path: /home/${equipe}/supervision/cellule.db
-      pathPrefix: "file:"
-      pathOptions: "mode=ro&_pragma=query_only(1)&_pragma=busy_timeout(5000)"
-EOF
-done
-} | sudo tee /etc/grafana/provisioning/datasources/cellule.yaml >/dev/null
-
-sudo systemctl enable grafana-server
-sudo systemctl restart grafana-server
+cd ~/niryo2/scripts
+sudo ./irup_grafana_sources.sh
 ```
+
+Le script écrit `/etc/grafana/provisioning/datasources/cellule.yaml` (une source `SQLite <equipe>` par ligne de `comptes_irup.txt`), active Grafana au démarrage et le redémarre.
 
 Les options du chemin protègent la base de l'équipe :
 
@@ -219,50 +181,28 @@ Tant que le collecteur d'une équipe n'a pas créé sa base, sa source de donné
 Chaque équipe a un compte Grafana (mêmes identifiant et mot de passe) et un dossier de dashboards où elle seule peut écrire. Le compte est créé avec le rôle « Viewer » : l'équipe ne modifie que son dossier.
 
 ```bash
-GF="http://admin:MOT_DE_PASSE_ADMIN_GRAFANA@localhost:3000"
-JSON="Content-Type: application/json"
-grep -v '^#' ~/niryo2/scripts/comptes_irup.txt | while IFS=: read -r equipe mdp; do
-    curl -s -X POST -H "$JSON" "$GF/api/admin/users" \
-         -d "{\"name\":\"${equipe}\",\"login\":\"${equipe}\",\"password\":\"${mdp}\"}"; echo
-    curl -s -X POST -H "$JSON" "$GF/api/folders" \
-         -d "{\"uid\":\"${equipe}\",\"title\":\"Équipe ${equipe}\"}"; echo
-    id=$(curl -s "$GF/api/users/lookup?loginOrEmail=${equipe}" | python3 -c 'import json,sys; print(json.load(sys.stdin)["id"])')
-    # remplace les droits par défaut : l'équipe modifie, l'administrateur gère, les autres ne voient pas
-    curl -s -X POST -H "$JSON" "$GF/api/folders/${equipe}/permissions" \
-         -d "{\"items\":[{\"userId\":${id},\"permission\":2},{\"role\":\"Admin\",\"permission\":4}]}"; echo
-done
+cd ~/niryo2/scripts
+./irup_grafana_comptes.sh          # demande le mot de passe de l'administrateur Grafana
 ```
+
+Le script crée, pour chaque équipe, le compte et le dossier « Équipe <equipe> », puis remplace les droits du dossier : l'équipe modifie, l'administrateur gère, les autres ne voient pas.
 
 Limite de la version gratuite de Grafana : toutes les sources de données sont visibles de toutes les équipes (les droits par source de données sont réservés à la version Enterprise). Chaque équipe doit choisir **sa** source `SQLite <equipe>` dans ses panneaux.
 
 ### 7.6 Données d'essai
 
-Pour tester Grafana avant les vrais cycles, remplir la base d'une équipe de test avec 500 cycles fictifs, un par minute. La commande est lancée avec le compte de l'équipe, à qui la base appartient ; les tables sont celles du cours de SQL.
+Pour tester Grafana avant les vrais cycles, remplir la base d'une équipe de test avec 500 cycles fictifs, un par minute. Le script écrit dans la base avec le compte de l'équipe (argument : son identifiant, `g1` par défaut), à qui la base appartient ; les tables sont celles du cours de SQL.
 
 ```bash
-sudo -u g1 sqlite3 /home/g1/supervision/cellule.db <<'SQL'
-CREATE TABLE IF NOT EXISTS robots (
-    id INTEGER PRIMARY KEY, nom TEXT NOT NULL UNIQUE,
-    equipe TEXT NOT NULL, adresse_ip TEXT);
-CREATE TABLE IF NOT EXISTS cycles (
-    id INTEGER PRIMARY KEY, robot_id INTEGER NOT NULL REFERENCES robots(id),
-    debut TEXT NOT NULL, duree REAL NOT NULL, zone TEXT, statut TEXT NOT NULL DEFAULT 'ok');
-INSERT INTO robots (nom, equipe, adresse_ip) VALUES ('robot1', 'g1', '192.168.1.21');
-WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < 500)
-INSERT INTO cycles (robot_id, debut, duree, zone, statut)
-SELECT 1, strftime('%Y-%m-%dT%H:%M:%S', 'now', 'localtime', -i || ' minutes'),
-       round(15 + abs(random() % 60) / 10.0, 1),
-       CASE WHEN i % 2 = 0 THEN 'A' ELSE 'B' END,
-       CASE WHEN abs(random() % 100) < 5 THEN 'defaut' ELSE 'ok' END
-FROM n;
-SQL
+cd ~/niryo2/scripts
+sudo ./irup_grafana_donnees_essai.sh g1
 ```
 
 Comme dans le collecteur, `debut` est l'heure locale posée par le robot, sans fuseau (`2026-11-17T08:30:18`). Effacer la base d'essai ensuite (le collecteur la recrée) : `sudo -u g1 rm /home/g1/supervision/cellule.db`.
 
 ### 7.7 Panneau d'essai
 
-Se connecter à `http://192.168.1.10:3000` avec le compte `g1`, créer un dashboard dans le dossier « Équipe g1 », un panneau « Time series » sur la source `SQLite g1`, avec la requête :
+Se connecter à `http://192.168.1.2:3000` avec le compte `g1`, créer un dashboard dans le dossier « Équipe g1 », un panneau « Time series » sur la source `SQLite g1`, avec la requête :
 
 ```sql
 SELECT unixepoch(debut, 'utc') AS time, duree AS "durée (s)"
@@ -294,7 +234,7 @@ sudo -u g2 ls /home/g1                                   # refusé : dossier d'u
 - [ ] Collecteur d'une équipe de test en marche : ses nouveaux cycles apparaissent dans Grafana (rafraîchissement toutes les 5 s), sans erreur « database is locked » ni côté collecteur ni côté Grafana
 - [ ] Redémarrage complet : les trois services repartent seuls
 - [ ] Mémoire disponible avec Grafana et 6 équipes actives (`htop`)
-- [ ] Le robot publie sur le broker du NUC : `~/cellule/lancer.sh ~/cellule/test.py --broker 192.168.1.10` sur le robot
+- [ ] Le robot publie sur le broker du NUC : `~/cellule/lancer.sh ~/cellule/test.py --broker 192.168.1.2` sur le robot
 
 
 ## 9. Sauvegarde et restauration

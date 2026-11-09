@@ -132,12 +132,11 @@ Plan d'adressage du fab lab (réseau `192.168.1.0/24`), à configurer sur le rou
 | Élément | Adresse |
 |---------|---------|
 | Routeur (passerelle) | `192.168.1.1` |
-| NUC de l'IRUP (serveur résident) | `192.168.1.10` |
-| NUC d'ISTP (visiteur, quelques séances) | `192.168.1.2` |
+| Serveur du module (NUC de l'IRUP, ou NUC d'ISTP les jours où il vient) | `192.168.1.2` |
 | Robots Ned2 | `192.168.1.21` à `192.168.1.24` |
 | Postes des étudiants (DHCP) | `192.168.1.100` à `192.168.1.199` |
 
-Le NUC de l'IRUP et le NUC d'ISTP ne doivent jamais avoir la même adresse : le NUC de l'IRUP reste branché en permanence sur le réseau du fab lab, où celui d'ISTP vient les 17/11 et 19/11/2026 (la séance 1 du 12/10 se fait sans serveur).
+Le NUC de l'IRUP et le NUC d'ISTP ont la même adresse, `192.168.1.2` : ils ne doivent jamais être branchés en même temps sur le réseau du fab lab. Les 17/11 et 19/11/2026, jours où celui d'ISTP vient, le NUC de l'IRUP est débranché (la séance 1 du 12/10 se fait sans serveur).
 
 | Service | Port | Machine |
 |---------|------|---------|
@@ -157,7 +156,7 @@ L'heure du NUC doit être correcte (horodatage des cycles). Elle est réglée pa
 
 Contenu du disque :
 
-- Ubuntu Server 24.04 LTS avec SSH, adresse IP fixe `192.168.1.10` (procédure complète dans `install/install_nuc.md`)
+- Ubuntu Server 24.04 LTS avec SSH, adresse IP fixe `192.168.1.2` (procédure complète dans `install/install_nuc.md`)
 - Mosquitto ouvert (sans compte) : chaque équipe publie sous `cellule/<equipe>/`
 - Python 3, paquets du projet (`paho-mqtt`, `flask`, `requests`) installés à l'avance, ainsi qu'un dépôt local de paquets pour une installation hors ligne (`package_nuc/` de l'an dernier)
 - SQLite (bibliothèque et outil en ligne de commande) : base `~/supervision/cellule.db` de chaque équipe, lue par son site web et par Grafana
@@ -212,7 +211,7 @@ Préparation et tests :
 ### 5.5 Répétition
 
 - [ ] **Avant la séance 3 de BACHTECH24 (ven. 06/11/2026)** : répétition complète au fab lab avec un laptop : connexion SSH, publication MQTT, collecteur, site web
-- [ ] **Avant la séance 9 de B3RNSPP26 et la séance 8 de BACHTECH24** : essai du robot réel publiant sur le broker du NUC (`~/cellule/lancer.sh ~/cellule/test.py --broker 192.168.1.10` sur chaque robot)
+- [ ] **Avant la séance 9 de B3RNSPP26 et la séance 8 de BACHTECH24** : essai du robot réel publiant sur le broker du NUC (`~/cellule/lancer.sh ~/cellule/test.py --broker 192.168.1.2` sur chaque robot)
 - [ ] **Avant la séance 11 de B3RNSPP26 et la séance 12 de BACHTECH24** : essai de Grafana avec l'historique simulé
 - [ ] **Après chaque séance** : sauvegarde du disque, relevé du matériel manquant
 

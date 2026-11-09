@@ -3,7 +3,7 @@
 EQUIPE = "g1"                        # identifiant de l'équipe (topics MQTT, client MQTT)
 
 # Broker MQTT du serveur du module
-BROKER = "192.168.1.10"               # adresse du serveur (le NUC d'ISTP est en .2)
+BROKER = "192.168.1.2"               # adresse du serveur (NUC de l'IRUP ou d'ISTP)
 PORT_MQTT = 1883
 
 # Topics des essais (les topics du projet sont cycle, etat et defaut)

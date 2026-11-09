@@ -53,7 +53,7 @@ Le site utilise Flask et `requests` (déjà installés sur le serveur ; sur un p
    python3 supervision.py
    ```
 
-4. **Ouvrir** la page dans un navigateur : `http://192.168.1.10:8001` depuis un poste du fab lab (adresse du serveur, port de l'équipe).
+4. **Ouvrir** la page dans un navigateur : `http://192.168.1.2:8001` depuis un poste du fab lab (adresse du serveur, port de l'équipe).
 
 Comme le collecteur, le site peut tourner dans une session `tmux` pour continuer après la fermeture du terminal (voir `collecteur/README.md`).
 

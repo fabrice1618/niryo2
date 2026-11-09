@@ -207,7 +207,7 @@ Pour le projet, les robots quittent leur Wi-Fi propre et rejoignent le réseau d
 ```mermaid
 flowchart LR
     PE["Postes étudiants"] --- SW["Réseau du fab lab<br/>192.168.1.0/24"]
-    SW --- SV["Serveur du module<br/>192.168.1.10<br/>SSH :22 · MQTT :1883 · sites :8001-8008"]
+    SW --- SV["Serveur du module<br/>192.168.1.2<br/>SSH :22 · MQTT :1883 · sites :8001-8008"]
     SW --- ROB["Robots Ned2<br/>192.168.1.21 à .24<br/>API :3000"]
 ```
 

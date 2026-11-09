@@ -33,12 +33,12 @@ Ce cours de révision reprend les bases d'un réseau IP : comment les machines s
 
 Une communication réseau est découpée en couches : chacune rend un service à celle du dessus et s'appuie sur celle du dessous, ce qui permet de modifier l'une sans toucher aux autres.
 
-Exemple : le robot (192.168.1.21) publie une fin de cycle en MQTT vers le serveur (192.168.1.10).
+Exemple : le robot (192.168.1.21) publie une fin de cycle en MQTT vers le serveur (192.168.1.2).
 
 ```text
 Application  :                                         [ PUBLISH cellule/g1/cycle {"duree": 18.2} ]
 Transport    :                          [ TCP 52344 → 1883 | données MQTT ]
-Internet     :       [ IP 192.168.1.21 → 192.168.1.10 | segment TCP ]
+Internet     :       [ IP 192.168.1.21 → 192.168.1.2 | segment TCP ]
 Accès réseau : [ Ethernet MAC robot → MAC serveur | paquet IP | FCS ]
 ```
 
@@ -410,7 +410,7 @@ Configurer une machine en statique, c'est saisir soi-même ses paramètres rése
 
 | Paramètre | Rôle | Exemple |
 | --- | --- | --- |
-| Adresse IP | Identifie la machine dans son réseau | 192.168.1.10 (serveur du module) |
+| Adresse IP | Identifie la machine dans son réseau | 192.168.1.2 (serveur du module) |
 | Masque de sous-réseau | Délimite le réseau local | 255.255.255.0 (/24) |
 | Passerelle par défaut | Routeur utilisé pour sortir du réseau | 192.168.1.1 |
 | Serveur DNS | Traduit les noms en adresses IP | 192.168.1.1 ou 8.8.8.8 |
@@ -431,7 +431,7 @@ Pour les équipements dont l'adresse doit rester prévisible : serveurs, broker 
 | Plage | Usage |
 | --- | --- |
 | 192.168.1.1 | Passerelle (routeur) |
-| 192.168.1.2 à .19 | Serveurs et équipements d'infrastructure, en statique (serveur du module : 192.168.1.10) |
+| 192.168.1.2 à .19 | Serveurs et équipements d'infrastructure, en statique (serveur du module : 192.168.1.2) |
 | 192.168.1.20 à .99 | Équipements de production : robots Ned2 (.21 à .24), automates, caméras, en statique ou réservés |
 | 192.168.1.100 à .199 | Plage distribuée par DHCP (postes étudiants) |
 | 192.168.1.200 à .254 | Réserve |
@@ -458,7 +458,7 @@ Ou par l'interface graphique : Paramètres réseau, propriétés de la carte, Pr
 **Linux : configuration immédiate (perdue au redémarrage)**
 
 ```bash
-sudo ip addr add 192.168.1.10/24 dev eth0
+sudo ip addr add 192.168.1.2/24 dev eth0
 sudo ip link set eth0 up
 sudo ip route add default via 192.168.1.1
 ip addr show eth0
@@ -474,7 +474,7 @@ network:
   ethernets:
     eth0:
       dhcp4: false
-      addresses: [192.168.1.10/24]
+      addresses: [192.168.1.2/24]
       routes:
         - to: default
           via: 192.168.1.1
@@ -640,7 +640,7 @@ flowchart LR
     subgraph LAN["Réseau du fab lab 192.168.1.0/24"]
         R1["Robot Ned2 g1<br/>192.168.1.21<br/>API Flask :3000"]
         R2["Robots g2 à g4<br/>.22 à .24"]
-        SRV["Serveur du module<br/>192.168.1.10 (statique)<br/>SSH :22 · MQTT :1883 · sites :8001-8008"]
+        SRV["Serveur du module<br/>192.168.1.2 (statique)<br/>SSH :22 · MQTT :1883 · sites :8001-8008"]
         PC["Postes étudiants<br/>.100 à .199 (DHCP)"]
         GW["Routeur<br/>192.168.1.1"]
     end
@@ -679,10 +679,10 @@ Un programme serveur doit écouter sur la bonne interface : Flask lancé sans op
 **Diagnostic de proche en proche, appliqué au projet**
 
 ```bash
-ping 192.168.1.10                       # 1. le robot joint-il le serveur ? (couches 1 à 3)
-nc -zv 192.168.1.10 1883                # 2. le port MQTT est-il ouvert ? (couche 4)
+ping 192.168.1.2                       # 1. le robot joint-il le serveur ? (couches 1 à 3)
+nc -zv 192.168.1.2 1883                # 2. le port MQTT est-il ouvert ? (couche 4)
 ss -tlnp | grep -E ':1883|:500|:800'     # 3. sur le serveur : qui écoute, et sur quelle adresse ?
-mosquitto_sub -h 192.168.1.10 -t 'cellule/g1/#' -v   # 4. application
+mosquitto_sub -h 192.168.1.2 -t 'cellule/g1/#' -v   # 4. application
 curl http://192.168.1.21:3000/requetes/etat                                           # 5. API du robot
 ```
 
@@ -789,11 +789,11 @@ Le poste n'a reçu aucune réponse DHCP (il n'y a pas de serveur DHCP sur le câ
 
 Sans `--host 0.0.0.0`, Flask n'écoute que sur la boucle locale `127.0.0.1` : seules les connexions venant du serveur lui-même sont acceptées. `ss -tlnp` le montre : `127.0.0.1:8001` au lieu de `0.0.0.0:8001`.
 
-**Exercice 12 (cellule).** Le robot g1 est en `192.168.1.21/24`, passerelle `192.168.1.1`. Le serveur est en `192.168.1.10/24`. Le robot publie en MQTT vers le serveur : quelles adresses IP et MAC portent la trame émise par le robot ? Même question si le broker était sur Internet, en `203.0.113.50`.
+**Exercice 12 (cellule).** Le robot g1 est en `192.168.1.21/24`, passerelle `192.168.1.1`. Le serveur est en `192.168.1.2/24`. Le robot publie en MQTT vers le serveur : quelles adresses IP et MAC portent la trame émise par le robot ? Même question si le broker était sur Internet, en `203.0.113.50`.
 
 | Destination | Même réseau ? | MAC de destination de la trame | IP de destination du paquet |
 | --- | --- | --- | --- |
-| Serveur 192.168.1.10 | Oui | MAC du serveur | 192.168.1.10 |
+| Serveur 192.168.1.2 | Oui | MAC du serveur | 192.168.1.2 |
 | Broker 203.0.113.50 | Non | MAC de la passerelle 192.168.1.1 | 203.0.113.50 |
 
 Dans les deux cas : port de destination TCP 1883, port source choisi au hasard dans la plage dynamique.

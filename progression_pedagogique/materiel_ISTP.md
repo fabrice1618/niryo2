@@ -128,12 +128,11 @@ Plan d'adressage du fab lab (réseau `192.168.1.0/24`), à configurer sur le rou
 | Élément | Adresse |
 |---------|---------|
 | Routeur (passerelle) | `192.168.1.1` |
-| Serveur de l'IRUP (NUC, résident au fab lab) | `192.168.1.10` |
-| NUC d'ISTP (visiteur) | `192.168.1.2` |
+| Serveur du module (NUC d'ISTP, ou NUC de l'IRUP les autres jours) | `192.168.1.2` |
 | Robots Ned2 | `192.168.1.21` à `192.168.1.24` |
 | Postes des étudiants (DHCP) | `192.168.1.100` à `192.168.1.199` |
 
-Le NUC d'ISTP garde la même adresse (`192.168.1.2`) en salle D3.10 et au fab lab. Trois profils réseau sont préparés sur le NUC (`salle`, `fablab`, `dhcp`) et on change de profil à l'installation avec `sudo profil-reseau`. Le serveur DHCP du NUC ne tourne qu'en salle D3.10 : au fab lab, le routeur de l'IRUP distribue déjà les adresses, un seul serveur DHCP par réseau. Le NUC de l'IRUP et celui d'ISTP ne doivent jamais avoir la même adresse : celui de l'IRUP reste branché en permanence au fab lab, où celui d'ISTP vient les 17/11 et 19/11/2026.
+Le NUC d'ISTP garde la même adresse (`192.168.1.2`) en salle D3.10 et au fab lab. Trois profils réseau sont préparés sur le NUC (`salle`, `fablab`, `dhcp`) et on change de profil à l'installation avec `sudo profil-reseau`. Le serveur DHCP du NUC ne tourne qu'en salle D3.10 : au fab lab, le routeur de l'IRUP distribue déjà les adresses, un seul serveur DHCP par réseau. Le NUC de l'IRUP a la même adresse (`192.168.1.2`) : les deux NUC ne doivent jamais être branchés en même temps sur le réseau du fab lab. Les 17/11 et 19/11/2026, jours où celui d'ISTP vient, le NUC de l'IRUP est débranché.
 
 ### 4.3 Ports
 
@@ -235,7 +234,7 @@ Les dates sont celles du planning `seances_BACHINGE24.xlsx` : les échéances so
 | Ven. 06/11/2026 | Installation complète en salle D3.10 : switches, câbles, NUC, essai depuis un poste Linux et depuis un laptop (section 5.4) | Séance 3 |
 | Lun. 09/11/2026, 1 heure avant | Installation du NUC en salle D3.10 (profil `salle`, serveur DHCP actif) ; avant : mises à jour, état du disque, nouvel essai de charge | Séance 3 |
 | Lun. 09/11/2026, après la séance | Sauvegarde du disque ; le NUC repart chez l'intervenant | Séance 4 |
-| Mar. 17/11/2026, avant 08:30 | Installation du NUC d'ISTP au fab lab (profil `fablab`, serveur DHCP arrêté, adresse distincte du NUC de l'IRUP), vérifications réseau : robots vers le broker, serveur vers l'API des robots | Séance 4 |
+| Mar. 17/11/2026, avant 08:30 | Installation du NUC d'ISTP au fab lab (profil `fablab`, serveur DHCP arrêté, NUC de l'IRUP débranché : même adresse `192.168.1.2`), vérifications réseau : robots vers le broker, serveur vers l'API des robots | Séance 4 |
 | Mar. 17/11/2026, entre les deux groupes | Contrôle du NUC, sauvegarde du disque | Séance 4 |
 | Jeu. 19/11/2026, avant 13:30 | NUC allumé et vérifié, robots prêts | Séance 5 |
 | Après le jeu. 19/11/2026 | Suppression des comptes sur les postes de la salle D3.10 (`--supprimer`), remise en état de la salle | Fin du module |

@@ -7,7 +7,7 @@ Le serveur du module héberge, pour toutes les équipes, le broker MQTT, les col
 | Document | Serveur | Classes | Base de données | Grafana |
 |---|---|---|---|---|
 | [`install_nuc_istp.md`](install_nuc_istp.md) | NUC Celeron d'ISTP (Ubuntu Desktop, nom `istp`), `192.168.1.2`, avec serveur DHCP pour la salle | BACHINGE24 (8 équipes) | SQLite (`cellule.db`, une par équipe) | Non |
-| [`install_nuc.md`](install_nuc.md) | NUC du fab lab de l'IRUP, `192.168.1.10` | BACHTECH24 et B3RNSPP26 (6 équipes) | SQLite (`cellule.db`, une par équipe) | Oui, port 3000, avec l'adaptateur SQLite (lecture seule) |
+| [`install_nuc.md`](install_nuc.md) | NUC du fab lab de l'IRUP, `192.168.1.2` | BACHTECH24 et B3RNSPP26 (6 équipes) | SQLite (`cellule.db`, une par équipe) | Oui, port 3000, avec l'adaptateur SQLite (lecture seule) |
 
 L'installation des bibliothèques sur les **robots** est à part : voir [`../install_robot/README.md`](../install_robot/README.md).
 
