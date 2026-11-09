@@ -55,7 +55,7 @@
 | Séance 12 | mar. 11/05/2027, 13:30-17:00 | Fab lab | Non | Oui, Grafana | Dashboard Grafana |
 | Séance 13 | jeu. 17/06/2027, 13:30-17:00 | Fab lab | Oui | Oui | Évaluation |
 
-Le fab lab est dans la même configuration pour toutes les classes (section 3.2). Seul le serveur change : celui d'ISTP est un Raspberry Pi, décrit dans `materiel_ISTP.md`.
+Le fab lab est dans la même configuration pour toutes les classes (section 3.2). Seul le serveur change : celui d'ISTP est un NUC Celeron, décrit dans `materiel_ISTP.md`.
 
 
 ## 2. Équipes
@@ -133,11 +133,11 @@ Plan d'adressage du fab lab (réseau `192.168.1.0/24`), à configurer sur le rou
 |---------|---------|
 | Routeur (passerelle) | `192.168.1.1` |
 | NUC de l'IRUP (serveur résident) | `192.168.1.10` |
-| Raspberry Pi d'ISTP (visiteur, quelques séances) | `192.168.1.11` |
+| NUC d'ISTP (visiteur, quelques séances) | `192.168.1.2` |
 | Robots Ned2 | `192.168.1.21` à `192.168.1.24` |
 | Postes des étudiants (DHCP) | `192.168.1.100` à `192.168.1.199` |
 
-Le NUC et le Raspberry Pi d'ISTP ne doivent jamais avoir la même adresse : le NUC reste branché en permanence sur le réseau du fab lab, où le Pi vient les 17/11 et 19/11/2026 (la séance 1 du 12/10 se fait sans serveur).
+Le NUC de l'IRUP et le NUC d'ISTP ne doivent jamais avoir la même adresse : le NUC de l'IRUP reste branché en permanence sur le réseau du fab lab, où celui d'ISTP vient les 17/11 et 19/11/2026 (la séance 1 du 12/10 se fait sans serveur).
 
 | Service | Port | Machine |
 |---------|------|---------|

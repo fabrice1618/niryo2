@@ -57,7 +57,7 @@ Ouvrir le dossier du projet : *Fichier > Ouvrir le dossier*, choisir le dossier 
 
 Le serveur n'est joignable que depuis **le réseau du module** (salle de cours ou fab lab), pas depuis chez soi. L'enseignant remet à chaque équipe :
 
-- l'**adresse du serveur** : au fab lab, `192.168.1.10` (NUC de l'IRUP) ou `192.168.1.11` (Raspberry Pi d'ISTP) ;
+- l'**adresse du serveur** : au fab lab, `192.168.1.10` (NUC de l'IRUP) ou `192.168.1.2` (NUC d'ISTP) ;
 - l'**identifiant** de l'équipe (`g1`, `tech2`, `g3`...) et son **mot de passe**, les mêmes pour SSH et pour la copie de fichiers.
 
 Le client SSH est déjà dans Windows 10 et 11. Vérifier dans PowerShell :

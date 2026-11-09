@@ -12,7 +12,7 @@
 
 - 5 séances, du 12 octobre au 19 novembre 2026, soit 15h45 par étudiant.
 - 22 étudiants en 8 équipes de 2 ou 3, sur 4 robots.
-- Le serveur est un Raspberry Pi, installé en salle D3.10 (séance 3) puis au fab lab (voir `materiel_ISTP.md`).
+- Le serveur est un NUC Celeron (nom `istp`, IP fixe `192.168.1.2`), installé en salle D3.10 (séance 3) puis au fab lab (voir `materiel_ISTP.md`).
 - Un projet fil rouge : une cellule robotisée supervisée, construite séance après séance.
 - Évaluation : chaque équipe déroule son propre cahier de recette devant l'enseignant.
 
@@ -45,7 +45,7 @@ Par rapport à l'an dernier :
 
 ## 3. Architecture cible du fil rouge
 
-L'architecture, les fonctions F1 à F7, le cycle instrumenté et le scénario complet des échanges sont présentés dans le `README.md` (sections 4 et 5). Dans cette classe, le serveur du module est un Raspberry Pi (voir section 6) et les robots sont au fab lab.
+L'architecture, les fonctions F1 à F7, le cycle instrumenté et le scénario complet des échanges sont présentés dans le `README.md` (sections 4 et 5). Dans cette classe, le serveur du module est un NUC Celeron (voir section 6) et les robots sont au fab lab.
 
 ![Architecture de la cellule](../robot_niryo-architecture.drawio.png)
 
@@ -251,7 +251,7 @@ Mosquitto, SQLite et Flask s'exécutent sans serveur. Chaque équipe travaille s
 
 | Lieu | Groupes | Durée | Matériel |
 |------|---------|-------|----------|
-| Salle D3.10 | G1 + G2 ensemble (22 étudiants) | 3h30 | Serveur Raspberry Pi (section 6) sur le réseau séparé de la salle, postes Linux et laptops des étudiants. Pas de robot : le process est simulé et l'API fonctionne en mode simulé |
+| Salle D3.10 | G1 + G2 ensemble (22 étudiants) | 3h30 | Serveur NUC (section 6) sur le réseau séparé de la salle, postes Linux et laptops des étudiants. Pas de robot : le process est simulé et l'API fonctionne en mode simulé |
 
 Les équipes ont avancé sur leur laptop pendant quatre semaines, à partir des exemples fournis à la séance 2 (simulateur, collecteur, site web de base) : la séance est un TP d'intégration. Il s'agit de déployer sur le serveur réel ce qui a été développé en local (voir la section 7 si une équipe arrive sans rien de prêt).
 
@@ -350,7 +350,7 @@ Conventions reprises des supports `cours/collecteur_MQTT.md` et `cours/SQL.md` (
 
 | Lieu | Groupes | Durée | Matériel |
 |------|---------|-------|----------|
-| Fab lab | Par groupe : G1 le matin, G2 l'après-midi | 3h30 | Robots, convoyeurs et serveur (Raspberry Pi apporté de la salle D3.10) |
+| Fab lab | Par groupe : G1 le matin, G2 l'après-midi | 3h30 | Robots, convoyeurs et serveur (NUC apporté de la salle D3.10) |
 
 Le collecteur, la base et le site web tournent déjà sur le serveur depuis la séance 3 : la séance porte sur le robot et sa liaison avec le serveur.
 
@@ -411,22 +411,24 @@ Pendant qu'une équipe passe, l'équipe suivante prépare sa cellule sur un autr
 | Questions individuelles | 20 % |
 
 
-## 6. Serveur : Raspberry Pi
+## 6. Serveur : NUC Celeron
 
-ISTP met à disposition un Raspberry Pi qui fait office de serveur. Il démarre sur un SSD USB contenant un Linux préparé à l'avance par l'enseignant. Le matériel demandé, le réseau, les comptes et les vérifications sont détaillés dans `materiel_ISTP.md`.
+ISTP met à disposition un NUC à processeur Celeron qui fait office de serveur. Il tourne sous Ubuntu Desktop, préparé à l'avance par l'enseignant (nom de machine `istp`, adresse fixe `192.168.1.2`). Le matériel demandé, le réseau, les comptes et les vérifications sont détaillés dans `materiel_ISTP.md`.
 
-Le serveur sert à la séance 3 (salle D3.10, sur un réseau séparé), puis aux séances 4 et 5 (fab lab). Le travail des équipes reste sur le SSD d'une séance à l'autre.
+Le serveur sert à la séance 3 (salle D3.10, sur un réseau séparé), puis aux séances 4 et 5 (fab lab). Le travail des équipes reste sur le disque du NUC d'une séance à l'autre.
 
 **Intérêts**
 
 - Aucune installation sur le parc ISTP, hors les comptes du projet sur les postes Linux de la salle D3.10
 - Environnement identique pour toutes les équipes, maîtrisé par l'enseignant
-- Le Pi se transporte facilement de la salle D3.10 au fab lab ; en cas de panne, le SSD de secours démarre sur un autre Raspberry Pi
-- Remise à zéro rapide à partir d'une image du SSD
+- Le NUC se transporte facilement de la salle D3.10 au fab lab, avec la même adresse ; en cas de panne, l'image du disque se restaure sur une autre machine
+- Remise à zéro rapide à partir d'une image du disque
 
-**Contenu préparé sur le SSD** (procédure complète dans `install/install_raspberry.md`)
+**Contenu préparé sur le NUC** (procédure complète dans `install/install_nuc_istp.md`)
 
-- Distribution Linux 64 bits pour Raspberry Pi (par exemple Ubuntu Server 24.04 LTS) avec serveur SSH
+- Ubuntu Desktop 24.04 LTS (nom de machine `istp`, adresse fixe `192.168.1.2`) avec serveur SSH
+- Serveur DHCP (dnsmasq) pour le réseau séparé de la salle D3.10, démarré en salle et arrêté au fab lab
+- DBeaver (consultation de la base SQLite) et MQTT Explorer (messages MQTT), directement sur le NUC
 - Un compte par équipe (8 comptes : `g1` à `g8`), avec son dossier personnel, créés avec `scripts/creer_comptes_equipes.sh` (mêmes comptes sur les postes Linux de la salle D3.10)
 - Broker Mosquitto ouvert sur le réseau du module (sans compte) : chaque équipe publie sous `cellule/<equipe>/`
 - Python 3 et les paquets du projet (`paho-mqtt`, `flask`, `requests`), installés à l'avance
@@ -436,23 +438,23 @@ Le serveur sert à la séance 3 (salle D3.10, sur un réseau séparé), puis aux
 
 **Réseau**
 
-- **En salle D3.10 (séance 3)** : un réseau séparé permet d'utiliser le serveur. Les postes Linux de la salle y sont raccordés ; deux switches 5 ports (avec câbles) apportés par l'enseignant connectent les laptops des équipes (un par équipe environ) et le Pi. SSH (22), MQTT (1883) et les ports HTTP (5001 à 5008 et 8001 à 8008) doivent être autorisés entre les postes et le Pi.
-- **Au fab lab (séances 4 et 5)** : le serveur rejoint le réseau des robots avec une adresse IP fixe (plan d'adressage proposé dans `cours/reseau_TCP_IP.md` : réseau `192.168.1.0/24`, robots en `.21` à `.24`). Le NUC de l'IRUP occupe l'adresse `.10` : le Pi prend `.11` (voir `materiel_ISTP.md`). L'API tourne alors sur chaque robot (Python ROS Wrapper), port 3000 : le port 5000 du robot est pris par le logiciel système de Niryo. Les bibliothèques Python du projet sont installées à l'avance sur chaque robot avec le dossier `install_robot/`.
+- **En salle D3.10 (séance 3)** : un réseau séparé permet d'utiliser le serveur. Les postes Linux de la salle y sont raccordés ; deux switches 5 ports (avec câbles) apportés par l'enseignant connectent les laptops des équipes (un par équipe environ) et le NUC, qui distribue les adresses (DHCP) si le réseau de la salle ne le fait pas. SSH (22), MQTT (1883) et les ports HTTP (5001 à 5008 et 8001 à 8008) doivent être autorisés entre les postes et le NUC.
+- **Au fab lab (séances 4 et 5)** : le serveur rejoint le réseau des robots avec une adresse IP fixe (plan d'adressage proposé dans `cours/reseau_TCP_IP.md` : réseau `192.168.1.0/24`, robots en `.21` à `.24`). Le NUC de l'IRUP occupe l'adresse `.10` : le NUC d'ISTP garde son adresse `.2`, comme en salle (voir `materiel_ISTP.md`). L'API tourne alors sur chaque robot (Python ROS Wrapper), port 3000 : le port 5000 du robot est pris par le logiciel système de Niryo. Les bibliothèques Python du projet sont installées à l'avance sur chaque robot avec le dossier `install_robot/`.
 
 ```mermaid
 flowchart TB
     subgraph SALLE["Séance 3 : salle D3.10"]
         direction LR
         PE1["Postes Linux et laptops étudiants"] --- SW1["Switch<br/>réseau séparé de la salle"]
-        SW1 --- SV1["Raspberry Pi<br/>serveur"]
+        SW1 --- SV1["NUC istp<br/>serveur, DHCP, 192.168.1.2"]
     end
     subgraph FAB["Séances 4 et 5 : fab lab"]
         direction LR
         PE2["Laptops étudiants"] --- R2["Réseau des robots"]
-        R2 --- SV2["Raspberry Pi<br/>même SSD, IP fixe"]
+        R2 --- SV2["NUC istp<br/>même machine, 192.168.1.2"]
         R2 --- ROB["4 robots Ned2"]
     end
-    SALLE -. "même SSD : travail des équipes conservé" .-> FAB
+    SALLE -. "même NUC : travail des équipes conservé" .-> FAB
 ```
 
 **À vérifier avec ISTP**
@@ -460,13 +462,13 @@ flowchart TB
 - Disponibilité de la salle C1.07 (séance 2), de la salle D3.10 (séance 3) et du fab lab (séances 1, 4 et 5), ainsi que de la salle D3.10 la veille de la séance 3 pour l'installation
 - Réseau séparé de la salle D3.10 : distribution d'adresses, nombre de prises, ports autorisés, accès à Internet
 - Postes Linux de la salle D3.10 : nombre, état, droits pour créer les comptes
-- Fourniture du Raspberry Pi et de ses accessoires (demande du 06/10/2026), délai de livraison
+- Fourniture du NUC et de ses accessoires, délai de mise à disposition
 
 **Calendrier de préparation**
 
 - Robots et fab lab vérifiés avant la séance 1 (lun. 12/10)
-- Salle D3.10 remise en état et Raspberry Pi prêt et testé avant la séance 3, soit au plus tard le ven. 06/11 (installation sur place la veille ou une heure avant la séance, lun. 09/11). Si le Pi n'est pas livré à temps, un serveur de secours (laptop de l'intervenant avec la même configuration) assure la séance 3
-- Sauvegarde du SSD après chaque séance (image complète ou copie des dossiers des équipes)
+- Salle D3.10 remise en état et NUC prêt et testé avant la séance 3, soit au plus tard le ven. 06/11 (installation sur place la veille ou une heure avant la séance, lun. 09/11). Si le NUC n'est pas disponible à temps, un serveur de secours (laptop de l'intervenant avec la même configuration) assure la séance 3
+- Sauvegarde du disque du NUC après chaque séance (image complète ou copie des dossiers des équipes)
 
 **Ressources reprises de l'an dernier**
 

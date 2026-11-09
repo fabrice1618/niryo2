@@ -107,7 +107,7 @@ Ce schéma est celui du projet : l'opérateur n'utilise qu'un navigateur ; le si
 |---|---|---|
 | Réseau du fab lab | `192.168.1.0/24` | sans objet (donné) |
 | Serveur du fab lab (NUC de l'IRUP) | `192.168.1.10` | À COMPLÉTER : le serveur de votre classe |
-| Serveur d'ISTP (Raspberry Pi) | `192.168.1.11` au fab lab ; adresse de la salle de cours remise par l'enseignant | À COMPLÉTER |
+| Serveur d'ISTP (NUC) | `192.168.1.2`, au fab lab comme en salle de cours | À COMPLÉTER |
 | Robots du fab lab | `192.168.1.21` à `192.168.1.24` | À COMPLÉTER : adresse du robot de l'équipe |
 | Adresse de votre poste sur le réseau | donnée par le réseau (DHCP) | À COMPLÉTER (utile pour les essais) |
 

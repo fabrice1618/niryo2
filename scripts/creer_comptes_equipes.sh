@@ -4,7 +4,7 @@
 # passe aléatoire par compte.
 #
 # À lancer en administrateur sur chaque machine concernée : postes Linux de la
-# salle D3.10, Raspberry Pi (ISTP), NUC du fab lab (IRUP). Les identifiants sont
+# salle D3.10, NUC d'ISTP, NUC du fab lab (IRUP). Les identifiants sont
 # les mêmes partout ; les mots de passe aussi si l'on réutilise le même fichier.
 #
 # Usage : sudo ./creer_comptes_equipes.sh [options] <jeu>

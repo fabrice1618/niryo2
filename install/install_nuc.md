@@ -4,7 +4,7 @@ Infrastructure client / serveur dans un contexte industriel
 
 Ce document décrit, pas à pas, la préparation du serveur NUC du fab lab de l'IRUP. Il héberge le broker MQTT et, pour chacune des 6 équipes (`tech1`, `tech2` de BACHTECH24, `g1` à `g4` de B3RNSPP26), le collecteur, la base de données, le site web et l'API simulée, ainsi qu'une instance **Grafana** commune. Il démarre sur un SSD externe : le disque interne n'est ni utilisé ni modifié. Le matériel et le calendrier sont dans `progression_pedagogique/materiel_IRUP.md`.
 
-Par rapport au Raspberry Pi d'ISTP ([`install_raspberry.md`](install_raspberry.md)), le NUC ajoute **Grafana**, qui lit directement la base SQLite `cellule.db` de chaque équipe, en lecture seule, grâce à un adaptateur (le plugin communautaire `frser-sqlite-datasource`). Il n'y a qu'une base par équipe : le collecteur et le site web restent ceux des cours.
+Par rapport au NUC d'ISTP ([`install_nuc_istp.md`](install_nuc_istp.md)), le NUC ajoute **Grafana**, qui lit directement la base SQLite `cellule.db` de chaque équipe, en lecture seule, grâce à un adaptateur (le plugin communautaire `frser-sqlite-datasource`). Il n'y a qu'une base par équipe : le collecteur et le site web restent ceux des cours.
 
 | Composant | Rôle | Port |
 |---|---|---|
@@ -118,7 +118,7 @@ echo 'export PATH=/opt/cellule/venv/bin:$PATH' | sudo tee /etc/profile.d/cellule
 sudo /opt/cellule/venv/bin/pip download -d /opt/cellule/paquets flask paho-mqtt requests
 ```
 
-Les briques fournies aux équipes se déposent dans `/opt/cellule/fournitures`, comme sur le Raspberry Pi (section 7 de `install_raspberry.md`).
+Les briques fournies aux équipes se déposent dans `/opt/cellule/fournitures`, comme sur le NUC d'ISTP (section 7 de `install_nuc_istp.md`).
 
 
 ## 7. Grafana et l'adaptateur SQLite
@@ -288,7 +288,7 @@ sudo -u grafana sqlite3 "file:/home/g1/supervision/cellule.db?mode=ro" "SELECT c
 sudo -u g2 ls /home/g1                                   # refusé : dossier d'une autre équipe
 ```
 
-- [ ] MQTT : chaque équipe publie et reçoit sur ses topics, rien sur ceux des autres (mêmes commandes que dans `install_raspberry.md`, section 9)
+- [ ] MQTT : chaque équipe publie et reçoit sur ses topics, rien sur ceux des autres (mêmes commandes que dans `install_nuc_istp.md`, section 9)
 - [ ] Une équipe ne lit ni le dossier, ni les topics, ni la base d'une autre
 - [ ] Grafana : connexion avec un compte d'équipe, panneau d'essai sur les données fictives, création d'un dashboard dans son dossier ; le dossier d'une autre équipe n'apparaît pas
 - [ ] Collecteur d'une équipe de test en marche : ses nouveaux cycles apparaissent dans Grafana (rafraîchissement toutes les 5 s), sans erreur « database is locked » ni côté collecteur ni côté Grafana
@@ -299,7 +299,7 @@ sudo -u g2 ls /home/g1                                   # refusé : dossier d'u
 
 ## 9. Sauvegarde et restauration
 
-- **Image complète du SSD** après l'installation, depuis un autre poste Linux, et copie sur le SSD de secours (mêmes commandes `dd` que pour le Raspberry Pi).
+- **Image complète du SSD** après l'installation, depuis un autre poste Linux, et copie sur le SSD de secours (mêmes commandes `dd` que pour le NUC d'ISTP).
 - **Après chaque séance**, collecteurs arrêtés (une base copiée pendant une écriture peut être incohérente) : dossiers des équipes avec leurs bases, configuration et dashboards Grafana. L'option `--acls` conserve les droits donnés à Grafana.
 
   ```bash

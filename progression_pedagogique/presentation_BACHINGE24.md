@@ -284,7 +284,7 @@ Le robot n'est disponible qu'aux séances 1, 4 et 5 : **préparez tout le reste 
 **Aussi fournis**
 
 - Cours en **libre service** : MQTT, SQL, Python et HTTP, HTML / CSS, Flask, API CQRS, réseau TCP/IP
-- Un **compte par équipe** sur le serveur (séance 3), le **broker** et le serveur Raspberry Pi
+- Un **compte par équipe** sur le serveur (séance 3), le **broker** et le serveur NUC
 - Les robots, convoyeurs et pièces (séances 1, 4 et 5), avec Flask et paho-mqtt **déjà installés** sur chaque robot
 
 ---
@@ -361,7 +361,7 @@ Le robot n'est disponible qu'aux séances 1, 4 et 5 : **préparez tout le reste 
 
 # Séance 3 : intégration sur le serveur
 
-**Lieu** : salle D3.10 · **Durée** : 3h30 · **Matériel** : serveur Raspberry Pi, laptops
+**Lieu** : salle D3.10 · **Durée** : 3h30 · **Matériel** : serveur NUC, laptops
 
 | Durée | Tâche à réaliser |
 |-------|------------------|
